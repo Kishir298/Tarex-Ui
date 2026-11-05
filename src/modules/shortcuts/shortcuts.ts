@@ -29,7 +29,6 @@ export type ShortcutId =
   | "pane.swapDown"
   | "pane.source"
   | "terminal.clear"
-  | "terminal.toggleInput"
   | "blocks.prev"
   | "blocks.next"
   | "search.focus"
@@ -40,6 +39,7 @@ export type ShortcutId =
   | "view.zoomOut"
   | "view.zoomReset"
   | "view.zenMode"
+  | "view.activity"
   | "ai.toggle"
   | "ai.toggleMini"
   | "ai.askSelection"
@@ -199,12 +199,6 @@ export const SHORTCUTS: Shortcut[] = [
     defaultBindings: IS_MAC ? [{ meta: true, key: "k" }] : [],
   },
   {
-    id: "terminal.toggleInput",
-    label: "Toggle Shell / AI input",
-    group: "Terminal",
-    defaultBindings: [{ [MOD_PROP]: true, key: "u" }],
-  },
-  {
     id: "blocks.prev",
     label: "Previous command block",
     group: "Terminal",
@@ -351,6 +345,12 @@ export const SHORTCUTS: Shortcut[] = [
     label: "Toggle zen mode",
     group: "View",
     defaultBindings: [{ [MOD_PROP]: true, shift: true, key: "'" }],
+  },
+  {
+    id: "view.activity",
+    label: "Toggle Activity panel",
+    group: "View",
+    defaultBindings: [{ [MOD_PROP]: true, shift: true, key: "j" }],
   },
   // Editor undo/redo: App.tsx registers handlers and useGlobalShortcuts
   // preventDefaults on match. Keep Mod+Y and add macOS Mod+Shift+Z (#941).

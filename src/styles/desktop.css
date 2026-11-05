@@ -65,7 +65,7 @@
 .terex-topline-subtitle { color:var(--terex-dim); }
 .terex-topline nav { display:flex; align-items:center; gap:3px; margin-left:auto;min-width:0;overflow-x:auto;scrollbar-width:none; }
 .terex-topline nav button { min-height:26px; padding:0 9px;flex-shrink:0;white-space:nowrap; }
-.terex-topline nav button:hover, .terex-topline nav button[aria-pressed=true] { background:var(--accent); color:var(--accent-foreground); }
+.terex-topline nav button:hover, .terex-topline nav button[aria-pressed=true], .terex-topline nav button[aria-expanded=true] { background:var(--accent); color:var(--accent-foreground); }
 .terex-native-status { display:flex; align-items:center; gap:6px; font-size:8px; white-space:nowrap; }
 .terex-native-status i { width:4px; height:4px; background:var(--ring); box-shadow:0 0 5px var(--ring); }
 .terex-top-deck { min-height:0; display:grid; grid-template-columns:var(--rail-width) minmax(0,1fr) var(--rail-width); gap:14px; flex:1; }
@@ -96,18 +96,19 @@
 .terex-processes td { overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.65; }.terex-processes td:last-child{text-align:right;}
 .terex-processes tr:hover{background:var(--muted);}.terex-processes tr:focus-visible{outline:1px solid var(--ring);}
 .terex-suspended{min-height:0;max-height:130px;overflow:auto;margin-top:6px;}.terex-suspended>div:not(.terex-rule){display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:8px;}.terex-suspended span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.terex-suspended button{font-size:8px;padding:3px;color:var(--ring);}
-.terex-system-rail{overflow-y:auto;scrollbar-width:thin;}
+.terex-system-rail,.terex-network-rail{overflow-y:auto;scrollbar-width:thin;}
 .terex-network-rail>.terex-rule:first-child { margin-bottom:22px; }
 .terex-network-status { margin:0 0 12px; font-size:9px; }
 .terex-network-status>div { display:flex;justify-content:space-between;gap:5px; }
 .terex-network-status dt { color:var(--terex-dim); }.terex-network-status dd{margin:0;text-align:right;}
-.terex-globe-wrap { display:flex; flex-direction:column; min-height:120px; flex:1; overflow:hidden; }
-.terex-globe { width:100%; flex:1; min-height:0; color:var(--terex-blue); }
-.terex-globe-caption { text-align:center;font-size:7px;color:var(--terex-dim);padding-bottom:15px; }
 .terex-traffic-summary { display:flex; justify-content:space-between; font-size:8px; margin:4px 0; }
 .terex-network-rail .terex-chart { height:115px; }
 .terex-transfer-total { display:flex;justify-content:space-between;flex-wrap:wrap;font-size:7px;padding:5px 0 0;color:var(--terex-dim); }
-.terex-workspace { position:relative; display:flex;flex-direction:column;min-width:0;min-height:0; border:1px solid var(--terex-line); margin-top:5px; }
+.terex-workspace { position:relative; display:flex;flex-direction:row;min-width:0;min-height:0; border:1px solid var(--terex-line); margin-top:5px; }
+.terex-workspace-main { position:relative;display:flex;flex-direction:column;flex:1;min-width:0;min-height:0; }
+.terex-workspace[data-activity-exclusive=true]>.terex-workspace-main { position:absolute;inset:0;visibility:hidden;pointer-events:none; }
+.terex-activity-loading-panel { flex:0 0 310px;border-left:1px solid var(--border);padding:16px;font-size:12px; }
+.terex-workspace[data-activity-exclusive=true]>.terex-activity-loading-panel { flex:1; }
 .terex-workspace-content { display:flex;flex-direction:column;height:100%;min-height:0;position:relative;isolation:isolate;z-index:0; }
 .terex-workspace[data-file-mode=true] .terex-workspace-content { visibility:hidden;pointer-events:none;opacity:0; }
 .terex-workspace-content>main { min-height:0;flex:1; }
@@ -124,7 +125,6 @@
 .terex-shell-prompt>.terex-prompt-path{min-width:0;padding-left:1.25em;}
 .terex-prompt-path>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .terex-shell-prompt svg{width:1em;height:1em;flex-shrink:0;}
-.cm-ghost::after{content:"  · Shift accept / RShift run";font-size:9px;opacity:.7;}
 .terex-pathline input{width:100%;min-width:0;background:transparent;color:var(--foreground);outline:none;}
 .terex-pathline input:focus{box-shadow:inset 0 -1px var(--ring);}
 .terex-file-row:focus-visible{outline:2px solid var(--ring);outline-offset:-2px;}
@@ -139,21 +139,15 @@
 .terex-file-detail{display:flex;align-items:center;justify-content:center;gap:15px;flex-direction:column;padding:16px;text-align:center;font-size:11px;min-width:0;overflow:auto;color:var(--terex-dim);}
 .terex-file-detail svg{width:44px;height:44px;opacity:.75;}.terex-file-detail strong{color:var(--terex-bright);overflow-wrap:anywhere;}.terex-file-detail button{border:1px solid var(--terex-line);padding:8px;color:var(--terex-bright);}
 .terex-file-footer{height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 7px;font-size:9px;color:var(--terex-dim);border-top:1px solid var(--terex-line);overflow:hidden;gap:10px;}.terex-file-footer>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.terex-bottom-deck { display:flex;height:22vh;min-height:120px;max-height:230px;padding-top:12px;flex-shrink:0; }
 .terex-filesystem { min-width:0;min-height:0;display:flex;flex-direction:column; }
 .terex-tiles { display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));grid-auto-rows:72px;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--terex-blue) transparent;min-height:0;flex:1;padding:3px 0; }
 .terex-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:0;color:var(--terex-blue);}.terex-tile svg{width:34px;height:34px;}.terex-tile>span:last-child{font-size:8px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;}.terex-tile:hover,.terex-tile[aria-pressed=true]{background:var(--muted);color:var(--ring);}
 .terex-action-glyph {font-size:37px;line-height:34px;height:34px;}
 .terex-file-tools {display:flex;align-items:center;justify-content:space-between;border-top:2px solid var(--terex-line);min-height:24px;gap:8px;flex-shrink:0;font-size:8px;}.terex-file-tools button:hover{color:var(--terex-bright);}
-.terex-keyboard {display:flex;flex-direction:column;min-width:0;min-height:0;gap:4px;}.terex-keyboard>.terex-rule{border-color:transparent;min-height:12px;font-size:8px;}
-.terex-bottom-deck>.terex-keyboard{width:100%;height:100%;}
 .terex-file-actions{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--border);padding:3px 6px;flex-shrink:0;}
 .terex-file-actions button{padding:5px 8px;min-height:28px;font-size:9px;color:var(--primary);}
 .terex-file-actions button:hover,.terex-file-actions button[aria-pressed=true]{background:var(--accent);color:var(--accent-foreground);}
-@media(max-width:600px){.terex-bottom-deck{display:none;}.terex-file-actions button{font-size:8px;padding:4px;}}
-.terex-key-row {display:flex;flex:1;gap:3px;min-height:0;}
-.terex-key {display:flex;align-items:center;justify-content:center;flex:1;min-width:0;min-height:28px;font-size:clamp(10px,1vw,16px);font-weight:700;color:var(--terex-blue);border:1px solid transparent;}
-.terex-key-wide{flex:1.5;font-size:10px;}.terex-key-enter{border-color:var(--terex-line);flex:2;}.terex-key-space{flex:7;border-color:var(--terex-line);margin:3px 6px;}.terex-key:hover,.terex-key[aria-pressed=true]{background:var(--terex-blue);color:var(--terex-bg);border-color:var(--terex-bright);}
+@media(max-width:600px){.terex-file-actions button{font-size:8px;padding:4px;}}
 .terex-footer {height:20px;flex-shrink:0;display:flex;align-items:center;gap:24px;color:var(--terex-dim);font-size:8px;border-bottom:2px solid var(--terex-line);}.terex-footer>span:nth-child(3){margin-left:auto;}
 .terex-error{color:#e99a90;font-size:10px;padding:6px;overflow-wrap:anywhere;}
 .terex-native-header{padding-left:5px!important;height:32px!important;gap:3px!important;}.terex-native-header button{border-radius:0!important;}.terex-workspace .terax-pane{border:0;box-shadow:none;border-radius:0;}.terex-workspace [role=tab]{border-radius:0;}.terex-workspace-content>main>div{padding:0;}
@@ -161,13 +155,12 @@
 .terex-desktop.is-zen .terex-topline.has-custom-controls{display:flex;justify-content:flex-end;border:0;}
 .terex-desktop.is-zen .terex-topline.has-custom-controls>nav,.terex-desktop.is-zen .terex-topline.has-custom-controls>strong{display:none;}
 @media(min-width:1800px){.terex-file-row{font-size:13px;min-height:23px;}.terex-processes{font-size:10px;}.terex-rule{font-size:11px;min-height:23px;}.terex-rule span:last-child{font-size:9px;}.terex-tiles{grid-template-columns:repeat(auto-fill,minmax(94px,1fr));grid-auto-rows:85px;}.terex-tile svg{width:39px;height:39px;}.terex-tile>span:last-child{font-size:10px;}}
-@media(max-width:1100px){.terex-desktop{padding:0 7px;--rail-width:145px;}.terex-top-deck{gap:8px;}.terex-topline-subtitle,.terex-native-status{display:none;}.terex-topline{gap:8px;}.terex-bottom-deck{gap:12px;}.terex-rule{font-size:8px;}.terex-file-row{font-size:10px;}.terex-file-size{display:none;}.terex-key-wide{font-size:8px;}.terex-tiles{grid-template-columns:repeat(auto-fill,minmax(62px,1fr));}.terex-file-tools{font-size:7px;gap:4px;}}
+@media(max-width:1100px){.terex-desktop{padding:0 7px;--rail-width:145px;}.terex-top-deck{gap:8px;}.terex-topline-subtitle,.terex-native-status{display:none;}.terex-topline{gap:8px;}.terex-rule{font-size:8px;}.terex-file-row{font-size:10px;}.terex-file-size{display:none;}.terex-tiles{grid-template-columns:repeat(auto-fill,minmax(62px,1fr));}.terex-file-tools{font-size:7px;gap:4px;}}
 @media(max-width:850px){.terex-desktop{--rail-width:15.6vw;}.terex-top-deck{gap:8px;}.terex-topline nav button{padding:0 5px;font-size:8px;}.terex-topline strong{font-size:9px;}.terex-file-tools button:nth-child(3){display:none;}.terex-file-row{font-size:8px;min-height:14px;gap:3px;}.terex-columns{grid-template-columns:25% 30% 45%;padding:4px 3px 0;}.terex-pathline{font-size:8px;min-height:20px;}.terex-rule{font-size:7px;}.terex-rule span:last-child{font-size:6px;}.terex-machine-summary dd,.terex-network-status{font-size:7px;}.terex-hardware{font-size:6px;}.terex-clock{font-size:22px;}.terex-date{font-size:6px;}.terex-browser-tabs button{font-size:8px;}.terex-footer{font-size:7px;gap:8px;}}
-@media(max-width:600px){.terex-top-deck{display:flex;}.terex-system-rail,.terex-network-rail{display:none;}.terex-workspace{flex:1;}.terex-topline nav button:nth-last-child(2){display:none;}.terex-topline.has-native-controls{padding-left:70px;}.terex-topline strong{display:none;}.terex-bottom-deck{grid-template-columns:1fr;height:24vh;min-height:140px;padding-top:8px;}.terex-keyboard{display:none;}.terex-filesystem{width:100%;}.terex-footer>span:nth-child(3){display:none;}.terex-tiles{grid-auto-rows:62px;}.terex-browser-tabs button{font-size:8px;}.terex-columns{grid-template-columns:40% 60%;}.terex-file-column-parent{display:none;}.terex-file-row{font-size:11px;min-height:24px;}.terex-file-detail{font-size:10px;}.terex-file-tools button:nth-child(3){display:block;}}
-@media(max-height:650px){.terex-bottom-deck{height:28vh;min-height:135px;padding-top:9px;}.terex-tiles{grid-auto-rows:56px;}.terex-tile svg{width:27px;height:27px;}.terex-tile{gap:2px;}.terex-rule{min-height:15px;}.terex-hardware{padding:4px 0;}.terex-clock{line-height:1.2;}.terex-memory-map{gap:2px;min-height:20px;max-height:40px;}.terex-core-bars{height:21px;}.terex-chart{height:38px;}.terex-network-rail .terex-chart{height:65px;}.terex-processes{font-size:7px;}.terex-keyboard>.terex-rule{display:none;}.terex-key{min-height:18px;}.terex-keyboard,.terex-key-row{gap:1px;}}
+@media(max-width:600px){.terex-top-deck{display:flex;}.terex-system-rail,.terex-network-rail{display:none;}.terex-workspace{flex:1;}.terex-topline nav button:nth-last-child(2){display:none;}.terex-topline.has-native-controls{padding-left:70px;}.terex-topline strong{display:none;}.terex-filesystem{width:100%;}.terex-footer>span:nth-child(3){display:none;}.terex-tiles{grid-auto-rows:62px;}.terex-browser-tabs button{font-size:8px;}.terex-columns{grid-template-columns:40% 60%;}.terex-file-column-parent{display:none;}.terex-file-row{font-size:11px;min-height:24px;}.terex-file-detail{font-size:10px;}.terex-file-tools button:nth-child(3){display:block;}}
+@media(max-height:650px){.terex-tiles{grid-auto-rows:56px;}.terex-tile svg{width:27px;height:27px;}.terex-tile{gap:2px;}.terex-rule{min-height:15px;}.terex-hardware{padding:4px 0;}.terex-clock{line-height:1.2;}.terex-memory-map{gap:2px;min-height:20px;max-height:40px;}.terex-core-bars{height:21px;}.terex-chart{height:38px;}.terex-network-rail .terex-chart{height:65px;}.terex-processes{font-size:7px;}}
 @media(prefers-reduced-motion:reduce){.terex-desktop *, .terex-desktop *::before, .terex-desktop *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
 @media(max-height:650px) and (min-width:601px){
-  .terex-bottom-deck{min-height:112px;height:28vh;padding-top:7px;}
   .terex-footer{height:13px;font-size:6px;}
   .terex-system-rail .terex-rule,.terex-network-rail .terex-rule{min-height:11px;font-size:6px;}
   .terex-rule span:last-child{font-size:5.5px;}
@@ -180,8 +173,8 @@
   .terex-memory-map{min-height:16px;max-height:25px;gap:1px;padding:2px 0;}.terex-meter{height:3px;margin-bottom:3px;}
   .terex-processes{font-size:5.5px;}.terex-processes td{line-height:1.2;}
   .terex-network-rail>.terex-rule:first-child{margin-bottom:10px;}.terex-network-status{margin-bottom:6px;font-size:6px;}
-  .terex-globe-wrap{min-height:70px;}.terex-globe-caption{font-size:4px;padding-bottom:7px;}.terex-network-rail .terex-chart{height:48px;}.terex-transfer-total{font-size:4px;}.terex-traffic-summary{font-size:5px;}
+  .terex-network-rail .terex-chart{height:48px;}.terex-transfer-total{font-size:4px;}.terex-traffic-summary{font-size:5px;}
   .terex-browser-tabs{height:17px;}.terex-pathline{min-height:18px;}.terex-file-footer{height:14px;font-size:6px;}.terex-file-row{min-height:12px;font-size:7px;}
   .terex-tiles{grid-template-columns:repeat(auto-fill,minmax(43px,1fr));grid-auto-rows:38px;}.terex-tile svg{width:22px;height:22px;}.terex-tile>span:last-child{font-size:5px;}.terex-action-glyph{font-size:25px;height:22px;line-height:22px;}
-  .terex-filesystem>.terex-rule{min-height:11px;font-size:6px;}.terex-file-tools{min-height:17px;font-size:5px;}.terex-key{font-size:9px;}.terex-key-wide{font-size:6px;}
+  .terex-filesystem>.terex-rule{min-height:11px;font-size:6px;}.terex-file-tools{min-height:17px;font-size:5px;}
 }

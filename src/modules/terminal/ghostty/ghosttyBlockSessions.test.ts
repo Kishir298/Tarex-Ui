@@ -93,4 +93,13 @@ describe("block presentation ownership", () => {
     expect(state.controller).toBeNull();
     expect(presentation.listeners.size).toBe(0);
   });
+
+  it("does not release session-owned prompt pins when block presentation detaches", async () => {
+    const { model, markers } = fakeModel();
+    model.enableSemanticMarkers?.(true);
+    const state = new GhosttyBlockSession();
+    await state.attach(model, () => {}, true);
+    state.dispose();
+    expect(markers).toHaveBeenCalledExactlyOnceWith(true);
+  });
 });

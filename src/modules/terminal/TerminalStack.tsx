@@ -98,6 +98,7 @@ export function TerminalStack({
               node={t.paneTree}
               tabVisible={tabVisible}
               activeLeafId={t.activeLeafId}
+              privateTerminal={t.private === true}
               blocks={
                 t.blocks === true ||
                 customPrompts ||

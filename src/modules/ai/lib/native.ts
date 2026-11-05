@@ -238,14 +238,18 @@ export const native = {
       cwd: cwd ?? null,
       workspace: currentWorkspaceEnv(),
     }),
-  shellBgLogs: (handle: number, sinceOffset?: number) =>
+  shellBgLogs: (handle: number, sinceOffset?: number, maxBytes?: number) =>
     invoke<{
       bytes: string;
       next_offset: number;
       dropped: number;
       exited: boolean;
       exit_code: number | null;
-    }>("shell_bg_logs", { handle, sinceOffset: sinceOffset ?? null }),
+    }>("shell_bg_logs", {
+      handle,
+      sinceOffset: sinceOffset ?? null,
+      maxBytes: maxBytes ?? null,
+    }),
   shellBgKill: (handle: number) => invoke<void>("shell_bg_kill", { handle }),
   shellBgList: () =>
     invoke<

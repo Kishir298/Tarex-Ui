@@ -15,9 +15,9 @@
 </div>
 
 Terex UI combines a native Tauri/Rust backend with an eDEX-style desktop layout:
-live system and network panels, a three-column file browser, terminal tabs, and
-an on-screen keyboard. The default palette is purple and lime; the dashboard
-and terminal follow the selected theme together.
+live system and network panels, a three-column file browser, terminal tabs,
+a live network-connections view, and an on-demand Activity panel. The default palette is
+purple and lime; the dashboard and terminal follow the selected theme together.
 
 ## Download
 
@@ -61,11 +61,14 @@ predate the updater need one manual installation of version 0.10.0 or later.
 - **Files context menu:** opens a terminal in the chosen directory, creates or
   deletes entries, copies paths, and attaches files to the agent.
 - **CONFIG:** endpoint settings, themes, editor preferences, shortcuts, and agents.
+- **ACTIVITY:** live terminal/agent sessions and app-managed background jobs. Sessions needing attention appear first; selecting a row focuses that terminal. Jobs expose bounded output and a Stop action. Git changes, Web preview, and AI agent buttons open their existing workspace views.
 
 Shells and filesystem operations run through Rust. CPU, memory, process, disk,
 and interface counters come from native system APIs. The network panel queries
-ipwho.is for the public IP and approximate IP-based location; the map uses
-public-domain Natural Earth land data.
+ipwho.is for the public IP. **Connections** shows passive TCP snapshots from the
+operating system: process names, remote/local endpoints, and connection states.
+Filter connections, include localhost traffic when needed, and copy endpoints.
+Sampling pauses when the network rail or window is hidden.
 
 ### Background Work
 
@@ -76,12 +79,21 @@ visible. Terminal input and output retain their independent responsive path.
 Right-click opens app actions, while editable fields keep their standard editing
 menus. The interface still uses Tauri's system WebView.
 
-The command bar hides while a TUI or command owns the terminal and returns at the
-shell prompt. Clipboard images are written to private temporary PNG files and
-pasted as paths, which image-aware TUIs such as OpenCode recognize as attachments.
-The editor supports multiline AI suggestions across languages, plus Emmet HTML/CSS
-expansion with Tab. **CONFIG → General → Custom terminal prompts** enables the
-segmented OS-logo prompt.
+Type shell commands directly in the terminal. The separate composer is for the AI
+agent and opens when requested. Terminal completion displays one ghost suggestion
+at the shell cursor. Right Arrow accepts it, Escape dismisses it, and Tab keeps
+the shell's own completion. The editor retains its own multiline AI completion
+and Emmet HTML/CSS expansion.
+
+**Activity** starts closed, leaving the terminal its full height. Open it from the
+title bar, the command palette, or Cmd/Ctrl+Shift+J. It sits beside the workspace
+on wide windows and uses the workspace area on smaller windows. Closing it
+restores the same sessions. Background-job refreshes stop when its view closes
+or the window is hidden. Command history remains available through the shell's
+Ctrl+R and **COMMANDS → Search command history**.
+
+Clipboard images are written to private temporary PNG files and pasted as paths,
+which image-aware TUIs such as OpenCode recognize as attachments.
 
 ## AI Setup And Existing Data
 

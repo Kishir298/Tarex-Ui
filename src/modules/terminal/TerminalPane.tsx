@@ -36,6 +36,7 @@ export type TerminalPaneProps = {
   initialCwd?: string;
   /** Enable command-block decorations (OSC 133) for this terminal. */
   blocks?: boolean;
+  privateTerminal?: boolean;
   onSearchReady?: (leafId: number, addon: TerminalSearchController) => void;
   onExit?: (leafId: number, code: number) => void;
   onCwd?: (leafId: number, cwd: string) => void;
@@ -59,6 +60,7 @@ const GhosttyTerminalPane = memo(
       focused = true,
       initialCwd,
       blocks = false,
+      privateTerminal = false,
       onSearchReady,
       onExit,
       onCwd,
@@ -80,6 +82,7 @@ const GhosttyTerminalPane = memo(
       focused,
       initialCwd,
       blocks,
+      privateTerminal,
       onSearchReady: (search) => onSearchReady?.(leafId, search),
       onExit: (code) => onExit?.(leafId, code),
       onCwd: (cwd) => onCwd?.(leafId, cwd),
@@ -151,7 +154,6 @@ const GhosttyTerminalPane = memo(
                       state.model.bufferLineAtViewportRow(row),
                     );
                 }
-                if (state?.getMode() === "prompt") state.focus?.();
               }
             : undefined
         }

@@ -329,6 +329,8 @@ export class WebGlTerminalSurface
     return { width: this.metrics.cellWidth, height: this.metrics.cellHeight };
   }
 
+  fontMetrics(): TerminalFontMetrics { return this.metrics; }
+
   setCursorEnabled(enabled: boolean): void {
     if (this.cursorEnabled === enabled) return;
     this.cursorEnabled = enabled;

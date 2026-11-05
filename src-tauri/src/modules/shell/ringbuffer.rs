@@ -65,6 +65,11 @@ impl BoundedRingBuffer {
         }
         (out, self.next_offset, self.dropped)
     }
+
+    pub fn read_tail_from(&self, since: u64, max_bytes: usize) -> (Vec<u8>, u64, u64) {
+        let tail_start = self.next_offset.saturating_sub(max_bytes as u64);
+        self.read_from(since.max(tail_start))
+    }
 }
 
 #[cfg(test)]
@@ -120,5 +125,31 @@ mod tests {
         assert_eq!(bytes, b"efgh");
         assert_eq!(off, 8);
         assert_eq!(dropped, 4);
+    }
+
+    #[test]
+    fn bounded_tail_preserves_absolute_offsets_and_ring_drop_count() {
+        let mut buf = BoundedRingBuffer::new(8);
+        buf.push(b"abcdef");
+        buf.push(b"ghijkl");
+        assert_eq!(buf.read_tail_from(0, 3), (b"jkl".to_vec(), 12, 4));
+        assert_eq!(buf.read_tail_from(11, 3), (b"l".to_vec(), 12, 4));
+        assert_eq!(buf.read_tail_from(12, 3), (vec![], 12, 4));
+        buf.push(b"mn");
+        assert_eq!(buf.read_tail_from(12, 3), (b"mn".to_vec(), 14, 6));
+        assert_eq!(buf.read_tail_from(0, 0), (vec![], 14, 6));
+        assert_eq!(buf.read_tail_from(u64::MAX, 3), (vec![], 14, 6));
+    }
+
+    #[test]
+    fn bounded_tail_never_copies_the_full_large_ring() {
+        let mut buf = BoundedRingBuffer::new(4 * 1024 * 1024);
+        buf.push(&vec![b'a'; 4 * 1024 * 1024]);
+        buf.push(b"last line\n");
+        let (bytes, offset, dropped) = buf.read_tail_from(0, 64 * 1024);
+        assert_eq!(bytes.len(), 64 * 1024);
+        assert!(bytes.ends_with(b"last line\n"));
+        assert_eq!(offset, 4 * 1024 * 1024 + 10);
+        assert_eq!(dropped, 10);
     }
 }

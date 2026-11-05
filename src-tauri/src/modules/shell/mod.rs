@@ -251,6 +251,7 @@ pub fn shell_bg_logs(
     state: tauri::State<ShellState>,
     handle: u32,
     since_offset: Option<u64>,
+    max_bytes: Option<usize>,
 ) -> Result<BackgroundLogResponse, String> {
     let proc = state
         .bg
@@ -259,7 +260,7 @@ pub fn shell_bg_logs(
         .get(&handle)
         .cloned()
         .ok_or_else(|| "no background handle".to_string())?;
-    Ok(proc.read_logs(since_offset.unwrap_or(0)))
+    Ok(proc.read_logs_bounded(since_offset.unwrap_or(0), max_bytes))
 }
 
 #[tauri::command]

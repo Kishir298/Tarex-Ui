@@ -49,10 +49,10 @@ export class GhosttyBlocks {
   private metadataUnits = 0;
   private clearGeneration = 0;
 
-  constructor(model: GhosttyTerminalModelApi) {
+  constructor(model: GhosttyTerminalModelApi, private readonly ownsMarkers = true) {
     requireBlockModel(model);
     this.model = model;
-    model.enableSemanticMarkers(true);
+    if (this.ownsMarkers) model.enableSemanticMarkers(true);
   }
 
   get mode(): BlockMode {
@@ -371,7 +371,7 @@ export class GhosttyBlocks {
   }
 
   dispose(): void {
-    if (!this.model.isDisposed?.()) this.model.enableSemanticMarkers(false);
+    if (this.ownsMarkers && !this.model.isDisposed?.()) this.model.enableSemanticMarkers(false);
   }
 }
 

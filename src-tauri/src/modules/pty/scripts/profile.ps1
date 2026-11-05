@@ -93,13 +93,9 @@ function global:prompt {
         $osc7 = "$esc]7;file://$hostName$cwdEnc$esc\"
     }
 
-    # Block mode: the host renders its own input bar, so suppress the shell
-    # prompt (markers only) and reserve the header/gap rows in the prompt
-    # itself -- same layout contract as the zsh integration.
+    $gap = ''
     if ($env:TERAX_BLOCKS) {
-        $global:LASTEXITCODE = $lec
         $gap = if ($global:__terax_block_seen) { "`n`n" } else { "`n" }
-        return "$oscD$oscA$osc7$gap$oscB"
     }
 
     $original = if (Test-Path Function:__terax_user_prompt) {
@@ -109,5 +105,5 @@ function global:prompt {
     }
 
     $global:LASTEXITCODE = $lec
-    "$oscD$oscA$osc7${original}${oscB}"
+    "$oscD$oscA$osc7${gap}${original}${oscB}"
 }

@@ -1,0 +1,119 @@
+.terex-activity-sessions {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--foreground);
+  font: 12px/1.5 "JetBrains Mono", monospace;
+}
+
+.terex-session-search {
+  display: flex;
+  flex-shrink: 0;
+  min-width: 0;
+  margin: 10px 10px 0;
+  border: 1px solid var(--input);
+  background: var(--background);
+}
+
+.terex-session-search input {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px;
+  outline: none;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+}
+
+.terex-session-search input::placeholder { color: var(--muted-foreground); opacity: 1; }
+.terex-session-search input::-webkit-search-cancel-button { display: none; }
+.terex-session-search:focus-within { outline: 1px solid var(--ring); }
+.terex-session-search button { min-width: 44px; padding: 0 6px; color: var(--primary); }
+
+.terex-session-controls {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 10px;
+  color: var(--muted-foreground);
+}
+
+.terex-session-controls select {
+  min-width: 0;
+  max-width: 55%;
+  min-height: 40px;
+  padding: 0 6px;
+  border-bottom: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  cursor: pointer;
+}
+
+.terex-session-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.terex-session-scroll ul { list-style: none; margin: 0; padding: 0 6px 6px; }
+.terex-session-scroll li[hidden] { display: none; }
+.terex-session-scroll li + li { margin-top: 3px; }
+
+.terex-session-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  padding: 9px 8px;
+  border: 1px solid transparent;
+  border-left: 2px solid transparent;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  text-align: left;
+}
+
+.terex-session-row:hover { background: var(--muted); }
+.terex-session-row:active { background: var(--secondary); }
+.terex-session-row[aria-current="true"] {
+  border-color: color-mix(in srgb, var(--primary) 32%, transparent);
+  border-left-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 9%, var(--background));
+}
+
+.terex-session-titleline { display: flex; align-items: center; gap: 7px; width: 100%; min-width: 0; }
+.terex-session-titleline strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.terex-session-indicator { flex: 0 0 5px; height: 5px; border: 1px solid var(--muted-foreground); }
+.terex-session-state { flex-shrink: 0; color: var(--muted-foreground); }
+.terex-session-row[data-phase="attention"] .terex-session-state { color: var(--ring); font-weight: 700; }
+.terex-session-row[data-phase="attention"] .terex-session-indicator { border-color: var(--ring); background: var(--ring); }
+.terex-session-row[data-phase="working"] .terex-session-state { color: var(--primary); }
+.terex-session-row[data-phase="working"] .terex-session-indicator { border-color: var(--primary); background: var(--primary); }
+.terex-session-row[data-phase="finished"] .terex-session-indicator { border-color: var(--foreground); background: var(--foreground); }
+.terex-session-row[data-phase="saved"] .terex-session-indicator { border-style: dashed; }
+.terex-session-context, .terex-session-description { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted-foreground); }
+.terex-session-current { color: var(--primary); }
+
+.terex-session-empty { padding: 28px 16px; text-align: center; color: var(--muted-foreground); }
+.terex-session-empty strong { color: var(--foreground); font-weight: 500; }
+.terex-session-empty p { margin: 8px 0; }
+.terex-session-empty button { min-height: 40px; padding: 8px 12px; margin-top: 4px; border: 1px solid var(--border); color: var(--primary); }
+.terex-session-empty button:hover, .terex-session-search button:hover { background: var(--muted); }
+.terex-session-footnote { flex-shrink: 0; margin: 0; padding: 8px 10px; border-top: 1px solid var(--border); color: var(--muted-foreground); }
+.terex-activity-sessions button:focus-visible, .terex-activity-sessions select:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .terex-activity-sessions button { transition: none; }
+}

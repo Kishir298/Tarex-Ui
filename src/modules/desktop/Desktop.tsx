@@ -10,14 +10,16 @@ import { WindowControls } from "@/components/WindowControls";
 import { WorkspaceVisibility, OpenFilesView } from "@/lib/workspaceVisibility";
 import { Commander, useDesktopFiles } from "@/modules/desktop/Files";
 import { FilesMenu, type FileMenuActions } from "@/modules/desktop/FilesMenu";
-import { Keyboard, type VirtualKey } from "@/modules/desktop/Keyboard";
+import type { Tab } from "@/modules/tabs/lib/useTabs";
 import { bytes } from "@/modules/desktop/model";
 import {
   NetworkRail,
   SystemRail,
   useTelemetry,
 } from "@/modules/desktop/Telemetry";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { lazy, type ReactNode, Suspense, useEffect, useRef, useState } from "react";
+
+const ActivityPanel = lazy(() => import("@/modules/desktop/ActivityPanel").then((module) => ({ default: module.ActivityPanel })));
 
 type Props = {
   children: ReactNode;
@@ -27,10 +29,15 @@ type Props = {
   terminalLabel: string;
   ready: boolean;
   terminalActive: boolean;
+  tabs: Tab[];
+  activeLeafId: number | null;
+  activityOpen: boolean;
+  onActivityChange: (open: boolean) => void;
+  onActivateSession: (tabId: number, leafId: number) => void;
+  onOpenAi: () => void;
   zen: boolean;
   aiOpen: boolean;
-  onKey: (key: VirtualKey) => void;
-  onAccept: (run: boolean) => boolean;
+  onPreview: (url: string) => void;
   onOpenFile: (path: string) => void;
   onTerminal: (path: string) => void;
   onNavigate: (path: string) => Promise<void>;
@@ -51,6 +58,20 @@ export function Desktop(props: Props) {
   const [fileMode, setFileMode] = useState(true);
   const [nativeEditMenu, setNativeEditMenu] = useState(false);
   const [selection, setSelection] = useState("");
+  const activityButton = useRef<HTMLButtonElement>(null);
+  const [compact, setCompact] = useState(() => window.matchMedia("(max-width: 1100px)").matches);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 1100px)");
+    const update = () => setCompact(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  const activityOpen = props.activityOpen && !props.zen;
+  const activityExclusive = activityOpen && compact;
+  const closeActivity = () => {
+    props.onActivityChange(false);
+    requestAnimationFrame(() => activityButton.current?.focus());
+  };
   const telemetry = useTelemetry(!props.zen);
   const files = useDesktopFiles(
     props.cwd,
@@ -60,7 +81,7 @@ export function Desktop(props: Props) {
     },
     props.scopeKey,
     props.onNavigate,
-    fileMode && !props.zen,
+    fileMode && !props.zen && !activityExclusive,
   );
   useEffect(() => {
     if (!props.terminalActive) setFileMode(false);
@@ -124,6 +145,9 @@ export function Desktop(props: Props) {
               >
                 WORKSPACE
               </button>
+              <button ref={activityButton} type="button" aria-expanded={activityOpen} aria-controls="terex-activity-panel" onClick={() => props.onActivityChange(!activityOpen)}>
+                ACTIVITY
+              </button>
               <button type="button" onClick={props.onCommands}>
                 COMMANDS
               </button>
@@ -138,12 +162,14 @@ export function Desktop(props: Props) {
             <div
               className="terex-workspace"
               data-file-mode={fileMode && !props.zen}
+              data-activity-exclusive={activityExclusive}
             >
+              <div className="terex-workspace-main" inert={activityExclusive} aria-hidden={activityExclusive}>
               <div
                 className="terex-workspace-content"
                 inert={fileMode && !props.zen}
               >
-                <WorkspaceVisibility.Provider value={!fileMode || props.zen}>
+                <WorkspaceVisibility.Provider value={(!fileMode || props.zen) && !activityExclusive}>
                   <OpenFilesView.Provider value={() => setFileMode(true)}>
                     {props.children}
                   </OpenFilesView.Provider>
@@ -201,25 +227,41 @@ export function Desktop(props: Props) {
                   </FilesMenu>
                 </div>
               )}
+              </div>
+              {activityOpen && (
+                <Suspense fallback={<div className="terex-activity-loading-panel" role="status">Loading Activity…</div>}>
+                  <ActivityPanel
+                    tabs={props.tabs}
+                    activeTabId={props.activeId}
+                    activeLeafId={props.activeLeafId}
+                    onClose={closeActivity}
+                    onActivate={(tabId, leafId) => {
+                      setFileMode(false);
+                      props.onActivityChange(false);
+                      props.onActivateSession(tabId, leafId);
+                    }}
+                    onOpenAi={() => {
+                      setFileMode(false);
+                      props.onActivityChange(false);
+                      props.onOpenAi();
+                    }}
+                    onGit={props.cwd ? () => {
+                      if (!props.cwd) return;
+                      setFileMode(false);
+                      props.onActivityChange(false);
+                      props.fileActions.onSourceControl(props.cwd);
+                    } : null}
+                    onPreview={() => {
+                      setFileMode(false);
+                      props.onActivityChange(false);
+                      props.onPreview("");
+                    }}
+                  />
+                </Suspense>
+              )}
             </div>
             {!props.zen && <NetworkRail {...telemetry} />}
           </div>
-          {!props.zen && (
-            <div className="terex-bottom-deck">
-              <Keyboard
-                disabled={!props.terminalActive}
-                onKey={(value) => {
-                  setFileMode(false);
-                  props.onKey(value);
-                }}
-                onAccept={(run) => {
-                  const accepted = props.onAccept(run);
-                  if (accepted) setFileMode(false);
-                  return accepted;
-                }}
-              />
-            </div>
-          )}
           {!props.zen && (
             <footer className="terex-footer">
               <span>

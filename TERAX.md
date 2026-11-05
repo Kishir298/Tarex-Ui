@@ -56,10 +56,9 @@ The native marker ring is capped at 2,048 pins; JavaScript history is capped at
 1,000 blocks and 512 KiB of estimated UTF-16 command/cwd text. Block implementation
 and UI load only for block sessions, and hidden/occluded block presentation stops.
 Block search yields after 128 rows or four milliseconds, retains at most 500
-matches, and cancels obsolete queries. Block copy, search, sticky headers, navigation, Ask AI, rerun, shared shell input,
+matches, and cancels obsolete queries. Block copy, search, sticky headers, navigation, Ask AI, rerun,
 and selection all use the same persistent Ghostty model.
-Block chrome commits with its matching renderer frame; command-editor focus does
-not lower active-pane cadence. Divider padding is presentation-only and does not
+Block chrome commits with its matching renderer frame. Divider padding is presentation-only and does not
 change copied command boundaries. Scrollbars preserve native fractional positions
 and ignore delayed programmatic scroll events. Hidden output does no surface DOM
 or search-mask work until presentation resumes.
@@ -67,10 +66,10 @@ or search-mask work until presentation resumes.
 Terminal clipboard shortcuts use the native text clipboard plugin on all desktop
 platforms. Context clicks expose the selected text through the input element to
 restore the webview's native text menu; no persistent DOM scrollback is maintained.
-Unclaimed macOS Command shortcuts reach the native menu after explicit clipboard,
-block-editor, and readline bindings, including when Kitty keyboard mode is active.
-The block prompt retains an enabled terminal input proxy for native menus and
-routes editing keys, composed text and paste back to its command editor.
+Unclaimed macOS Command shortcuts reach the native menu after explicit clipboard
+and readline bindings, including when Kitty keyboard mode is active.
+Shell editing, composed text, and paste go directly to the terminal's PTY input.
+The workspace input bar is an AI composer only and opens on explicit AI activation.
 Character drags retain a native selection pin from pointerdown, including before
 the first pointermove. Unmoved clicks and lost captures discard provisional pins.
 Key encoding supplies the base character required by Kitty keyboard mode; plain
@@ -86,9 +85,10 @@ an erase in the same output chunk retain their new pins. Alternate-screen erases
 preserve primary block history. Block scrollbar status dots are removed along
 with their timers and history scans.
 
-The shared command bar activates after shell integration confirms prompt input.
-Bare shells keep direct terminal input. Bash before 4.4 reports
-`OSC 133;B;terax_blocks=0` and keeps its native prompt because it lacks PS0.
+Terminal autocomplete displays a single ghost suffix at the shell cursor after
+integration confirms prompt input. It does not replace shell editing with a
+separate command field. Bare shells retain direct input without inferred prompts.
+Bash before 4.4 reports `OSC 133;B;terax_blocks=0` because it lacks PS0.
 
 Settings offer Automatic or WebGL for new terminals, plus opt-in screen reader
 output. Accessible text is limited to 256 rows / 64 KiB and refreshes at most four
@@ -166,6 +166,7 @@ establish production readiness, platform parity, or multi-day resource stability
 - `workspace::*`: `workspace_authorize` / `workspace_current_dir` (the spawn/git/AI cwd authorization registry) plus the WSL bridge (`wsl_list_distros`, `wsl_default_distro`, `wsl_home`).
 - `lsp::*` (`lsp_detect`, `lsp_host_pid`, `lsp_resolve_root`, `lsp_spawn`, `lsp_send`, `lsp_kill`): language server process host. Dumb JSON-RPC pipe: Content-Length framing + process lifecycle in Rust (`lsp/framing.rs`, pure + tested), protocol intelligence on the frontend. Spawn cwd gated through the workspace registry; binaries resolve via the captured login-shell env (`lsp/env.rs`, GUI apps get a bare PATH on macOS); root detection walks up to markers but never to or above `$HOME`. Servers run in their own process group on Unix and are group-killed (cargo check / proc-macro children die with the server); Windows children get a `proc::job::ProcessJob` (kill-on-close, shared with pty). All sessions killed on `RunEvent::Exit`.
 - `net::*` (`ai_http_request`, `ai_http_stream`, `lm_ping`): AI HTTP proxy with SSRF guard; keeps provider calls and local-model pings off the webview.
+- `connections::network_connections`: passive TCP socket/process snapshot, collected off-thread with a five-second shared cache and a 256-row response cap. macOS uses checked libproc reads; Linux/Windows use netstat2. Reports partial coverage and performs no DNS lookups or outbound probes.
 - `secrets::secrets_*`: OS keychain via the `keyring` crate. Service constant `terax-ai`. Linux uses a file-based fallback gated behind `#[cfg(target_os = "linux")]`.
 - `open_settings_window`: separate webview window for Settings (optional `tab` arg deep-links a section).
 - `vibrancy::window_*`: native window backdrop (`window_backdrop_kind`, `window_set_backdrop`). macOS gets `NSVisualEffectMaterial::UnderWindowBackground`, Windows 11 gets Mica (gated on build >= 22000 via `RtlGetVersion`, since `apply_mica` fails on Windows 10), Linux reports `none` because blur there belongs to the compositor. The `window-vibrancy` crate is a macOS/Windows-only dependency so Linux builds never pull it.
@@ -203,6 +204,7 @@ Each module is self-contained, exports a thin barrel via `index.ts`, and owns it
 - **tabs/** - `useTabs` is the source of truth for tab list + active id. `useWorkspaceCwd` derives explorer root + inherited cwd for new tabs from active tab. `basename` splits on both `/` and `\`.
 - **header/** - top bar + inline search (`SearchInline` adapts to terminal vs editor via `SearchTarget`). `WindowControls` rendered when `USE_CUSTOM_WINDOW_CONTROLS` is true (Linux + Windows; macOS uses native traffic lights).
 - **statusbar/** - bottom bar, `CwdBreadcrumb` (handles Unix paths, Windows drive letters, and home `~` segments via `pathUtils.segmentsFromCwd`), AI tools indicator.
+- **desktop/** - outer system/network rails, virtualized three-column Files view, passive native TCP connection snapshots, and an on-demand Activity toolbelt. The toolbelt lists live sessions and app-managed background jobs and links to existing Git/Preview panes. It starts closed; its data work is mounted only on request. Compact layouts hide workspace presentation while preserving mounted sessions. The globe, preset-port checker, on-screen keyboard, and permanent history dock have been removed.
 - **shortcuts/** - keymap registry (`shortcuts.ts`) + `useGlobalShortcuts`. Handlers live in `App.tsx` and are passed in by id (`tab.new`, `ai.toggle`, …). `metaKey || ctrlKey` for cross-platform Cmd/Ctrl.
 - **settings/** - settings store (`store.ts` via `tauri-plugin-store`), preferences hook, settings window opener.
 - **sidebar/** - activity bar + collapsible side panels (explorer, source control, git history).

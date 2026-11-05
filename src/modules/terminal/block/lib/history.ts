@@ -12,6 +12,7 @@ export function historyList(query: string, limit = 200): Promise<string[]> {
   return invoke<string[]>("history_list", { query, limit }).catch(() => []);
 }
 
-export function historyRecord(command: string): void {
+export function historyRecord(command: string, privateTerminal = false): void {
+  if (privateTerminal) return;
   void invoke("history_record", { command }).catch(() => {});
 }

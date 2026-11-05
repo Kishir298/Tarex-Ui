@@ -69,27 +69,18 @@ function __terax_install_prompt
         return
     end
     __terax_capture_user_prompt
-    if set -q TERAX_BLOCKS
-        function fish_right_prompt
-        end
-        function fish_greeting
-        end
-    end
     function fish_prompt
         set -l __terax_status $status
         printf '\e]133;D;%d\e\\' $__terax_status
         printf '\e]7;file://%s%s\e\\' "$__TERAX_HOST" (__terax_urlencode_path "$PWD")
         printf '\e]133;A\e\\'
-        # Block mode: host renders its own input bar, so suppress the shell prompt
-        # (B marker only) and reserve header/gap rows, mirroring zsh.
+        # Reserve block spacing without replacing the user's prompt.
         if set -q TERAX_BLOCKS
             if set -q __terax_block_seen
                 printf '\n\n'
             else
                 printf '\n'
             end
-            printf '\e]133;B\e\\'
-            return
         end
         __terax_restore_status $__terax_status
         if functions -q __terax_user_prompt

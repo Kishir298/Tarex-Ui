@@ -54,6 +54,7 @@ export type CommandPaletteActionContext = {
   toggleSidebar: () => void;
   toggleHiddenFiles: () => void;
   toggleAi: () => void;
+  toggleActivity?: () => void;
   askAiSelection: () => void;
   openSettings: () => void;
   openKeyboardShortcuts: () => void;
@@ -85,6 +86,15 @@ export function createCommandItems(
     onlyOneTab && activePaneCount < 2 ? "Last tab" : undefined;
 
   return [
+    ...(ctx.toggleActivity ? [{
+      id: "view.activity",
+      title: "Toggle Activity panel",
+      group: "View" as const,
+      keywords: ["activity", "sessions", "jobs", "agents", "background", "logs"],
+      icon: DashboardSquare01Icon,
+      shortcutId: "view.activity" as const,
+      run: ctx.toggleActivity,
+    }] : []),
     {
       id: "settings.open",
       title: "Open settings",

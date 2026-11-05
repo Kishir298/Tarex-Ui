@@ -812,10 +812,16 @@ const StreamHandler = struct {
             .semantic_prompt => {
                 self.readonly.vt(action, value);
                 switch (value.action) {
-                    .fresh_line_new_prompt, .prompt_start => try self.emitEvent(.prompt_start, &.{}),
+                    .fresh_line_new_prompt, .prompt_start => {
+                        const kind = value.readOption(.prompt_kind) orelse .initial;
+                        const event: TerminalEvent = if (kind == .continuation or kind == .secondary) .prompt_continuation else .prompt_start;
+                        try self.emitEvent(event, &.{});
+                    },
                     .end_prompt_start_input, .end_prompt_start_input_terminate_eol => {
-                        const block_input = [_]u8{@intFromBool(!std.mem.eql(u8, value.options_unvalidated, "terax_blocks=0"))};
-                        try self.emitEvent(.prompt_end, &.{&block_input});
+                        var payload: [5]u8 = undefined;
+                        payload[0] = @intFromBool(!std.mem.eql(u8, value.options_unvalidated, "terax_blocks=0"));
+                        std.mem.writeInt(u32, payload[1..5], try self.semantic_markers.capture(self.alloc, self.term), .little);
+                        try self.emitEvent(.prompt_end, &.{&payload});
                     },
                     .end_input_start_output => {
                         var marker: [4]u8 = undefined;

@@ -53,15 +53,15 @@ if [ -z "$__TERAX_HOOKS_LOADED" ]; then
     printf '\e]133;D;%s\e\\' "$_terax_ret"
     printf '\e]7;file://%s%s\e\\' "${HOSTNAME:-$(uname -n 2>/dev/null)}" "$(_terax_urlencode "$PWD")"
     if [ -n "$TERAX_BLOCKS" ]; then
-      # Host renders its own input bar: suppress the shell prompt (B marker
-      # only) and reserve header/gap rows, mirroring the zsh integration.
+      # Header spacing is independent of the native readline prompt.
       if [ -n "$_terax_block_seen" ]; then
-        PS1='\n\n\[\e]133;B\e\\\]'
+        printf '\n\n'
       else
-        PS1='\n\[\e]133;B\e\\\]'
+        printf '\n'
       fi
-    elif [ -z "$__TERAX_PS1_INJECTED" ]; then
-      PS1="${_terax_prompt_end}${PS1}"
+    fi
+    if [ -z "$__TERAX_PS1_INJECTED" ]; then
+      PS1="${PS1}${_terax_prompt_end}"
       __TERAX_PS1_INJECTED=1
     fi
     printf '\e]133;A\e\\'

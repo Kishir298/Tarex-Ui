@@ -12,6 +12,7 @@ use super::ringbuffer::BoundedRingBuffer;
 use crate::modules::workspace::{resolve_path, WorkspaceEnv};
 
 const RING_CAP: usize = 4 * 1024 * 1024;
+const MAX_TAIL_BYTES: usize = 64 * 1024;
 
 pub struct BackgroundProc {
     pub command: String,
@@ -45,7 +46,17 @@ pub struct BackgroundProcInfo {
 
 impl BackgroundProc {
     pub fn read_logs(&self, since: u64) -> BackgroundLogResponse {
-        let (bytes, next_offset, dropped) = self.buffer.lock().unwrap().read_from(since);
+        self.read_logs_bounded(since, None)
+    }
+
+    pub fn read_logs_bounded(&self, since: u64, max_bytes: Option<usize>) -> BackgroundLogResponse {
+        let (bytes, next_offset, dropped) = {
+            let buffer = self.buffer.lock().unwrap();
+            match max_bytes {
+                Some(limit) => buffer.read_tail_from(since, limit.min(MAX_TAIL_BYTES)),
+                None => buffer.read_from(since),
+            }
+        };
         let exited = self.exited.load(Ordering::Acquire);
         let exit_code = if exited && !self.exit_unknown.load(Ordering::Acquire) {
             Some(self.exit_code.load(Ordering::Acquire))
@@ -187,4 +198,38 @@ pub fn spawn(
     }
 
     Ok(proc)
+}
+
+#[cfg(all(test, unix))]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bounded_logs_clamp_requested_limit_and_keep_legacy_reads() {
+        let child = Arc::new(SharedChild::spawn(&mut std::process::Command::new("true")).unwrap());
+        child.wait().unwrap();
+        let mut buffer = BoundedRingBuffer::new(RING_CAP);
+        buffer.push(&vec![b'x'; MAX_TAIL_BYTES * 2]);
+        let proc = BackgroundProc {
+            command: "true".into(),
+            cwd: None,
+            started_at_ms: 0,
+            child,
+            buffer: Mutex::new(buffer),
+            exited: AtomicBool::new(true),
+            exit_code: AtomicI32::new(0),
+            exit_unknown: AtomicBool::new(false),
+        };
+        let tail = proc.read_logs_bounded(0, Some(usize::MAX));
+        assert_eq!(tail.bytes.len(), MAX_TAIL_BYTES);
+        assert_eq!(tail.next_offset, (MAX_TAIL_BYTES * 2) as u64);
+        assert_eq!(tail.dropped, 0);
+        assert!(tail.exited);
+        assert_eq!(tail.exit_code, Some(0));
+        assert_eq!(proc.read_logs(0).bytes.len(), MAX_TAIL_BYTES * 2);
+        assert!(proc
+            .read_logs_bounded(tail.next_offset, Some(8))
+            .bytes
+            .is_empty());
+    }
 }

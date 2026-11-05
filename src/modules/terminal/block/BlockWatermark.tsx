@@ -51,10 +51,8 @@ export function BlockWatermark({ leafId, subscribe }: Props) {
       <div className="grid grid-cols-[auto_auto] items-center gap-x-12 gap-y-3 text-[13px]">
         <Hint label="Browse your command history" keys="↑" />
         <Hint label="Autocomplete paths and commands" keys="Tab" />
-        <Hint
-          label="Switch between Shell and AI"
-          shortcut="terminal.toggleInput"
-        />
+        <Hint label="Accept the inline suggestion" keys="→" />
+        <Hint label="Dismiss the inline suggestion" keys="Esc" />
         <Hint label="Open the AI assistant" shortcut="ai.toggle" />
       </div>
     </div>

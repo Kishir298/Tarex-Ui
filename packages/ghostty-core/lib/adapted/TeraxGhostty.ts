@@ -20,10 +20,10 @@ export const ADAPTED_GHOSTTY_COMMIT =
 export const ADAPTED_RESTTY_COMMIT =
   "7700b14a7643ba9240818209ef1e0aa90d83ad77";
 export const ADAPTED_GHOSTTY_WASM_SHA256 =
-  "b2305e15dcf4bac59eef3e25687444b9678b79b23cf90d5d62718acab61966e7";
+  "af4e24cf43a84355a25dcea7da084642a5fe0882093a386d383ed34f13056e04";
 
 export const ADAPTED_GHOSTTY_SCALAR_WASM_SHA256 =
-  "8e9d194130ee714c6ced2ab1ccaff751cad28eea9bb2355dd9844034abe67775";
+  "3fe304ccd86044e1a114c90c2c4d30bc1db698804aa40911d4262fc59f161731";
 
 let wasmSimdAvailable: boolean | undefined;
 
@@ -1231,10 +1231,16 @@ function decodeTerminalEvent(
       return { type: "prompt-start" };
     case 7:
       return { type: "prompt-continuation" };
-    case 8:
-      return payload.byteLength > 0 && payload[0] === 0
-        ? { type: "prompt-end", blockInput: false }
-        : { type: "prompt-end" };
+    case 8: {
+      const marker = payload.byteLength >= 5
+        ? new DataView(payload.buffer, payload.byteOffset, payload.byteLength).getUint32(1, true)
+        : 0;
+      return {
+        type: "prompt-end",
+        ...(payload.byteLength > 0 && payload[0] === 0 ? { blockInput: false } : {}),
+        ...(marker ? { marker } : {}),
+      };
+    }
     case 9: {
       if (payload.byteLength < 4) return null;
       const marker = new DataView(payload.buffer, payload.byteOffset, payload.byteLength).getUint32(0, true);

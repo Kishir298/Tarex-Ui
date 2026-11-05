@@ -34,7 +34,6 @@ import {
   setTerminalShell,
   setTerminalRenderer,
   setTerminalSuggestions,
-  setCustomTerminalPrompts,
   setTerminalScreenReader,
   setZoomLevel,
   TERMINAL_FONT_SIZES,
@@ -100,9 +99,6 @@ export function GeneralSection() {
   );
   const terminalRenderer = usePreferencesStore((s) => s.terminalRenderer);
   const terminalSuggestions = usePreferencesStore((s) => s.terminalSuggestions);
-  const customTerminalPrompts = usePreferencesStore(
-    (s) => s.customTerminalPrompts,
-  );
   const terminalScreenReader = usePreferencesStore(
     (s) => s.terminalScreenReader,
   );
@@ -255,21 +251,11 @@ export function GeneralSection() {
         <Label>Terminal</Label>
         <SettingRow
           title="Terminal AI autocomplete"
-          description="Suggest commands using the selected custom endpoint. Left Shift accepts; Right Shift accepts and runs. Private terminals are excluded."
+          description="Use the selected endpoint when history has no match. One ghost suggestion appears at the shell cursor. Right Arrow accepts; Esc dismisses. Private terminals are excluded."
         >
           <Switch
             checked={terminalSuggestions}
             onCheckedChange={(value) => void setTerminalSuggestions(value)}
-          />
-        </SettingRow>
-        <SettingRow
-          title="Custom terminal prompts"
-          description="Show your OS logo and home/path in a segmented command prompt. Plain terminals switch on their next integrated shell prompt."
-        >
-          <Switch
-            aria-label="Custom terminal prompts"
-            checked={customTerminalPrompts}
-            onCheckedChange={(value) => void setCustomTerminalPrompts(value)}
           />
         </SettingRow>
         <SettingRow

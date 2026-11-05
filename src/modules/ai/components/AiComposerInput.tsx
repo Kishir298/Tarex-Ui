@@ -58,8 +58,11 @@ function detectFileTrigger(value: string, caret: number): FileTrigger | null {
   return null;
 }
 
-export function AiComposerInput() {
+export function AiComposerInput({ focusWhenReady = false }: { focusWhenReady?: boolean } = {}) {
   const c = useComposer();
+  useEffect(() => {
+    if (focusWhenReady) c.textareaRef.current?.focus();
+  }, [focusWhenReady, c.textareaRef]);
   const snippets = useSnippetsStore((s) => s.snippets);
   const workspaceRoot = useChatStore((s) => s.live.getWorkspaceRoot());
 
@@ -212,6 +215,7 @@ export function AiComposerInput() {
           <div className="flex items-start gap-2">
             <textarea
               ref={c.textareaRef}
+              aria-label="Message AI agent"
               value={c.value}
               onChange={(e) => c.setValue(e.target.value)}
               onKeyUp={updateTrigger}

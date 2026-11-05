@@ -1,7 +1,8 @@
 // biome-ignore-all lint/suspicious/noArrayIndexKey: Hardware core indexes and fixed memory cells never reorder.
 import { bytes, type SystemSnapshot } from "@/modules/desktop/model";
 import { Processes } from "@/modules/desktop/Processes";
-import { WorldView, usePublicNetwork } from "@/modules/desktop/WorldView";
+import { usePublicNetwork } from "@/modules/desktop/usePublicNetwork";
+import { NetworkConnections } from "@/modules/desktop/NetworkConnections";
 import { subscribeWindowPresentation } from "@/modules/terminal/ghostty/windowPresentation";
 import { invoke } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useState } from "react";
@@ -300,11 +301,7 @@ export function NetworkRail({
           <dd title={error}>{network?.ip ?? "--"}</dd>
         </div>
       </dl>
-      <div className="terex-rule">
-        <span>WORLD VIEW</span>
-        <span>NETWORK MAP</span>
-      </div>
-      <WorldView network={network} error={error}/>
+      <NetworkConnections />
       <div className="terex-rule">
         <span>NETWORK TRAFFIC</span>
         <span>{bytes(max)}/s</span>

@@ -82,6 +82,27 @@ describe.each([
       }
     });
 
+    it("captures prompt-end pins before same-write input and bounds the shared marker ring", () => {
+      const terminal = ghostty.createTerminal(40, 4);
+      try {
+        terminal.enableSemanticMarkers(true);
+        terminal.write(new TextEncoder().encode("\x1b]133;A\x07$ \x1b]133;B;terax_blocks=0\x07git"));
+        const prompt = terminal.drainEvents().find((event) => event.type === "prompt-end");
+        if (prompt?.type !== "prompt-end" || !prompt.marker) throw new Error("Missing prompt pin");
+        expect(prompt.blockInput).toBe(false);
+        expect(terminal.semanticMarkerLine(prompt.marker)).toBe(0);
+        expect(terminal.semanticMarkerColumn(prompt.marker)).toBe(2);
+        expect(terminal.readTextRange(0, 0, 2, 39)).toBe("git");
+        terminal.write(new TextEncoder().encode("\x1b]133;B\x07".repeat(3000)));
+        expect(terminal.semanticMarkerCount()).toBe(2048);
+        expect(terminal.semanticMarkerLine(prompt.marker)).toBeNull();
+        terminal.enableSemanticMarkers(false);
+        expect(terminal.semanticMarkerCount()).toBe(0);
+      } finally {
+        terminal.dispose();
+      }
+    });
+
     it("invalidates clear markers at parse time without allocating events for plain terminals", () => {
       const terminal = ghostty.createTerminal(16, 4);
       const write = (text: string) =>

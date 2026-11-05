@@ -30,6 +30,7 @@ export class GhosttyBlockSession {
   async attach(
     model: GhosttyTerminalModelApi,
     requestFrame: () => void = () => {},
+    markersOwnedBySession = false,
   ): Promise<void> {
     this.detach();
     const generation = this.generation;
@@ -39,7 +40,7 @@ export class GhosttyBlockSession {
     if (generation !== this.generation || model.isDisposed?.()) return;
     this.model = model;
     this.requestFrame = requestFrame;
-    this.controller = new GhosttyBlocks(model);
+    this.controller = new GhosttyBlocks(model, !markersOwnedBySession);
     this.unsubscribeDamage = model.subscribeDamage(() => this.changed());
     this.unsubscribePresentation = subscribeWindowPresentation((state) => {
       this.presented = state.visible;

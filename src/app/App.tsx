@@ -7,18 +7,16 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { consumeLaunchFiles, getLaunchDir } from "@/lib/launchDir";
 import { quoteShellArg } from "@/lib/shellQuote";
-import { IS_MAC, IS_WINDOWS } from "@/lib/platform";
+import { IS_WINDOWS } from "@/lib/platform";
 import {
   readTerminalPaste,
   writeTerminalClipboard,
 } from "@/modules/terminal/lib/terminalClipboard";
 import {
   pasteIntoSession,
-  dispatchTerminalKey,
-  acceptTerminalSuggestion,
+  focusLeafInput,
   getLeafDraft,
 } from "@/modules/terminal/lib/terminalSessionApi";
-import { SHORTCUTS, matchBinding } from "@/modules/shortcuts/shortcuts";
 import { useTerminalBusy } from "@/modules/terminal/lib/terminalActivity";
 import { toast } from "sonner";
 import { usePresence } from "@/lib/usePresence";
@@ -138,10 +136,7 @@ import {
   useState,
 } from "react";
 import { CloseDialogs } from "./components/CloseDialogs";
-import {
-  TOGGLE_BLOCK_INPUT_EVENT,
-  WorkspaceInputBar,
-} from "./components/WorkspaceInputBar";
+import { WorkspaceInputBar } from "./components/WorkspaceInputBar";
 import { WorkspaceSurface } from "./components/WorkspaceSurface";
 import { useAppCloseGuard } from "./hooks/useAppCloseGuard";
 import {
@@ -885,6 +880,17 @@ export default function App() {
   }, [activeId, closeActivePane, handleClose]);
 
   const [zenMode, setZenMode] = useState(false);
+  const [activityOpen, setActivityOpen] = useState(false);
+  const toggleActivity = useCallback(() => {
+    const next = zenMode || !activityOpen;
+    setActivityOpen(next);
+    if (next) setZenMode(false);
+    else requestAnimationFrame(() => {
+      const tab = tabsRef.current.find((entry) => entry.id === activeIdRef.current);
+      if (tab?.kind === "terminal") focusLeafInput(tab.activeLeafId);
+      else if (tab) editorRefs.current.get(tab.id)?.focus();
+    });
+  }, [activityOpen, zenMode]);
 
   // Focus an agent's tab, switching to its space first so the header and tab
   // strip don't end up showing a different space than the focused pane.
@@ -932,8 +938,6 @@ export default function App() {
       "terminal.clear": () => {
         clearFocusedTerminal();
       },
-      "terminal.toggleInput": () =>
-        window.dispatchEvent(new CustomEvent(TOGGLE_BLOCK_INPUT_EVENT)),
       "blocks.prev": () => navigateFocusedBlocks(-1),
       "blocks.next": () => navigateFocusedBlocks(1),
       "search.focus": () => {
@@ -962,6 +966,7 @@ export default function App() {
       "view.zoomOut": zoomOut,
       "view.zoomReset": zoomReset,
       "view.zenMode": () => setZenMode((v) => !v),
+      "view.activity": toggleActivity,
       "editor.undo": () => editorRefs.current.get(activeId)?.undo(),
       "editor.redo": () => editorRefs.current.get(activeId)?.redo(),
       "editor.save": () => {
@@ -999,6 +1004,7 @@ export default function App() {
       zoomOut,
       zoomReset,
       activateAgentTarget,
+      toggleActivity,
     ],
   );
 
@@ -1034,7 +1040,6 @@ export default function App() {
         return !isTerminalSurfaceTarget(target);
       }
       if (
-        id === "terminal.toggleInput" ||
         id === "blocks.prev" ||
         id === "blocks.next"
       ) {
@@ -1287,6 +1292,7 @@ export default function App() {
             toggleSidebar,
             toggleHiddenFiles,
             toggleAi: togglePanelAndFocus,
+            toggleActivity,
             askAiSelection: askFromSelection,
             openSettings: () => void openSettingsWindow(),
             openKeyboardShortcuts: () => void openSettingsWindow("shortcuts"),
@@ -1318,6 +1324,7 @@ export default function App() {
       askFromSelection,
       activeSpaceId,
       handleNewSpace,
+      toggleActivity,
     ],
   );
 
@@ -1418,70 +1425,15 @@ export default function App() {
             }
             ready={booted}
             terminalActive={isTerminalTab}
+            tabs={tabs}
+            activeLeafId={activeLeafId}
+            activityOpen={activityOpen}
+            onActivityChange={setActivityOpen}
+            onActivateSession={activateAgentTarget}
+            onOpenAi={onActivateLocalAgent}
             zen={zenMode}
             aiOpen={panelOpen}
-            onAccept={(run) =>
-              activeLeafId !== null &&
-              acceptTerminalSuggestion(activeLeafId, run)
-            }
-            onKey={(key) => {
-              const event = new KeyboardEvent("keydown", {
-                ...key,
-                bubbles: true,
-                cancelable: true,
-              });
-              const clipboard = IS_MAC
-                ? key.metaKey
-                : key.ctrlKey && key.shiftKey;
-              if (clipboard && key.code === "KeyC") {
-                const text = captureActiveSelection();
-                if (text)
-                  void writeTerminalClipboard(text).catch((e) =>
-                    toast.error(String(e)),
-                  );
-                return;
-              }
-              if (clipboard && key.code === "KeyV") {
-                if (activeLeafId !== null) {
-                  const leaf = activeLeafId;
-                  void readTerminalPaste()
-                    .then((text) => {
-                      if (text) pasteIntoSession(leaf, text);
-                    })
-                    .catch((error) =>
-                      toast.error(`Paste failed: ${String(error)}`),
-                    );
-                }
-                return;
-              }
-              if (key.metaKey && key.code === "KeyQ") {
-                void getCurrentWindow().close();
-                return;
-              }
-              if (!key.altGraph)
-                for (const shortcut of SHORTCUTS) {
-                  const bindings =
-                    usePreferencesStore.getState().shortcuts[shortcut.id] ||
-                    shortcut.defaultBindings;
-                  if (
-                    bindings.some((binding) =>
-                      matchBinding(event, binding, shortcut.id),
-                    )
-                  ) {
-                    if (
-                      shortcut.id === "terminal.clear" ||
-                      !shortcutsDisabled(shortcut.id, event)
-                    )
-                      shortcutHandlers[shortcut.id]?.(event);
-                    return;
-                  }
-                }
-              if (key.metaKey) return;
-              if (activeLeafId !== null) {
-                dispatchTerminalKey(activeLeafId, event, key.text);
-                terminalRefs.current.get(activeLeafId)?.focus();
-              }
-            }}
+            onPreview={openPreviewTab}
             onOpenFile={(path) => handleOpenFile(path, true)}
             onTerminal={(path) => newTab(path)}
             onNavigate={(path) =>
@@ -1658,10 +1610,8 @@ export default function App() {
                       </div>
 
                       <WorkspaceInputBar
-                        isBlockTab={isBlockTab}
                         terminalBusy={terminalBusy}
                         isTerminalTab={isTerminalTab}
-                        activeLeafId={activeLeafId}
                         cwd={activeCwd}
                         home={home}
                         hasComposer={hasComposer}

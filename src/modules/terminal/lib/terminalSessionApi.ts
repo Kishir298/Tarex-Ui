@@ -6,6 +6,8 @@ import {
   disposeGhosttySession,
   focusGhosttySession,
   ghosttyFocusedLeaf,
+  ghosttyDraftForLeaf,
+  insertGhosttyCommandDraft,
   ghosttyLeafHasForegroundProcess,
   ghosttyLeafIdForPty,
   ghosttyCwdForLeaf,
@@ -128,23 +130,19 @@ export function acceptTerminalSuggestion(leafId:number,run:boolean):boolean {
 }
 
 export function dispatchTerminalKey(leafId:number,event:KeyboardEvent,text:string):boolean {
-  const state=ghosttyBlocks(leafId);
-  if(state?.getMode()==="prompt") {
-    if(state.keyDown?.(event))return true;
-    if(text&&!event.metaKey&&(!event.ctrlKey||event.altKey)&&state.paste){state.paste(text);return true;}
-    return false;
-  }
   return dispatchGhosttyKey(leafId,event,text);
 }
 
 export function focusLeafInput(leafId: number): void {
-  const state = ghosttyBlocks(leafId);
-  if (state?.getMode() === "prompt" && state.focus) state.focus();
-  else focusGhosttySession(leafId);
+  focusGhosttySession(leafId);
 }
 
 export function getLeafDraft(leafId: number): string {
-  return ghosttyBlocks(leafId)?.draft ?? "";
+  return ghosttyDraftForLeaf(leafId);
+}
+
+export function insertCommandDraft(leafId: number, text: string, isCurrent: () => boolean): Promise<void> {
+  return insertGhosttyCommandDraft(leafId, text, isCurrent);
 }
 
 export function setLeafDraft(leafId: number, text: string): void {

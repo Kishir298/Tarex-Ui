@@ -36,7 +36,11 @@ import {
   GhosttyInputController,
   encodeVirtualKey,
 } from "./input/GhosttyInputController";
-import { encodeTerminalSubmission } from "./input/terminalInputEncoding";
+import { encodeTerminalPaste, encodeTerminalSubmission } from "./input/terminalInputEncoding";
+import { TerminalPrompt, insertPromptDraft } from "@/modules/terminal/ghostty/input/TerminalPrompt";
+import { TerminalInlineCompletion } from "@/modules/terminal/ghostty/input/TerminalInlineCompletion";
+import { historyRecord } from "@/modules/terminal/block/lib/history";
+import { terminalWindowPresentation } from "@/modules/terminal/ghostty/windowPresentation";
 import type {
   WebGlTerminalSurface,
   WebGlTerminalSurfaceOptions,
@@ -70,6 +74,9 @@ type Callbacks = {
 };
 
 type GhosttySession = {
+  prompt: TerminalPrompt;
+  privateTerminal: boolean;
+  pendingCommand: string | null;
   directorySync: DirectorySyncState;
   readonly leafId: number;
   readonly backend: GhosttyBackend;
@@ -111,6 +118,7 @@ type GhosttyStartupTimings = {
 };
 
 const sessions = new Map<number, GhosttySession>();
+const completions = new WeakMap<GhosttySurface, TerminalInlineCompletion>();
 const textEncoder = new TextEncoder();
 const oscClipboard = new LatestClipboardWrite(writeTerminalClipboard);
 
@@ -122,6 +130,7 @@ type Options = {
   focused: boolean;
   initialCwd?: string;
   blocks?: boolean;
+  privateTerminal?: boolean;
   onExit?: (code: number) => void;
   onCwd?: (cwd: string) => void;
   onSearchReady?: (search: TerminalSearchController) => void;
@@ -135,6 +144,7 @@ export function useGhosttyTerminalSession({
   focused,
   initialCwd,
   blocks = false,
+  privateTerminal = false,
   onSearchReady,
   onExit,
   onCwd,
@@ -169,14 +179,14 @@ export function useGhosttyTerminalSession({
       initialCwdRef.current,
       fontRef.current,
     );
+    session.privateTerminal = privateTerminal;
+    if (session.surface) completions.get(session.surface)?.refresh();
     const blockState = blocks
       ? ensureGhosttyBlocks(leafId)
       : ghosttyBlocks(leafId);
     blockState?.setEnabled(blocks);
     if (blocks && session.model && blockState && !blockState.model)
-      void blockState.attach(session.model, () =>
-        session.surface?.requestFrame(),
-      );
+      void blockState.attach(session.model, () => session.surface?.requestFrame(), true);
     const node = container.current;
     session.container = node;
     setModel(session.model);
@@ -196,11 +206,12 @@ export function useGhosttyTerminalSession({
     return () => {
       if (session.container === node) {
         session.surface?.detach();
+        if (session.surface) completions.get(session.surface)?.invalidate();
         session.container = null;
         session.callbacks = {};
       }
     };
-  }, [leafId, backend, container, blocks]);
+  }, [leafId, backend, container, blocks, privateTerminal]);
 
   useEffect(() => {
     const session = sessions.get(leafId);
@@ -212,6 +223,7 @@ export function useGhosttyTerminalSession({
     const session = ensureSession(leafId, backend, initialCwdRef.current);
     session.visible = visible;
     session.focused = focused;
+    if (session.surface) completions.get(session.surface)?.refresh();
     ghosttyBlocks(leafId)?.setVisible(visible);
     const surface = session.surface;
     if (!surface || session.rendererError) return;
@@ -304,9 +316,13 @@ export function hasGhosttySession(leafId: number): boolean {
 export function writeToGhosttySession(leafId: number, data: string): boolean {
   const session = sessions.get(leafId);
   if (!session || session.shellExited || session.disposed) return false;
+  if (data === "\r") captureCommand(session);
   const accepted = session.writer.enqueue(textEncoder.encode(data));
-  if (accepted)
+  if (accepted) {
+    noteSessionInput(session);
+    if (data === "\r") session.prompt.submitted();
     session.directorySync = directorySyncState(session.directorySync, "input");
+  }
   return accepted;
 }
 
@@ -317,10 +333,15 @@ export function dispatchGhosttyKey(
 ): boolean {
   const session = sessions.get(leafId);
   if (!session?.model || session.shellExited || session.disposed) return false;
+  if (session.surface && completions.get(session.surface)?.keyDown(event)) return true;
+  if (event.key === "Enter" && !event.shiftKey) captureCommand(session);
   const bytes = encodeVirtualKey(session.model, event, text);
   const accepted = bytes.length > 0 && session.writer.enqueue(bytes);
-  if (accepted)
+  if (accepted) {
+    noteSessionInput(session);
+    if (event.key === "Enter" && !event.shiftKey) session.prompt.submitted();
     session.directorySync = directorySyncState(session.directorySync, "input");
+  }
   return accepted;
 }
 
@@ -335,8 +356,7 @@ export async function changeGhosttyDirectory(
     throw new Error("Terminal is not ready.");
   if (session.lastCwd === path) return;
   const generation = session.generation;
-  const canSync = () =>
-    session.directorySync === "ready" && !ghosttyBlocks(leafId)?.draft;
+  const canSync = () => !!session.model && session.prompt.isEmpty(session.model);
   if (!canSync())
     throw new Error(
       "Finish or clear the current terminal input before syncing this folder.",
@@ -348,6 +368,7 @@ export async function changeGhosttyDirectory(
     busy !== false ||
     !canSync() ||
     session.generation !== generation ||
+    session.shellExited ||
     session.disposed
   ) {
     throw new Error("Terminal is busy; its directory was not changed.");
@@ -365,6 +386,8 @@ export function submitToGhosttySession(leafId: number, text: string): boolean {
   );
   const accepted = session.writer.enqueue(textEncoder.encode(data));
   if (accepted) {
+    noteSessionInput(session);
+    session.prompt.submitted();
     session.directorySync = directorySyncState(session.directorySync, "input");
     const blocks = ghosttyBlocks(leafId);
     if (blocks) {
@@ -378,7 +401,9 @@ export function submitToGhosttySession(leafId: number, text: string): boolean {
 
 export function interruptGhosttySession(leafId: number): boolean {
   const session = sessions.get(leafId);
-  return session?.writer.enqueue(Uint8Array.of(3)) ?? false;
+  if (!session?.writer.enqueue(Uint8Array.of(3))) return false;
+  noteSessionInput(session);
+  return true;
 }
 
 export function clearGhosttySession(leafId: number): boolean {
@@ -391,16 +416,31 @@ export function clearGhosttySession(leafId: number): boolean {
 }
 
 export function pasteIntoGhosttySession(leafId: number, text: string): boolean {
-  const blocks = ghosttyBlocks(leafId);
-  if (blocks?.getMode() === "prompt" && blocks.paste) {
-    blocks.paste(text);
-    return true;
-  }
   const session = sessions.get(leafId);
-  if (!session?.input) return false;
+  if (!session?.input || session.shellExited || session.disposed) return false;
   session.input.paste(text);
   session.surface?.focus();
   return true;
+}
+
+export function ghosttyDraftForLeaf(leafId: number): string {
+  const session = sessions.get(leafId);
+  return session?.model ? session.prompt.draft(session.model) : "";
+}
+
+export async function insertGhosttyCommandDraft(leafId: number, text: string, isCurrent: () => boolean): Promise<void> {
+  const session = sessions.get(leafId);
+  if (!session?.pty || !session.model) throw new Error("Terminal is not ready.");
+  const { generation, pty, model } = session;
+  const epoch = session.prompt.epoch;
+  const ready = () => isCurrent() && sessions.get(leafId) === session &&
+    session.generation === generation && session.pty === pty && session.model === model &&
+    !session.disposed && !session.shellExited && session.prompt.epoch === epoch &&
+    session.prompt.isEmpty(model) && !model.trackedSelection?.();
+  await insertPromptDraft(text, ready,
+    () => invoke<boolean>("pty_has_foreground_process", { id: pty.id }),
+    (command) => writeToGhosttySession(leafId, encodeTerminalPaste(command, model.modes().bracketedPaste)));
+  session.surface?.focus();
 }
 
 export function ghosttySelectionForLeaf(leafId: number): string | null {
@@ -504,6 +544,8 @@ export async function respawnGhosttySession(
   session.pty = null;
   session.shellExited = false;
   session.lastCwd = null;
+  session.prompt.reset();
+  session.pendingCommand = null;
   session.directorySync = "unknown";
   setTerminalBusy(leafId, false);
   session.initialCwd = cwd ?? session.initialCwd;
@@ -601,6 +643,9 @@ function ensureSession(
     },
   );
   const session: GhosttySession = {
+    prompt: new TerminalPrompt(),
+    privateTerminal: false,
+    pendingCommand: null,
     directorySync: "unknown",
     leafId,
     backend,
@@ -745,6 +790,12 @@ async function initializeSessionGeneration(
     },
     onReply: (bytes) => session.writer.enqueue(bytes),
     onEvent: (event) => {
+      if (event.type === "end-of-input" && session.pendingCommand) {
+        historyRecord(session.pendingCommand, session.privateTerminal);
+        session.pendingCommand = null;
+      }
+      if (event.type === "prompt-continuation" || event.type === "prompt-end") session.pendingCommand = null;
+      session.prompt.handle(event);
       if (event.type === "prompt-end") commandRunning = false;
       session.directorySync = directorySyncState(
         session.directorySync,
@@ -763,10 +814,9 @@ async function initializeSessionGeneration(
   }
   mark("modelReadyMs");
   session.model = model;
+  model.enableSemanticMarkers?.(true);
   session.callbacks.onModel?.(model);
-  await ghosttyBlocks(session.leafId)?.attach(model, () =>
-    session.surface?.requestFrame(),
-  );
+  await ghosttyBlocks(session.leafId)?.attach(model, () => session.surface?.requestFrame(), true);
   if (!alive()) {
     if (ghosttyBlocks(session.leafId)?.model === model)
       ghosttyBlocks(session.leafId)?.detach();
@@ -784,7 +834,10 @@ async function initializeSessionGeneration(
       session.ptyResize.schedule(cols, rows);
     },
     onFirstFrame: () => mark("firstFrameMs"),
-    onFrame: () => ghosttyBlocks(session.leafId)?.present(),
+    onFrame: () => {
+      ghosttyBlocks(session.leafId)?.present();
+      if (session.surface) completions.get(session.surface)?.refresh();
+    },
     onRequestFocus: () => focusGhosttySession(session.leafId),
     onOpenLink: (uri: string) => {
       void openExternalUrl(uri, () => focusGhosttySession(session.leafId));
@@ -877,17 +930,19 @@ async function initializeSessionGeneration(
         if (!session.disposed && generation === session.generation) {
           mark("firstOutputMs");
           model.write(bytes);
+          session.prompt.output();
+          if (session.surface) completions.get(session.surface)?.refresh();
           setTerminalBusy(
             session.leafId,
             commandRunning || model.modes().alternateScreen,
           );
           ghosttyBlocks(session.leafId)?.changed();
-          applyBlockInputMode(session);
         }
       },
       onExit: (code) => {
         if (session.disposed || generation !== session.generation) return;
         session.shellExited = true;
+        if (session.surface) completions.get(session.surface)?.invalidate();
         setTerminalBusy(session.leafId, true);
         session.writer.detach();
         session.pty = null;
@@ -895,7 +950,7 @@ async function initializeSessionGeneration(
       },
     },
     session.initialCwd,
-    !!ghosttyBlocks(session.leafId),
+    ghosttyBlocks(session.leafId)?.enabled ?? false,
     preferences.terminalShell || undefined,
     session.leafId,
   );
@@ -920,12 +975,18 @@ function createGhosttyInput(
   model: GhosttyTerminalModelApi,
   surface: GhosttySurface,
 ): GhosttyInputController {
-  const insertPromptText = (text: string): boolean => {
-    const blocks = ghosttyBlocks(session.leafId);
-    if (blocks?.getMode() !== "prompt" || !blocks.paste) return false;
-    blocks.paste(text);
-    return true;
-  };
+  const completion = new TerminalInlineCompletion({
+    model,
+    prompt: session.prompt,
+    input: surface.inputElement(),
+    target: surface.eventTarget(),
+    metrics: () => surface.fontMetrics(),
+    available: () => !session.privateTerminal && !session.disposed && !session.shellExited &&
+      session.visible && session.focused && session.surface === surface,
+    cwd: () => session.lastCwd,
+    insert: (text) => writeToGhosttySession(session.leafId, encodeTerminalPaste(text, model.modes().bracketedPaste)),
+  });
+  completions.set(surface, completion);
   return new GhosttyInputController({
     model,
     input: surface.inputElement(),
@@ -935,25 +996,19 @@ function createGhosttyInput(
       height: surface.cellSize().height,
     }),
     onData: (bytes) => {
-      if (
-        ghosttyBlocks(session.leafId)?.getMode() === "prompt" &&
-        !(bytes.length === 1 && bytes[0] === 3)
-      )
-        return;
-      if (session.writer.enqueue(bytes))
+      if (session.disposed || session.shellExited) return;
+      if (bytes.length === 1 && bytes[0] === 13) captureCommand(session);
+      if (session.writer.enqueue(bytes)) {
+        noteSessionInput(session);
+        if (bytes.length === 1 && bytes[0] === 13) session.prompt.submitted();
         session.directorySync = directorySyncState(
           session.directorySync,
           "input",
         );
+      }
     },
-    onKeyDown: (event) => {
-      const blocks = ghosttyBlocks(session.leafId);
-      return (
-        blocks?.getMode() === "prompt" && (blocks.keyDown?.(event) ?? false)
-      );
-    },
-    onText: insertPromptText,
-    onPaste: insertPromptText,
+    onKeyDown: (event) => completion.keyDown(event),
+    onDispose: () => { completion.dispose(); completions.delete(surface); },
     onClipboardError: (error) =>
       toast.error(`Paste failed: ${toError(error).message}`),
     getSelection: () => surface.getSelection(),
@@ -972,28 +1027,29 @@ export function focusGhosttySession(leafId: number): void {
 }
 
 function focusSessionSurface(
-  session: GhosttySession,
+  _session: GhosttySession,
   surface: GhosttySurface | null,
 ): void {
-  const blocks = ghosttyBlocks(session.leafId);
-  if (blocks?.getMode() === "prompt" && blocks.focus) blocks.focus();
-  else surface?.focus();
+  surface?.focus();
 }
 
-function applyBlockInputMode(
-  session: GhosttySession,
-  surface = session.surface,
-): void {
-  const input = surface?.inputElement();
-  const blocks = ghosttyBlocks(session.leafId);
-  if (!input || !blocks) return;
-  const prompt = blocks.getMode() === "prompt";
-  const changed =
-    input.getAttribute("data-terax-block-prompt") !== String(prompt);
-  if (!changed) return;
-  input.setAttribute("data-terax-block-prompt", String(prompt));
-  surface?.setCursorEnabled(!prompt);
-  if (session.visible && session.focused) focusSessionSurface(session, surface);
+function noteSessionInput(session: GhosttySession): void {
+  session.prompt.input(session.visible && terminalWindowPresentation().visible ? session.model ?? undefined : undefined);
+  if (session.surface) completions.get(session.surface)?.invalidate();
+}
+
+function captureCommand(session: GhosttySession): void {
+  const line = session.visible && terminalWindowPresentation().visible && session.model
+    ? session.prompt.read(session.model)
+    : null;
+  session.pendingCommand = line?.atEnd && line.text.trim() ? line.text : null;
+  if (session.pendingCommand) {
+    const blocks = ghosttyBlocks(session.leafId);
+    if (blocks) {
+      blocks.everSubmitted = true;
+      blocks.controller?.submitted(session.pendingCommand);
+    }
+  }
 }
 
 export function ghosttyBlockGeometry(
@@ -1016,7 +1072,6 @@ function attachGhosttySurface(
   surface.attach(session.container);
   surface.setVisible(true);
   surface.setFocused(session.focused);
-  applyBlockInputMode(session, surface);
   if (session.focused) focusSessionSurface(session, surface);
 }
 

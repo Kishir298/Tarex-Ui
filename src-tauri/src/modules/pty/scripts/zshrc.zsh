@@ -44,24 +44,16 @@ if [[ -z "$__TERAX_HOOKS_LOADED" ]]; then
     local _terax_ret=$?
     printf '\e]133;D;%s\e\\' "$_terax_ret"
     printf '\e]7;file://%s%s\e\\' "${HOST}" "$(_terax_urlencode "$PWD")"
-    # In block mode the host renders its own input bar, so suppress the shell
-    # prompt entirely (keep only the OSC 133 B marker) and add a leading blank
-    # line so frozen command blocks get vertical breathing room.
+    # Keep header spacing while readline owns the visible prompt and input.
     if [[ -n "$TERAX_BLOCKS" ]]; then
-      # Spacing reserved for the host-drawn block header lives in the prompt
-      # (the grid is WebGL, not CSS). Later prompts get two blank rows: the
-      # upper one is the previous block's end gap (above its divider), the lower
-      # one is this command's header row. The very first prompt has no block
-      # above it, so it gets a single row (header only) to avoid a tall top gap.
       if [[ -n "$_terax_block_seen" ]]; then
-        PS1=$'\n\n%{\e]133;B\e\\%}'
+        printf '\n\n'
       else
-        PS1=$'\n%{\e]133;B\e\\%}'
+        printf '\n'
       fi
-      RPROMPT=''
-    elif [[ "$PS1" != *$'\e]133;B\e\\'* ]]; then
-      # Re-inject prompt-end marker in case a framework rebuilt PS1 (p10k, starship).
-      PS1=$'%{\e]133;B\e\\%}'"$PS1"
+    fi
+    if [[ "$PS1" != *$'\e]133;B\e\\'* ]]; then
+      PS1="$PS1"$'%{\e]133;B\e\\%}'
     fi
     printf '\e]133;A\e\\'
   }

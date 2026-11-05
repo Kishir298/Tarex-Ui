@@ -144,6 +144,7 @@ export type GhosttyInputControllerOptions = {
   readonly onClipboardError?: (error: unknown) => void;
   readonly onText?: (text: string) => boolean;
   readonly onKeyDown?: (event: KeyboardEvent) => boolean;
+  readonly onDispose?: () => void;
   readonly macOptionIsMeta?: boolean;
   readonly isMac?: boolean;
 };
@@ -228,6 +229,7 @@ export class GhosttyInputController {
   dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
+    this.options.onDispose?.();
     this.nativeSelection?.dispose();
     this.pressedKeys.clear();
     const { input, pointerTarget } = this.options;

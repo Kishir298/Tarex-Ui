@@ -15,6 +15,7 @@ import { teraxDefault } from "./terax-default";
 import { tide } from "./tide";
 import { tokyoNight } from "./tokyo-night";
 import { xcode } from "./xcode";
+import { voidFrost } from "@/modules/theme/themes/void-frost";
 
 const BUILTIN: Theme[] = [
   teraxDefault,
@@ -27,6 +28,7 @@ const BUILTIN: Theme[] = [
   rosePine,
   everforest,
   nord,
+  voidFrost,
   gruvbox,
   dracula,
   solarized,
