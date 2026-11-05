@@ -99,7 +99,7 @@ export function NewTabMenu({
                   size={14}
                   strokeWidth={1.75}
                 />
-                <span className="flex-1">Terminal</span>
+                <span className="flex flex-1 flex-col"><span>Terminal</span><span className="text-[10px] text-muted-foreground">Continuous shell output</span></span>
                 <span className="text-xs text-muted-foreground">
                   {fmtShortcut(MOD_KEY, "T")}
                 </span>
@@ -110,7 +110,7 @@ export function NewTabMenu({
                   size={14}
                   strokeWidth={1.75}
                 />
-                <span className="flex-1">Blocks</span>
+                <span className="flex flex-1 flex-col"><span>Blocks</span><span className="text-[10px] text-muted-foreground">Command groups, status, copy and rerun</span></span>
                 <span className="text-xs text-muted-foreground">
                   {fmtShortcut(MOD_KEY, SHIFT_KEY, "T")}
                 </span>
@@ -184,7 +184,7 @@ export function NewTabMenu({
           openMenuAfterLauncherClose.current = false;
           requestAnimationFrame(() => setMenuOpen(true));
         }}
-        className="w-[340px] gap-0 overflow-hidden rounded-2xl p-1.5"
+        className="w-[340px] max-w-[calc(100vw-16px)] max-h-[var(--radix-popover-content-available-height)] gap-0 overflow-y-auto rounded-2xl p-1.5"
       >
         <AgentLauncherPanel
           onBack={backToMenu}

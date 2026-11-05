@@ -11,12 +11,6 @@ export interface SystemSnapshot {
   swapUsed: number;
   swapTotal: number;
   processes: { pid: number; name: string; cpu: number; memory: number; started: number }[];
-  interface: string | null;
-  address: string | null;
-  received: number;
-  transmitted: number;
-  totalReceived: number;
-  totalTransmitted: number;
   disks: { mount: string; total: number; available: number }[];
 }
 

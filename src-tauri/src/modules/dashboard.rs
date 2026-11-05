@@ -1,7 +1,7 @@
 use serde::Serialize;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
-use sysinfo::{Disks, Networks, ProcessRefreshKind, ProcessesToUpdate, System};
+use sysinfo::{Disks, ProcessRefreshKind, ProcessesToUpdate, System};
 
 pub struct DashboardState(Arc<Mutex<Monitor>>);
 
@@ -9,24 +9,18 @@ impl Default for DashboardState {
     fn default() -> Self {
         Self(Arc::new(Mutex::new(Monitor {
             system: System::new(),
-            networks: Networks::new(),
             disks: Disks::new(),
-            sampled: Instant::now(),
             details_sampled: None,
             processes: Vec::new(),
-            network_sample: None,
         })))
     }
 }
 
 struct Monitor {
     system: System,
-    networks: Networks,
     disks: Disks,
-    sampled: Instant,
     details_sampled: Option<Instant>,
     processes: Vec<Process>,
-    network_sample: Option<(String,u64,u64)>,
 }
 
 #[derive(Serialize)]
@@ -44,12 +38,6 @@ pub struct Snapshot {
     swap_used: u64,
     swap_total: u64,
     processes: Vec<Process>,
-    interface: Option<String>,
-    address: Option<String>,
-    received: f64,
-    transmitted: f64,
-    total_received: u64,
-    total_transmitted: u64,
     disks: Vec<Disk>,
 }
 
@@ -71,8 +59,6 @@ struct Disk {
 
 impl Monitor {
     fn snapshot(&mut self) -> Snapshot {
-        let elapsed = self.sampled.elapsed().as_secs_f64().max(0.2);
-        self.sampled = Instant::now();
         self.system.refresh_cpu_usage();
         self.system.refresh_memory();
         if self
@@ -103,19 +89,6 @@ impl Monitor {
             self.processes = processes;
             self.details_sampled = Some(Instant::now());
         }
-        self.networks.refresh(true);
-        let outbound=crate::modules::public_network::outbound_address();
-        let network = self
-            .networks
-            .iter()
-            .filter(|(_, n)| {
-                n.ip_networks().iter().any(|ip| {
-                    ip.addr.is_ipv4() && !ip.addr.is_loopback() && !ip.addr.is_unspecified()
-                })
-            })
-            .max_by_key(|(_, n)| (n.ip_networks().iter().any(|ip|Some(ip.addr)==outbound),n.total_received().saturating_add(n.total_transmitted())));
-        let (received,transmitted)=network.map(|(name,n)| network_rates(self.network_sample.as_ref(),name,n.total_received(),n.total_transmitted(),elapsed)).unwrap_or_default();
-        self.network_sample=network.map(|(name,n)|(name.clone(),n.total_received(),n.total_transmitted()));
         Snapshot {
             hostname: System::host_name().unwrap_or_else(|| "localhost".into()),
             os: System::name().unwrap_or_else(|| std::env::consts::OS.into()),
@@ -134,17 +107,6 @@ impl Monitor {
             swap_used: self.system.used_swap(),
             swap_total: self.system.total_swap(),
             processes: self.processes.clone(),
-            interface: network.map(|(name, _)| name.clone()),
-            address: network.and_then(|(_, n)| {
-                n.ip_networks()
-                    .iter()
-                    .find(|ip| ip.addr.is_ipv4() && !ip.addr.is_loopback())
-                    .map(|ip| ip.addr.to_string())
-            }),
-            received,
-            transmitted,
-            total_received: network.map(|(_, n)| n.total_received()).unwrap_or(0),
-            total_transmitted: network.map(|(_, n)| n.total_transmitted()).unwrap_or(0),
             disks: self
                 .disks
                 .iter()
@@ -156,10 +118,6 @@ impl Monitor {
                 .collect(),
         }
     }
-}
-
-fn network_rates(previous:Option<&(String,u64,u64)>,name:&str,received:u64,transmitted:u64,elapsed:f64)->(f64,f64){
-    match previous {Some((old,rx,tx)) if old==name&&received>=*rx&&transmitted>=*tx=>((received-rx) as f64/elapsed.max(0.2),(transmitted-tx) as f64/elapsed.max(0.2)),_=> (0.0,0.0)}
 }
 
 #[tauri::command]
@@ -191,20 +149,10 @@ mod tests {
         assert_eq!(state.0.lock().unwrap().details_sampled, details_sampled);
         assert!(s.processes.len() <= 5);
         assert!(s.memory_used <= s.memory_total);
-        assert!(s.received.is_finite() && s.received >= 0.0);
-        assert!(s.transmitted.is_finite() && s.transmitted >= 0.0);
         assert!(s
             .cpu
             .iter()
             .all(|c| c.is_finite() && (0.0..=100.0).contains(c)));
     }
 
-    #[test]
-    fn network_rates_require_a_matching_baseline(){
-        let previous=("en0".into(),100,200);
-        assert_eq!(network_rates(None,"en0",1000,2000,5.0),(0.0,0.0));
-        assert_eq!(network_rates(Some(&previous),"en0",200,400,5.0),(20.0,40.0));
-        assert_eq!(network_rates(Some(&previous),"utun0",200,400,5.0),(0.0,0.0));
-        assert_eq!(network_rates(Some(&previous),"en0",0,0,5.0),(0.0,0.0));
-    }
 }

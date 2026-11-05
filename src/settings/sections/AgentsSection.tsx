@@ -37,6 +37,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect, useRef, useState } from "react";
 import { SectionHeader } from "../components/SectionHeader";
+import { TerminalAgentsSettings } from "@/settings/sections/TerminalAgentsSettings";
 
 const ICON_OPTIONS: AgentIconId[] = [
   "coder",
@@ -73,14 +74,16 @@ export function AgentsSection() {
     <div className="flex flex-col gap-7">
       <SectionHeader
         title="Agents"
-        description="Personas and snippets the AI uses. Switch agents from the input bar."
+        description="Saved terminal launch settings, AI personas, and reusable instructions."
       />
 
       <CustomInstructionsBlock value={customInstructions} />
 
+      <TerminalAgentsSettings />
+
       <section className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <Label>Agents</Label>
+          <Label>AI personas</Label>
           <Button
             size="sm"
             variant="outline"

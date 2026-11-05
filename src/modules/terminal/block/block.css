@@ -101,7 +101,9 @@
   opacity: 0.5;
 }
 
-/* Block chrome overlay. Premium: muted, color only signals failure. */
+/* Command block chrome. */
+.bt-block-label { color:var(--primary); border:1px solid color-mix(in srgb,var(--primary) 40%,transparent); padding:0 4px; font-size:9px; letter-spacing:.06em; white-space:nowrap; }
+.bt-tools .bt-exit-ok { color:var(--ring); }
 .bt-divider {
   position: absolute;
   left: 0;

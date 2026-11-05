@@ -253,9 +253,7 @@ pub fn run() {
         .manage(pty::PtyState::default())
         .plugin(tauri_plugin_dialog::init())
         .manage(modules::dashboard::DashboardState::default())
-        .manage(modules::connections::ConnectionsState::default())
         .manage(modules::terminal_clipboard::TerminalClipboardState::default())
-        .manage(modules::public_network::PublicNetworkState::default())
         .manage(modules::process_control::ProcessControlState::default())
         .manage(modules::window_presentation::WindowPresentationState::default())
         .manage(control_state)
@@ -280,9 +278,7 @@ pub fn run() {
             modules::terminal_clipboard::terminal_clipboard_read,
             modules::shared_storage::shared_storage_paths,
             modules::dashboard::dashboard_snapshot,
-            modules::connections::network_connections,
             modules::keyboard::keyboard_layout,
-            modules::public_network::public_network,
             modules::process_control::suspended_processes,
             modules::process_control::control_process,
             pty::pty_open,

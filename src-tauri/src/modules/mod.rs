@@ -2,11 +2,9 @@ pub mod agent;
 #[cfg(target_os = "macos")]
 pub mod app_menu;
 pub mod control;
-pub mod connections;
 pub mod dashboard;
 pub mod keyboard;
 pub mod terminal_clipboard;
-pub mod public_network;
 pub mod process_control;
 pub mod fs;
 pub mod git;

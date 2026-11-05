@@ -1,5 +1,20 @@
 # Terex UI
 
+## Requested Cleanup and Relaunch: 2026-11-05
+- User explicitly requested removing the old version and relaunching. Verified the installed app signature, gracefully quit PID 24217, and removed both retained `Previous.app` backups and their empty `.terex-ui-update-n3q843bv` / `.terex-ui-update-l0iaev3z` directories.
+- Launched `/Applications/Terex UI.app` and verified the new installed-app process, PID 43389. This launch was explicitly requested; the standing preference remains to replace updates without automatic launches.
+
+## Completed Modes, Agent Defaults, Project Rail: 2026-11-05
+- Request: explain/fix indistinguishable Blocks and Terminal modes, remember agent setup in the Agents settings tab, and replace the rejected Connections panel.
+- Found ordinary terminals were forced into block mode by terminal autocomplete and legacy custom-prompt preferences. The launcher also hardcoded Claude/two instances on each mount; Settings > Agents only exposed AI personas, not terminal launch defaults.
+- Direction: explicit Blocks mode with clearer labels/hints; persisted launch selection/count and commands managed in Config > Agents; right-hand project files/Git changes instead of Connections. Install the completed app in `/Applications` and leave it closed, following the user's standing instruction.
+- Implemented explicit mode selection in `TerminalStack` and `App`: autocomplete no longer forces Blocks. Blocks have a tab badge, numbered completed-command headers, visible exit status, direct Copy output, and first-command guidance that accounts for the native shell prompt.
+- Added `agentLaunchDefaults` to the preferences store and a shared hook. Launcher selection/pane count persist and synchronize with Settings; commands are edited once in `TerminalAgentsSettings` under Config > Agents. Existing AI personas/snippets remain available separately in that tab.
+- Added `ProjectRail` with current-folder files, bounded filtering, watcher updates, and Git branch/changed-file diffs through the existing source-control APIs. Removed the Connections/public-IP UI, native socket collector, unused network telemetry, and its netstat2/libproc dependencies. Compact Activity closes when opening project content so the destination becomes visible.
+- Passed TypeScript, 1,292 frontend tests, 383 native tests (plus one ignored), frontend lint with existing warnings, and all-targets Rust clippy. All 13 headless scenarios passed against the final production assets: plain-vs-Blocks behavior, real block output copy/rerun, agent persistence across popup/reload/settings windows, saved-command launches, file/diff opening, folder bounds, nongit use, hidden watcher pause, compact Activity navigation, and responsive layouts. These use synthetic native IPC with real React/Ghostty, not a native GUI launch. Script/results: `check-project-agents.cjs` and `project-agent-results/` in the approved OpenCode temporary directory.
+- Final native release build and app packaging passed. All size budgets passed: 246.3 kB startup JS gzip, 1.51 MB total JS gzip, 9.74 MiB app bundle.
+- Replaced `/Applications/Terex UI.app` using a staged directory swap. Verified strict/deep signing and the complete bundle's file hashes/modes before and after installation. Retained the previous installation at `/Applications/.terex-ui-update-n3q843bv/Previous.app`; the older `/Applications/.terex-ui-update-l0iaev3z/Previous.app` backup was preserved at installation time. No app was launched during installation. See the subsequent requested cleanup and relaunch above.
+
 ## Installed Update: 2026-10-17
 - User explicitly requested replacing the installed app and stopping automatic launches. Replace `/Applications/Terex UI.app` for updates; leave it closed unless the user asks to open it.
 - Installed the completed Connections build with a staged directory swap. Verified both executable hashes against the source bundle and strict/deep app signature validation. Previous version: `/Applications/.terex-ui-update-l0iaev3z/Previous.app`. No app was launched during installation.

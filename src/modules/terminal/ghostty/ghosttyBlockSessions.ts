@@ -104,12 +104,8 @@ export class GhosttyBlockSession {
   watermark(): WatermarkState {
     if (this.everSubmitted || this.controller?.hasAnyBlock) return "dead";
     if (!this.model || this.inputActive) return "hidden";
-    if (
-      this.model.scrollPosition().history > 0 ||
-      this.model.readText(this.model.rows).trim()
-    )
-      return "dead";
-    return "visible";
+    if (this.model.scrollPosition().history > 0) return "dead";
+    return this.getMode() === "prompt" ? "visible" : "hidden";
   }
 
   dispose(): void {

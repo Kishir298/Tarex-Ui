@@ -11,9 +11,11 @@ import { WorkspaceVisibility, OpenFilesView } from "@/lib/workspaceVisibility";
 import { Commander, useDesktopFiles } from "@/modules/desktop/Files";
 import { FilesMenu, type FileMenuActions } from "@/modules/desktop/FilesMenu";
 import type { Tab } from "@/modules/tabs/lib/useTabs";
+import type { GitDiffOpenInput } from "@/modules/tabs/lib/useTabs";
+import type { SourceControlSummary } from "@/modules/source-control/useSourceControl";
+import { ProjectRail } from "@/modules/desktop/ProjectRail";
 import { bytes } from "@/modules/desktop/model";
 import {
-  NetworkRail,
   SystemRail,
   useTelemetry,
 } from "@/modules/desktop/Telemetry";
@@ -39,6 +41,8 @@ type Props = {
   aiOpen: boolean;
   onPreview: (url: string) => void;
   onOpenFile: (path: string) => void;
+  sourceControl: SourceControlSummary;
+  onOpenDiff: (input: GitDiffOpenInput) => void;
   onTerminal: (path: string) => void;
   onNavigate: (path: string) => Promise<void>;
   getSelection: () => string;
@@ -260,7 +264,14 @@ export function Desktop(props: Props) {
                 </Suspense>
               )}
             </div>
-            {!props.zen && <NetworkRail {...telemetry} />}
+            {!props.zen && <ProjectRail
+              path={props.cwd}
+              git={props.sourceControl}
+              onOpenEntry={(entry, directory) => { if (activityExclusive) props.onActivityChange(false); if (entry.kind !== "file") setFileMode(true); void files.open(entry, directory); }}
+              onBrowse={(path) => { if (activityExclusive) props.onActivityChange(false); setFileMode(true); files.navigate(path); }}
+              onGit={(path) => { if (activityExclusive) props.onActivityChange(false); setFileMode(false); props.fileActions.onSourceControl(path); }}
+              onOpenDiff={(input) => { if (activityExclusive) props.onActivityChange(false); setFileMode(false); props.onOpenDiff(input); }}
+            />}
           </div>
           {!props.zen && (
             <footer className="terex-footer">

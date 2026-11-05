@@ -1,0 +1,28 @@
+.terex-project-rail { display:flex; flex-direction:column; min-width:0; min-height:0; overflow:hidden; color:var(--foreground); font:12px/1.45 "JetBrains Mono",monospace; }
+.terex-project-heading { display:flex; align-items:center; gap:6px; padding:12px 0 5px; }
+.terex-project-heading strong { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; }
+.terex-project-rail button { min-height:32px; }
+.terex-project-heading button,.terex-project-footer button { padding:3px 6px; border:1px solid var(--border); font-size:10px; flex-shrink:0; }
+.terex-project-path { margin:0 0 12px; color:var(--muted-foreground); font-size:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.terex-project-tabs { display:flex; min-width:0; gap:2px; padding:2px; margin-bottom:8px; border:1px solid var(--border); flex-shrink:0; }
+.terex-project-tabs button { flex:1; min-width:0; padding:4px; font-size:11px; }
+.terex-project-tabs button[aria-pressed=true] { color:var(--primary-foreground); background:var(--primary); }
+.terex-project-rail>input { width:100%; min-height:34px; padding:5px 7px; border:1px solid var(--input); background:transparent; color:var(--foreground); outline:none; font:inherit; }
+.terex-project-rail>input::placeholder { color:var(--muted-foreground); }
+.terex-project-rail :is(button,input):focus-visible { outline:2px solid var(--ring); outline-offset:-2px; }
+.terex-project-branch { padding:8px 0; margin:0; color:var(--ring); font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.terex-project-list { flex:1; min-height:0; overflow:auto; scrollbar-width:thin; scrollbar-color:var(--primary) transparent; margin-top:8px; }
+.terex-project-list ul { padding:0; margin:0; list-style:none; }
+.terex-project-list li>button { display:flex; align-items:center; gap:7px; width:100%; min-width:0; padding:6px 3px; text-align:left; border-bottom:1px solid color-mix(in srgb,var(--border) 25%,transparent); }
+.terex-project-rail button:hover:not(:disabled) { background:var(--muted); color:var(--foreground); }
+.terex-project-tabs button[aria-pressed=true]:hover { background:var(--primary); color:var(--primary-foreground); }
+.terex-project-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.terex-project-kind { flex:0 0 25px; font-size:8px; color:var(--muted-foreground); }
+.terex-project-change { flex:0 0 14px; color:var(--ring); font-size:11px; }
+.terex-project-staged { margin-left:auto; color:var(--muted-foreground); font-size:8px; }
+.terex-project-message { padding:10px 3px; color:var(--muted-foreground); font-size:11px; overflow-wrap:anywhere; }
+.terex-project-message button { padding:4px 6px; color:var(--primary); border:1px solid var(--border); margin-top:6px; }
+.terex-project-footer { display:flex; align-items:center; justify-content:space-between; gap:5px; flex-shrink:0; border-top:1px solid var(--border); padding:8px 0; margin-top:8px; color:var(--muted-foreground); font-size:10px; }
+@media(max-width:850px) { .terex-project-heading { flex-wrap:wrap; } .terex-project-kind { flex-basis:18px; font-size:7px; } .terex-project-footer { flex-wrap:wrap; } }
+@media(max-width:600px) { .terex-project-rail { display:none; } }
+@media(pointer:coarse) { .terex-project-rail button,.terex-project-rail>input { min-height:44px; } }

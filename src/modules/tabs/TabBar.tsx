@@ -470,6 +470,9 @@ export function TabBar({
                     <span className={cn("truncate", isPreview && "italic")}>
                       {labelFor(t)}
                     </span>
+                    {t.kind === "terminal" && t.blocks === true && (
+                      <span className="shrink-0 border border-primary/40 px-1 text-[9px] font-medium tracking-wide text-primary" title="Command blocks with exit status, copy, and rerun controls">BLOCKS</span>
+                    )}
                     {t.kind === "editor" && t.dirty ? (
                       <span
                         aria-label="Unsaved changes"

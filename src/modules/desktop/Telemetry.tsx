@@ -1,13 +1,11 @@
 // biome-ignore-all lint/suspicious/noArrayIndexKey: Hardware core indexes and fixed memory cells never reorder.
 import { bytes, type SystemSnapshot } from "@/modules/desktop/model";
 import { Processes } from "@/modules/desktop/Processes";
-import { usePublicNetwork } from "@/modules/desktop/usePublicNetwork";
-import { NetworkConnections } from "@/modules/desktop/NetworkConnections";
 import { subscribeWindowPresentation } from "@/modules/terminal/ghostty/windowPresentation";
 import { invoke } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useState } from "react";
 
-type Sample = { cpu: number; received: number; transmitted: number; interface:string|null };
+type Sample = { cpu: number };
 
 export function useTelemetry(enabled = true) {
   const [snapshot, setSnapshot] = useState<SystemSnapshot | null>(null);
@@ -35,8 +33,8 @@ export function useTelemetry(enabled = true) {
             next.cpu.reduce((sum, value) => sum + value, 0) /
             Math.max(1, next.cpu.length);
           setHistory((previous) => [
-            ...(previous[previous.length-1]?.interface===next.interface?previous.slice(-59):[]),
-            { cpu, received: next.received, transmitted: next.transmitted,interface:next.interface },
+            ...previous.slice(-59),
+            { cpu },
           ]);
         }
       } catch (e) {
@@ -264,62 +262,6 @@ export function SystemRail({
           SYSTEM DATA UNAVAILABLE
         </p>
       )}
-    </aside>
-  );
-}
-
-export function NetworkRail({
-  snapshot: s,
-  history,
-}: ReturnType<typeof useTelemetry>) {
-  const {network,error}=usePublicNetwork(`${s?.interface??""}/${s?.address??""}`);
-  const max = Math.max(
-    1024,
-    ...history.flatMap((sample) => [sample.received, sample.transmitted]),
-  );
-  return (
-    <aside className="terex-network-rail" aria-label="Live network monitor">
-      <div className="terex-rule">
-        <span>PANEL</span>
-        <span>NETWORK</span>
-      </div>
-      <div className="terex-rule">
-        <span>NETWORK STATUS</span>
-        <span>PUBLIC</span>
-      </div>
-      <dl className="terex-network-status">
-        <div>
-          <dt>STATE</dt>
-          <dd>{s ? (s.address ? network ? "ONLINE" : "LINK UP" : "OFFLINE") : "--"}</dd>
-        </div>
-        <div>
-          <dt>INTERFACE</dt>
-          <dd>{s?.interface ?? "--"}</dd>
-        </div>
-        <div>
-          <dt>PUBLIC IP</dt>
-          <dd title={error}>{network?.ip ?? "--"}</dd>
-        </div>
-      </dl>
-      <NetworkConnections />
-      <div className="terex-rule">
-        <span>NETWORK TRAFFIC</span>
-        <span>{bytes(max)}/s</span>
-      </div>
-      <div className="terex-traffic-summary">
-        <span>↓ {bytes(s?.received)}/s</span>
-        <span>↑ {bytes(s?.transmitted)}/s</span>
-      </div>
-      <Chart
-        values={history.map((sample) => sample.received)}
-        second={history.map((sample) => sample.transmitted)}
-        max={max}
-        label="Network receive and transmit rates over the last five minutes"
-      />
-      <div className="terex-transfer-total">
-        <span>RECEIVED {bytes(s?.totalReceived)}</span>
-        <span>TRANSMITTED {bytes(s?.totalTransmitted)}</span>
-      </div>
     </aside>
   );
 }

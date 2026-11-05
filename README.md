@@ -15,8 +15,8 @@
 </div>
 
 Terex UI combines a native Tauri/Rust backend with an eDEX-style desktop layout:
-live system and network panels, a three-column file browser, terminal tabs,
-a live network-connections view, and an on-demand Activity panel. The default palette is
+live system monitoring, a three-column file browser, terminal tabs,
+a project files/changes rail, and an on-demand Activity panel. The default palette is
 purple and lime; the dashboard and terminal follow the selected theme together.
 
 ## Download
@@ -61,21 +61,19 @@ predate the updater need one manual installation of version 0.10.0 or later.
 - **Files context menu:** opens a terminal in the chosen directory, creates or
   deletes entries, copies paths, and attaches files to the agent.
 - **CONFIG:** endpoint settings, themes, editor preferences, shortcuts, and agents.
+- **PROJECT:** the active folder's files stay available beside the workspace. Click a file to open it, or switch to Changes to review the current Git branch and file diffs. The file list also works outside Git repositories.
 - **ACTIVITY:** live terminal/agent sessions and app-managed background jobs. Sessions needing attention appear first; selecting a row focuses that terminal. Jobs expose bounded output and a Stop action. Git changes, Web preview, and AI agent buttons open their existing workspace views.
 
-Shells and filesystem operations run through Rust. CPU, memory, process, disk,
-and interface counters come from native system APIs. The network panel queries
-ipwho.is for the public IP. **Connections** shows passive TCP snapshots from the
-operating system: process names, remote/local endpoints, and connection states.
-Filter connections, include localhost traffic when needed, and copy endpoints.
-Sampling pauses when the network rail or window is hidden.
+Shells and filesystem operations run through Rust. CPU, memory, process, and disk
+counters come from native system APIs. Project files use native directory listings
+and filesystem notifications. Git changes refresh while that view is visible.
 
 ### Background Work
 
 Dashboard samples run every five seconds while visible, with process/disk scans
 cached for fifteen seconds. Dashboard timers and the clock stop when the window
-is hidden or occluded; filesystem watchers and listings pause when Files is not
-visible. Terminal input and output retain their independent responsive path.
+is hidden or occluded. Files and Project listings/watchers pause when their views
+are hidden. Terminal input and output retain their independent responsive path.
 Right-click opens app actions, while editable fields keep their standard editing
 menus. The interface still uses Tauri's system WebView.
 
@@ -84,6 +82,18 @@ agent and opens when requested. Terminal completion displays one ghost suggestio
 at the shell cursor. Right Arrow accepts it, Escape dismisses it, and Tab keeps
 the shell's own completion. The editor retains its own multiline AI completion
 and Emmet HTML/CSS expansion.
+
+**Terminal** keeps continuous shell output. **Blocks** groups each completed
+command and output with a numbered header, exit status, Copy output, and Run again
+controls. Blocks tabs have a visible badge. Both use direct terminal input and
+the same single ghost suggestion; enabling autocomplete does not change the mode.
+Full-screen terminal apps such as OpenCode use the same display in both modes;
+the grouping applies to shell commands and their output.
+
+Configure CLI start commands under **CONFIG → Agents → Terminal agents**. Your
+default agent and pane count are saved and shared with the launch menu. Editing
+a command there updates its saved launcher configuration. AI personas and snippets
+remain in the same Agents settings tab.
 
 **Activity** starts closed, leaving the terminal its full height. Open it from the
 title bar, the command palette, or Cmd/Ctrl+Shift+J. It sits beside the workspace

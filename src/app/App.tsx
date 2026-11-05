@@ -361,15 +361,7 @@ export default function App() {
 
   const activeTab = tabs.find((t) => t.id === activeId);
   const isTerminalTab = activeTab?.kind === "terminal";
-  const terminalSuggestions = usePreferencesStore((s) => s.terminalSuggestions);
-  const customTerminalPrompts = usePreferencesStore(
-    (s) => s.customTerminalPrompts,
-  );
-  const isBlockTab =
-    !!activeTerminalTab &&
-    (activeTerminalTab.blocks === true ||
-      customTerminalPrompts ||
-      (terminalSuggestions && !activeTerminalTab.private));
+  const isBlockTab = activeTerminalTab?.blocks === true;
   const isEditorTab = activeTab?.kind === "editor";
   const isGitHistoryTab = activeTab?.kind === "git-history";
 
@@ -1435,6 +1427,8 @@ export default function App() {
             aiOpen={panelOpen}
             onPreview={openPreviewTab}
             onOpenFile={(path) => handleOpenFile(path, true)}
+            sourceControl={sourceControl}
+            onOpenDiff={openGitDiffTab}
             onTerminal={(path) => newTab(path)}
             onNavigate={(path) =>
               activeLeafId === null

@@ -1,6 +1,5 @@
 import type { Tab } from "@/modules/tabs";
 import type { TerminalSearchController } from "@/modules/terminal/search/TerminalSearchController";
-import { usePreferencesStore } from "@/modules/settings/preferences";
 import { useEffect, useMemo, useRef } from "react";
 import { selectLiveTerminals } from "./lib/liveTerminals";
 import { leafIds } from "./lib/panes";
@@ -34,8 +33,6 @@ export function TerminalStack({
   onExit,
   onFocusLeaf,
 }: Props) {
-  const suggestions = usePreferencesStore((s) => s.terminalSuggestions);
-  const customPrompts = usePreferencesStore((s) => s.customTerminalPrompts);
   const terminals = useMemo(() => selectLiveTerminals(tabs), [tabs]);
 
   const registerRef = useRef(registerHandle);
@@ -87,6 +84,7 @@ export function TerminalStack({
           <div
             key={t.id}
             data-terminal-tab={t.id}
+            data-terminal-mode={t.blocks === true ? "blocks" : "terminal"}
             className="absolute inset-0"
             style={{
               visibility: tabVisible ? "visible" : "hidden",
@@ -99,11 +97,7 @@ export function TerminalStack({
               tabVisible={tabVisible}
               activeLeafId={t.activeLeafId}
               privateTerminal={t.private === true}
-              blocks={
-                t.blocks === true ||
-                customPrompts ||
-                (suggestions && !t.private)
-              }
+              blocks={t.blocks === true}
               onFocusLeaf={(leafId) => onFocusLeaf(t.id, leafId)}
               getBundle={getBundle}
             />

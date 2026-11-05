@@ -5,6 +5,7 @@ import {
   createAgentPanePlan,
   DEFAULT_AGENT_LAUNCH_COMMANDS,
   normalizeAgentLaunchCommands,
+  normalizeAgentLaunchDefaults,
   validateAgentLaunchCommand,
   type AgentInstanceCount,
 } from "./launcher";
@@ -15,6 +16,13 @@ function allocator(start = 1) {
 }
 
 describe("agent launch commands", () => {
+  it("restores a saved launcher and pane count without accepting invalid persisted values", () => {
+    expect(normalizeAgentLaunchDefaults({ agent: "opencode", instances: 4 })).toEqual({ agent: "opencode", instances: 4 });
+    for (const value of [null, "claude", { agent: "unknown", instances: 0 }, { instances: 1.5 }, { instances: "4" }, { instances: 99 }]) {
+      expect(normalizeAgentLaunchDefaults(value)).toEqual({ agent: "claude", instances: 1 });
+    }
+    expect(normalizeAgentLaunchDefaults({ agent: "codex", instances: 8 })).toEqual({ agent: "codex", instances: 1 });
+  });
   it("defines a non-empty default for every launcher", () => {
     for (const launcher of AGENT_LAUNCHERS) {
       expect(DEFAULT_AGENT_LAUNCH_COMMANDS[launcher.id]).toBe(

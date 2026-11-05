@@ -931,6 +931,10 @@ async function initializeSessionGeneration(
           mark("firstOutputMs");
           model.write(bytes);
           session.prompt.output();
+          const blocks = ghosttyBlocks(session.leafId);
+          if (blocks && !blocks.everSubmitted && !blocks.controller?.hasAnyBlock) {
+            blocks.inputActive = session.prompt.draft(model).length > 0;
+          }
           if (session.surface) completions.get(session.surface)?.refresh();
           setTerminalBusy(
             session.leafId,

@@ -16,8 +16,11 @@ import {
 } from "@/modules/ai/config";
 import {
   type AgentLaunchCommands,
+  type AgentLaunchDefaults,
   DEFAULT_AGENT_LAUNCH_COMMANDS,
+  DEFAULT_AGENT_LAUNCH_DEFAULTS,
   normalizeAgentLaunchCommands,
+  normalizeAgentLaunchDefaults,
 } from "@/modules/agents/lib/launcher";
 import type { KeyBinding, ShortcutId } from "@/modules/shortcuts/shortcuts";
 import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
@@ -176,6 +179,7 @@ export type Preferences = {
   agentNotifications: boolean;
   agentNotificationSound: boolean;
   agentLaunchCommands: AgentLaunchCommands;
+  agentLaunchDefaults: AgentLaunchDefaults;
   defaultWorkspaceEnv: string;
   shortcuts: Record<ShortcutId, KeyBinding[]>;
   editorAutoSave: boolean;
@@ -274,6 +278,7 @@ const KEY_ZOOM_LEVEL = "zoomLevel";
 const KEY_AGENT_NOTIFICATIONS = "agentNotifications";
 const KEY_AGENT_NOTIFICATION_SOUND = "agentNotificationSound";
 const KEY_AGENT_LAUNCH_COMMANDS = "agentLaunchCommands";
+const KEY_AGENT_LAUNCH_DEFAULTS = "agentLaunchDefaults";
 const KEY_DEFAULT_WORKSPACE_ENV = "defaultWorkspaceEnv";
 const KEY_SHORTCUTS = "shortcuts";
 const KEY_EDITOR_AUTO_SAVE = "editorAutoSave";
@@ -368,6 +373,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   agentNotifications: true,
   agentNotificationSound: true,
   agentLaunchCommands: DEFAULT_AGENT_LAUNCH_COMMANDS,
+  agentLaunchDefaults: DEFAULT_AGENT_LAUNCH_DEFAULTS,
   defaultWorkspaceEnv: "local",
   shortcuts: {} as Record<ShortcutId, KeyBinding[]>,
   editorAutoSave: false,
@@ -558,6 +564,7 @@ export async function loadPreferences(): Promise<Preferences> {
     agentLaunchCommands: normalizeAgentLaunchCommands(
       get<unknown>(KEY_AGENT_LAUNCH_COMMANDS),
     ),
+    agentLaunchDefaults: normalizeAgentLaunchDefaults(get<unknown>(KEY_AGENT_LAUNCH_DEFAULTS)),
     defaultWorkspaceEnv:
       get<string>(KEY_DEFAULT_WORKSPACE_ENV) ??
       DEFAULT_PREFERENCES.defaultWorkspaceEnv,
@@ -963,6 +970,10 @@ export async function setDefaultWorkspaceEnv(value: string): Promise<void> {
   await writePref(KEY_DEFAULT_WORKSPACE_ENV, value);
 }
 
+export async function setAgentLaunchDefaults(value: AgentLaunchDefaults): Promise<void> {
+  await writePref(KEY_AGENT_LAUNCH_DEFAULTS, normalizeAgentLaunchDefaults(value));
+}
+
 export async function setShortcuts(
   value: Record<ShortcutId, KeyBinding[]> | {},
 ): Promise<void> {
@@ -1036,6 +1047,7 @@ export async function onPreferencesChange(
     [KEY_AGENT_NOTIFICATIONS]: "agentNotifications",
     [KEY_AGENT_NOTIFICATION_SOUND]: "agentNotificationSound",
     [KEY_AGENT_LAUNCH_COMMANDS]: "agentLaunchCommands",
+    [KEY_AGENT_LAUNCH_DEFAULTS]: "agentLaunchDefaults",
     [KEY_DEFAULT_WORKSPACE_ENV]: "defaultWorkspaceEnv",
     [KEY_SHORTCUTS]: "shortcuts",
     [KEY_EDITOR_AUTO_SAVE]: "editorAutoSave",

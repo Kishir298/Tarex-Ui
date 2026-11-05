@@ -204,6 +204,7 @@ function BlockChrome({ block, all, onSearch }: ChromeProps) {
 function Meta({ block }: { block: PositionedBlock }) {
   return (
     <span className="bt-head-meta">
+      <span className="bt-block-label">BLOCK {block.id}</span>
       {block.cwd && (
         <span className="bt-cwd">
           {homeRelativePath(block.cwd, cachedHome)}
@@ -239,8 +240,13 @@ function Toolbar({ block, all, onSearch }: ChromeProps) {
   const failed = !block.running && !block.ok && block.exitCode !== null;
   return (
     <div className="bt-tools">
-      {failed && <span className="bt-exit">exit {block.exitCode}</span>}
+      {!block.running && <span className={cn("bt-exit", !failed && "bt-exit-ok")}>{block.exitCode === null ? "Finished" : `exit ${block.exitCode}`}</span>}
       {duration && <span className="bt-dur">{duration}</span>}
+      {!block.running && (
+        <button type="button" title="Copy block output" aria-label="Copy block output" className="bt-btn" onClick={() => { const output = all.readOutput(block.id); if (output) copy(output, "Output copied"); else toast.info("No output to copy"); }}>
+          <HugeiconsIcon icon={Copy01Icon} size={12.5} strokeWidth={1.75} />
+        </button>
+      )}
       {!block.running && block.canRerun && (
         <button
           type="button"

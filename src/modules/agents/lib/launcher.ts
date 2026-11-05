@@ -42,6 +42,16 @@ export const AGENT_LAUNCHERS = [
 export type AgentLauncherId = (typeof AGENT_LAUNCHERS)[number]["id"];
 export type AgentInstanceCount = 1 | 2 | 3 | 4;
 export type AgentLaunchCommands = Record<AgentLauncherId, string>;
+export type AgentLaunchDefaults = { agent: AgentLauncherId; instances: AgentInstanceCount };
+export const DEFAULT_AGENT_LAUNCH_DEFAULTS: AgentLaunchDefaults = { agent: "claude", instances: 1 };
+
+export function normalizeAgentLaunchDefaults(value: unknown): AgentLaunchDefaults {
+  const stored = typeof value === "object" && value !== null ? value as Record<string, unknown> : {};
+  return {
+    agent: AGENT_LAUNCHERS.some(({ id }) => id === stored.agent) ? stored.agent as AgentLauncherId : DEFAULT_AGENT_LAUNCH_DEFAULTS.agent,
+    instances: Number.isInteger(stored.instances) && Number(stored.instances) >= 1 && Number(stored.instances) <= 4 ? stored.instances as AgentInstanceCount : DEFAULT_AGENT_LAUNCH_DEFAULTS.instances,
+  };
+}
 
 export type AgentLaunchRequest = {
   agent: AgentLauncherId;

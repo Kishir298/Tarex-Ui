@@ -42,18 +42,13 @@ export function BlockWatermark({ leafId, subscribe }: Props) {
           : "translate-y-2 opacity-0",
       )}
     >
-      <img
-        src="/logo.png"
-        alt=""
-        draggable={false}
-        className="size-24 rounded-3xl shadow-lg shadow-black/25"
-      />
-      <div className="grid grid-cols-[auto_auto] items-center gap-x-12 gap-y-3 text-[13px]">
-        <Hint label="Browse your command history" keys="↑" />
-        <Hint label="Autocomplete paths and commands" keys="Tab" />
-        <Hint label="Accept the inline suggestion" keys="→" />
-        <Hint label="Dismiss the inline suggestion" keys="Esc" />
-        <Hint label="Open the AI assistant" shortcut="ai.toggle" />
+      <div className="max-w-sm px-5 text-center">
+        <strong className="text-xs tracking-[.16em] text-primary">COMMAND BLOCKS</strong>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Type in the terminal. Each command gets its own output group with an exit status, copy, and rerun controls.</p>
+      </div>
+      <div className="grid grid-cols-[auto_auto] items-center gap-x-5 gap-y-3 px-4 text-[12px]">
+        <Hint label="Previous command block" shortcut="blocks.prev" />
+        <Hint label="Next command block" shortcut="blocks.next" />
       </div>
     </div>
   );

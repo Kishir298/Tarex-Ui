@@ -79,11 +79,7 @@ libc = "0.2"
 [target.'cfg(target_os = "linux")'.dependencies]
 gtk = "0.18"
 
-[target.'cfg(any(target_os = "linux", target_os = "windows"))'.dependencies]
-netstat2 = "=0.11.2"
-
 [target.'cfg(target_os = "macos")'.dependencies]
-libproc = "=0.14.11"
 keyring = { version = "3.6", default-features = false, features = [
 	"apple-native",
 ] }

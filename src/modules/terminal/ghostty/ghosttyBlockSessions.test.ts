@@ -44,6 +44,23 @@ function fakeModel() {
 }
 
 describe("block presentation ownership", () => {
+  it("shows mode guidance at an empty native prompt without scanning screen text", async () => {
+    const { model } = fakeModel();
+    model.scrollPosition = () => ({ offset: 0, history: 0 });
+    model.readText = vi.fn(() => "user@host $ ");
+    const state = new GhosttyBlockSession();
+    await state.attach(model);
+    expect(state.watermark()).toBe("hidden");
+    state.controller?.handle({ type: "prompt-end" }, "/work");
+    state.changed();
+    expect(state.watermark()).toBe("visible");
+    expect(model.readText).not.toHaveBeenCalled();
+    state.inputActive = true;
+    expect(state.watermark()).toBe("hidden");
+    state.everSubmitted = true;
+    expect(state.watermark()).toBe("dead");
+    state.dispose();
+  });
   it("coalesces damage, stops when hidden or occluded, and releases listeners", async () => {
     const { model, markers, listeners } = fakeModel();
     const state = new GhosttyBlockSession();
