@@ -1,4 +1,4 @@
-import { CellFlags } from "@terax/ghostty-core/protocol";
+import { CellFlags } from "@tarex/ghostty-core/protocol";
 import { hasIntrinsicColor } from "./glyphColor";
 import { SkylineAtlasAllocator } from "./SkylineAtlasAllocator";
 import { fontCss, type TerminalFontMetrics } from "./terminalVisuals";
@@ -288,7 +288,7 @@ export class GlyphAtlas {
       totalBytes += upload.byteLength;
     }
     const staging = this.device.createBuffer({
-      label: "Terax terminal glyph upload staging",
+      label: "Tarex terminal glyph upload staging",
       size: totalBytes,
       usage: GPUBufferUsage.COPY_SRC,
       mappedAtCreation: true,
@@ -559,7 +559,7 @@ export class GlyphAtlas {
 
   private createCoverageTexture(): GPUTexture {
     return this.device.createTexture({
-      label: "Terax terminal glyph coverage atlas",
+      label: "Tarex terminal glyph coverage atlas",
       size: [COVERAGE_ATLAS_SIZE, COVERAGE_ATLAS_SIZE],
       format: "r8unorm",
       usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
@@ -568,7 +568,7 @@ export class GlyphAtlas {
 
   private createColorTexture(): GPUTexture {
     return this.device.createTexture({
-      label: "Terax terminal color glyph atlas",
+      label: "Tarex terminal color glyph atlas",
       size: [COLOR_ATLAS_SIZE, COLOR_ATLAS_SIZE],
       format: "rgba8unorm",
       usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
@@ -577,7 +577,7 @@ export class GlyphAtlas {
 
   private createPlaceholderColorTexture(): GPUTexture {
     return this.device.createTexture({
-      label: "Terax terminal color glyph placeholder",
+      label: "Tarex terminal color glyph placeholder",
       size: [1, 1],
       format: "rgba8unorm",
       usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,

@@ -1,12 +1,12 @@
 import { readFile } from "node:fs/promises";
 import {
-  TeraxGhostty,
-  type TeraxGhosttyTerminal,
-} from "@terax/ghostty-core/adapted";
+  TarexGhostty,
+  type TarexGhosttyTerminal,
+} from "@tarex/ghostty-core/adapted";
 import { afterAll, beforeAll, bench, describe } from "vitest";
 
 const artifacts = ["ghostty-vt.wasm", "ghostty-vt-scalar.wasm"];
-const terminals: TeraxGhosttyTerminal[] = [];
+const terminals: TarexGhosttyTerminal[] = [];
 const streamingUpdate = new TextEncoder().encode(
   Array.from(
     { length: 1_024 },
@@ -27,7 +27,7 @@ beforeAll(async () => {
         import.meta.url,
       ),
     );
-    const ghostty = await TeraxGhostty.loadBytes(Uint8Array.from(bytes).buffer);
+    const ghostty = await TarexGhostty.loadBytes(Uint8Array.from(bytes).buffer);
     terminals.push(
       ghostty.createTerminal(120, 40, {
         maxScrollbackBytes: 8 * 1024 * 1024,

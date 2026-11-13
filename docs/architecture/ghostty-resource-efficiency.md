@@ -12,16 +12,16 @@ and records the remaining limits of the resource evidence.
 ## September 7 allocation and redundant-work pass
 
 The baseline is `0e3fae9`. The current core is built from Ghostty
-`f426f6f181ba95f45d33f683fb754b6359d9e04f`, with identical Terax semantics and
+`f426f6f181ba95f45d33f683fb754b6359d9e04f`, with identical Tarex semantics and
 both SIMD and scalar variants. The inspected upstream release list has a
 [nightly WASM artifact](https://github.com/ghostty-org/ghostty/releases/tag/tip),
 but no tagged stable standalone libghostty WASM release. The
 [source comparison](https://github.com/ghostty-org/ghostty/compare/349f026087d948f8f898dca3231ff91438f83ab8...f426f6f181ba95f45d33f683fb754b6359d9e04f)
 includes page allocation and fixed terminal memory reductions. Upstream alone
 saved only one 64 KiB WASM page in the 20-model allocation test, so its native
-allocation claims are not used as Terax memory or CPU claims.
+allocation claims are not used as Tarex memory or CPU claims.
 
-The larger changes are in Terax's resource ownership and presentation:
+The larger changes are in Tarex's resource ownership and presentation:
 
 - Native renderer cell arrays are created on first presentation. Reclamation
   frees those arrays and the grapheme, hyperlink and placement snapshots while
@@ -99,14 +99,14 @@ doubles, so packaged GPU timing and device behavior remain separate gates.
 Reproduce the per-artifact comparison:
 
 ```sh
-mkdir -p /tmp/terax-core-baseline
-git show 0e3fae9:packages/ghostty-core/adapted/ghostty-vt.wasm > /tmp/terax-core-baseline/ghostty-vt.wasm
-git show 0e3fae9:packages/ghostty-core/adapted/ghostty-vt-scalar.wasm > /tmp/terax-core-baseline/ghostty-vt-scalar.wasm
-TERAX_PROFILE_BASELINE=/tmp/terax-core-baseline TERAX_PROFILE_REPORT=/tmp/terax-core-profile.json pnpm profile:ghostty
+mkdir -p /tmp/tarex-core-baseline
+git show 0e3fae9:packages/ghostty-core/adapted/ghostty-vt.wasm > /tmp/tarex-core-baseline/ghostty-vt.wasm
+git show 0e3fae9:packages/ghostty-core/adapted/ghostty-vt-scalar.wasm > /tmp/tarex-core-baseline/ghostty-vt-scalar.wasm
+TAREX_PROFILE_BASELINE=/tmp/tarex-core-baseline TAREX_PROFILE_REPORT=/tmp/tarex-core-profile.json pnpm profile:ghostty
 ```
 
-`TERAX_PROFILE_REVERSE=1` reverses revision order. Run without concurrent builds
-or other heavy workloads. `TERAX_SOAK_CORE_DIR` and `TERAX_SOAK_ARTIFACT` optionally
+`TAREX_PROFILE_REVERSE=1` reverses revision order. Run without concurrent builds
+or other heavy workloads. `TAREX_SOAK_CORE_DIR` and `TAREX_SOAK_ARTIFACT` optionally
 select a preserved artifact for the longer stress test; the default still tests
 both current variants. This tooling is outside the shipped application.
 
@@ -188,10 +188,10 @@ and raster canvas storage explicitly.
 
 ## Reproducible core stress run
 
-Run without launching Terax:
+Run without launching Tarex:
 
 ```sh
-TERAX_SOAK_REPORT=/tmp/terax-ghostty-soak.json pnpm soak:ghostty
+TAREX_SOAK_REPORT=/tmp/tarex-ghostty-soak.json pnpm soak:ghostty
 ```
 
 The workload runs five real WASM models through 64 epochs of 2,048 updates,
@@ -241,7 +241,7 @@ The September 6 symbol fallback added a 772,032-byte WOFF2 asset. It was removed
 on September 7; current builds rely on installed fonts for private-use symbols
 and retain system fallback for native color emoji.
 
-A read-only `footprint --noCategories` sample of the existing packaged Terax host
+A read-only `footprint --noCategories` sample of the existing packaged Tarex host
 on September 6 reported 59,934,016 bytes of physical footprint and a 63,472,960-byte
 peak. This was the user's running earlier build, not the candidate built in this
 pass. It excludes WebContent, GPU and compositor ownership and cannot attribute
@@ -253,9 +253,9 @@ timeline was captured in this pass.
 Enable diagnostics in the new test build and reload:
 
 ```js
-localStorage.setItem("terax:terminal-diagnostics", "1");
+localStorage.setItem("tarex:terminal-diagnostics", "1");
 // After reload:
-var resourceTrace = window.__teraxTermTrace();
+var resourceTrace = window.__tarexTermTrace();
 // Switch desktops, cover/uncover the window, or sleep/wake.
 // Return to the inspector, then capture the JSON:
 JSON.stringify(resourceTrace.stop());
@@ -267,8 +267,8 @@ previous recording. It starts no PTY workload and does not collect terminal
 output. Normal startup has no recorder or sampling timer. Disable diagnostics
 for final idle energy measurements, since recording has its own cost.
 
-Compare timestamps with separately attributed Terax host, WebContent, and GPU
-process memory. `await window.__teraxTermSnapshot()` adds native PTY queue
+Compare timestamps with separately attributed Tarex host, WebContent, and GPU
+process memory. `await window.__tarexTermSnapshot()` adds native PTY queue
 counters and host RSS; host RSS alone is not total application memory. Owned
 allocation estimates must not be added to process RSS, which would double-count
 memory. GPU canvas estimates exclude compositor and driver allocations.
@@ -310,7 +310,7 @@ OSC clipboard writes retain one in-flight call and the newest pending value.
 Run native command tracking under the same streaming/reflow workload with:
 
 ```sh
-TERAX_SOAK_BLOCKS=1 TERAX_SOAK_REPORT=/tmp/terax-block-soak.json pnpm soak:ghostty
+TAREX_SOAK_BLOCKS=1 TAREX_SOAK_REPORT=/tmp/tarex-block-soak.json pnpm soak:ghostty
 ```
 
 The [recorded block run](ghostty-resource-soak-2026-09-05-blocks.json) uses five models,

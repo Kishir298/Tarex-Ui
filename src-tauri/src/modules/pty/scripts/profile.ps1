@@ -1,14 +1,14 @@
-# terax-shell-integration (PowerShell)
+# tarex-shell-integration (PowerShell)
 # Emits OSC 7 (cwd) + OSC 133 A/B/C/D so the host tracks cwd and prompt
 # boundaries. C comes from a PSConsoleHostReadLine wrapper (PowerShell has no
 # preexec hook).
 
-if ($global:__TERAX_HOOKS_LOADED) { return }
-$global:__TERAX_HOOKS_LOADED = $true
+if ($global:__TAREX_HOOKS_LOADED) { return }
+$global:__TAREX_HOOKS_LOADED = $true
 
-if ($env:TERAX_CLI -and (Test-Path -LiteralPath $env:TERAX_CLI -PathType Leaf)) {
-    function global:terax {
-        & $env:TERAX_CLI @args
+if ($env:TAREX_CLI -and (Test-Path -LiteralPath $env:TAREX_CLI -PathType Leaf)) {
+    function global:tarex {
+        & $env:TAREX_CLI @args
     }
 }
 
@@ -19,10 +19,10 @@ try {
 } catch {}
 
 if (Test-Path Function:prompt) {
-    Copy-Item Function:prompt Function:__terax_user_prompt -Force -ErrorAction SilentlyContinue
+    Copy-Item Function:prompt Function:__tarex_user_prompt -Force -ErrorAction SilentlyContinue
 }
 
-function global:__terax_urlencode {
+function global:__tarex_urlencode {
     param([string]$s)
     $bytes = [System.Text.Encoding]::UTF8.GetBytes($s)
     $sb = [System.Text.StringBuilder]::new($bytes.Length)
@@ -43,26 +43,26 @@ function global:__terax_urlencode {
 # Wrap PSConsoleHostReadLine (defined by PSReadLine) to emit OSC 133 C with
 # the accepted command line just before execution. Installed lazily from
 # prompt: PSReadLine may finish loading only after this profile has run.
-function global:__terax_install_readline {
-    if ($global:__terax_readline_done) { return }
+function global:__tarex_install_readline {
+    if ($global:__tarex_readline_done) { return }
     if (-not (Test-Path Function:PSConsoleHostReadLine)) { return }
-    $global:__terax_readline_done = $true
+    $global:__tarex_readline_done = $true
     # global: is required -- a plain Function: copy made inside a function
     # lands in its local scope and vanishes when it returns, leaving the
     # wrapper calling a missing command on every read (empty-input loop).
-    Copy-Item Function:PSConsoleHostReadLine Function:global:__terax_user_readline -Force
+    Copy-Item Function:PSConsoleHostReadLine Function:global:__tarex_user_readline -Force
     function global:PSConsoleHostReadLine {
         try {
-            $line = __terax_user_readline
+            $line = __tarex_user_readline
         } catch {
             # Self-heal: restore the original reader so a broken wrapper can
             # never lock the shell out of input.
-            Copy-Item Function:__terax_user_readline Function:global:PSConsoleHostReadLine -Force
+            Copy-Item Function:__tarex_user_readline Function:global:PSConsoleHostReadLine -Force
             return ''
         }
         try {
             if ($line -is [string] -and $line.Trim().Length -gt 0) {
-                $global:__terax_block_seen = $true
+                $global:__tarex_block_seen = $true
                 $esc = [char]27
                 $cmd = $line -replace '[\x00-\x1F\x7F]', ' '
                 if ($cmd.Length -gt 256) { $cmd = $cmd.Substring(0, 256) }
@@ -74,7 +74,7 @@ function global:__terax_install_readline {
 }
 
 function global:prompt {
-    __terax_install_readline
+    __tarex_install_readline
     $lec = $LASTEXITCODE
     if ($null -eq $lec) { $lec = if ($?) { 0 } else { 1 } }
     $esc = [char]27
@@ -88,18 +88,18 @@ function global:prompt {
     if ($loc.Provider.Name -eq 'FileSystem') {
         $cwd = $loc.ProviderPath -replace '\\','/'
         if ($cwd -match '^[A-Za-z]:') { $cwd = "/$cwd" }
-        $cwdEnc = __terax_urlencode $cwd
+        $cwdEnc = __tarex_urlencode $cwd
         $hostName = [System.Environment]::MachineName
         $osc7 = "$esc]7;file://$hostName$cwdEnc$esc\"
     }
 
     $gap = ''
-    if ($env:TERAX_BLOCKS) {
-        $gap = if ($global:__terax_block_seen) { "`n`n" } else { "`n" }
+    if ($env:TAREX_BLOCKS) {
+        $gap = if ($global:__tarex_block_seen) { "`n`n" } else { "`n" }
     }
 
-    $original = if (Test-Path Function:__terax_user_prompt) {
-        try { & __terax_user_prompt } catch { "PS $((Get-Location).Path)> " }
+    $original = if (Test-Path Function:__tarex_user_prompt) {
+        try { & __tarex_user_prompt } catch { "PS $((Get-Location).Path)> " }
     } else {
         "PS $((Get-Location).Path)> "
     }

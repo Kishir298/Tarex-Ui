@@ -6,18 +6,18 @@ release gates are maintained in [release readiness](ghostty-release-readiness.md
 and [renderer ownership](terminal-renderer-pool.md).
 
 As of 2026-09-05, xterm is removed. All leaves use libghostty-vt with WebGPU or
-Terax WebGL, including command blocks. Both SIMD and scalar artifacts ship.
+Tarex WebGL, including command blocks. Both SIMD and scalar artifacts ship.
 Accessible output is available on demand. Actual platform, GUI, and sustained
 resource validation remains required before stable release.
 
 ## Goals
 
-- Preserve Terax shell, PTY, tab, pane, block, AI, clipboard, link, search, IME, and accessibility behavior.
+- Preserve Tarex shell, PTY, tab, pane, block, AI, clipboard, link, search, IME, and accessibility behavior.
 - Render only in response to damage, resize, cursor state, selection, or visibility changes.
 - Keep terminal state correct while a tab is hidden without retaining an unbounded number of GPU contexts.
 - Share expensive GPU resources within one window.
 - Bound scrollback, glyph caches, pending PTY bytes, staging buffers, and renderer count.
-- Measure release builds with identical Terax workloads before selecting a default backend.
+- Measure release builds with identical Tarex workloads before selecting a default backend.
 
 ## Non-goals for the first vertical slice
 
@@ -62,7 +62,7 @@ A visible leaf may attach a lightweight `WebGpuTerminalSurface`. It owns only ca
 
 Hiding a leaf detaches or parks its surface. The model continues parsing without rendering.
 
-The WebGL variant leases an xterm-inspired renderer from Terax's window pool.
+The WebGL variant leases an xterm-inspired renderer from Tarex's window pool.
 It retains only one typed CPU glyph grid and the GPU buffer for that visible
 surface. Dirty Ghostty row ranges become matching `bufferSubData` uploads.
 Hidden leaves release the context immediately.
@@ -94,7 +94,7 @@ warm idle renderer, and reaps surplus idle contexts after 30 seconds.
 
 ## Backend boundary
 
-Product code must depend on Terax contracts instead of xterm classes.
+Product code must depend on Tarex contracts instead of xterm classes.
 
 ```ts
 export interface TerminalModel {
@@ -127,14 +127,14 @@ export interface TerminalSurface {
 
 Search, OSC events, markers, decorations, and viewport access use dedicated contracts. They are not added to one broad compatibility object.
 
-The Ghostty session already uses Terax's raw `Uint8Array` PTY channels in both
+The Ghostty session already uses Tarex's raw `Uint8Array` PTY channels in both
 directions. It does not serialize terminal output through JSON or reconstruct
 hidden terminals from snapshots.
 
 ## Required libghostty-vt ABI work
 
 The upstream bridge is a useful base, but its JavaScript API is not sufficient
-for Terax. The maintained fork currently has the following status.
+for Tarex. The maintained fork currently has the following status.
 
 | ABI capability | Status |
 | --- | --- |
@@ -166,7 +166,7 @@ Runtime replies otherwise belong to libghostty-vt.
 - Ghostty key encoding returns `Uint8Array` and stays binary through `InvokeBody::Raw`.
 - Printable input, IME commits, paste, mouse reports, and terminal replies share the same bounded PTY write queue.
 - The existing macOS CJK compensation remains until native-composition tests prove it is unnecessary.
-- Custom Terax key bindings run before terminal encoding.
+- Custom Tarex key bindings run before terminal encoding.
 - Bracketed paste, focus reporting, mouse modes, and Kitty keyboard state come from the model's current modes.
 
 ## Rendering path
@@ -228,7 +228,7 @@ measurement limits are in [resource efficiency](ghostty-resource-efficiency.md).
 
 ## Current vertical-slice status
 
-Implemented in the Terax branch:
+Implemented in the Tarex branch:
 
 - one persistent libghostty-vt model per Ghostty terminal session;
 - raw binary PTY output, input, and terminal reply transport;
@@ -243,7 +243,7 @@ Implemented in the Terax branch:
 - clipboard copy and bracketed paste;
 - terminal-controlled block, underline, and bar cursor styles and blinking;
 - bounded parser-owned semantic events with secure OSC 7 and OSC 52 routing;
-- parser-owned OSC 8 link activation through Terax's external URL policy;
+- parser-owned OSC 8 link activation through Tarex's external URL policy;
 - parallel font, WASM, and low-power WebGPU initialization with per-session
   startup-stage diagnostics;
 - allocation-free packed RGB reads and cached simple-glyph string creation in
@@ -316,7 +316,7 @@ Implemented in the Terax branch:
 
 Still required before production default:
 
-- title, bell, notification, and Terax block product integration;
+- title, bell, notification, and Tarex block product integration;
 - plain-text URL detection, accessibility, and Kitty graphics;
 - broader IME, shell, TUI, platform, sleep/wake, and device-loss validation;
 - release resource benchmarks against xterm WebGL using identical workloads.
@@ -335,7 +335,7 @@ The new backend cannot become the default until all rows pass on macOS, Windows,
 | Scrollback | wheel, trackpad, keyboard, scrollbar, wrapped lines, resize reflow |
 | Selection | character, word, line, drag outside viewport, copy |
 | Integration | OSC 7, OSC 52, OSC 133, title, links, notifications |
-| Terax blocks | markers, ranges, decorations, sticky headers, block search |
+| Tarex blocks | markers, ranges, decorations, sticky headers, block search |
 | Lifecycle | tabs, split panes, hidden streaming, close, respawn, sleep and wake |
 | Recovery | GPU device loss, font change, scale change, window move |
 | AI APIs | buffer reads, selection reads, writes, interrupts, foreground checks |

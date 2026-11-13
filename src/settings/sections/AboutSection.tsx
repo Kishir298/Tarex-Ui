@@ -8,8 +8,8 @@ import { arch, platform } from "@tauri-apps/plugin-os";
 import { useEffect, useState } from "react";
 import { SectionHeader } from "../components/SectionHeader";
 
-const REPO_URL = "https://github.com/3xecutablefile/terex-ui";
-const WEBSITE = "https://github.com/3xecutablefile/terex-ui#readme";
+const REPO_URL = "https://github.com/Kishir298/Tarex-Ui";
+const WEBSITE = "https://github.com/Kishir298/Tarex-Ui#readme";
 
 const PLATFORM_LABEL: Record<string, string> = {
   macos: "macOS",
@@ -22,7 +22,7 @@ const PLATFORM_LABEL: Record<string, string> = {
 
 export function AboutSection() {
   const [version, setVersion] = useState("");
-  const [name, setName] = useState("Terex UI");
+  const [name, setName] = useState("Tarex UI");
   const [build, setBuild] = useState("");
   const [updateError, setUpdateError] = useState("");
   const onUpdateClick = () => {
@@ -49,7 +49,7 @@ export function AboutSection() {
 
       <div className="flex items-center gap-4 rounded-xl border border-border/60 bg-card/60 p-5">
         <img
-          src="/terex-mark.svg"
+          src="/tarex-mark.svg"
           alt=""
           className="size-12"
           draggable={false}
@@ -75,7 +75,7 @@ export function AboutSection() {
 
         <dt className="text-muted-foreground">Bundle ID</dt>
         <dd className="font-mono text-[11.5px]">
-          io.github.3xecutablefile.terex-ui
+          io.github.kishir298.tarex-ui
         </dd>
 
         <dt className="text-muted-foreground">License</dt>
@@ -89,7 +89,7 @@ export function AboutSection() {
             className="inline-flex items-center gap-1.5 rounded-md text-[12px] underline-offset-2 hover:text-foreground hover:underline"
           >
             <HugeiconsIcon icon={GithubIcon} size={12} strokeWidth={1.75} />
-            3xecutablefile/terex-ui
+            Kishir298/Tarex-Ui
           </button>
         </dd>
         <dt className="text-muted-foreground">Website</dt>
@@ -100,7 +100,7 @@ export function AboutSection() {
             className="inline-flex items-center gap-1.5 rounded-md text-[12px] underline-offset-2 hover:text-foreground hover:underline"
           >
             <HugeiconsIcon icon={Globe02Icon} size={12} strokeWidth={1.75} />
-            Terex UI documentation
+            Tarex UI documentation
           </button>
         </dd>
       </dl>

@@ -28,7 +28,7 @@ export async function osNotify(
     sendNotification({ title, body });
     return "requested";
   } catch (e) {
-    console.warn("[terax] os notification failed:", e);
+    console.warn("[tarex] os notification failed:", e);
     return "failed";
   }
 }
@@ -37,7 +37,7 @@ export async function testAgentOsNotification(
   withSound = true,
 ): Promise<OsNotificationResult> {
   const result = await osNotify(
-    "Terex UI notifications are working",
+    "Tarex UI notifications are working",
     "You will be notified when an agent needs your attention.",
   );
   if (result === "requested" && withSound) playAgentNotificationSound();

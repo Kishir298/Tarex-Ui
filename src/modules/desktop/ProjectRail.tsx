@@ -115,51 +115,51 @@ export function ProjectRail(props: Props) {
   const name = props.path?.replace(/[\\/]+$/, "").split(/[\\/]/).pop() || props.path || "No folder";
 
   return (
-    <aside className="terex-project-rail" aria-label="Project files and changes">
-      <div className="terex-rule"><span>PROJECT</span><span>WORKSPACE</span></div>
-      <div className="terex-project-heading">
+    <aside className="tarex-project-rail" aria-label="Project files and changes">
+      <div className="tarex-rule"><span>PROJECT</span><span>WORKSPACE</span></div>
+      <div className="tarex-project-heading">
         <strong title={props.path ?? undefined}>{name}</strong>
         <button type="button" disabled={!props.path} onClick={() => { if (props.path) props.onBrowse(props.path); }}>Open Files</button>
       </div>
-      <p className="terex-project-path" title={props.path ?? undefined}>{props.path ?? "Choose a workspace folder"}</p>
-      <fieldset className="terex-project-tabs" aria-label="Project view">
+      <p className="tarex-project-path" title={props.path ?? undefined}>{props.path ?? "Choose a workspace folder"}</p>
+      <fieldset className="tarex-project-tabs" aria-label="Project view">
         <button type="button" aria-pressed={view === "files"} onClick={() => setView("files")}>Files</button>
         <button type="button" aria-pressed={view === "changes"} onClick={() => setView("changes")}>Changes{matchesRepo ? ` ${props.git.changedCount}` : ""}</button>
       </fieldset>
       <input type="search" aria-label="Filter project files" placeholder={view === "files" ? "Find a file…" : "Filter changes…"} value={query} maxLength={256} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === "Escape") setQuery(""); }} />
-      {view === "changes" && matchesRepo && <p className="terex-project-branch" title={props.git.status?.branch}>Branch / {props.git.status?.branch || "Detached HEAD"}</p>}
-      <div className="terex-project-list" aria-busy={view === "files" ? pending : props.git.isLoading}>
+      {view === "changes" && matchesRepo && <p className="tarex-project-branch" title={props.git.status?.branch}>Branch / {props.git.status?.branch || "Detached HEAD"}</p>}
+      <div className="tarex-project-list" aria-busy={view === "files" ? pending : props.git.isLoading}>
         {view === "files" ? (
-          listing.scope === scope && listing.error ? <p className="terex-project-message" role="alert">{listing.error}</p> : (
+          listing.scope === scope && listing.error ? <p className="tarex-project-message" role="alert">{listing.error}</p> : (
             <>
               <ul>{files.slice(0, ROW_LIMIT).map((entry) => <li key={entry.name}>
                 <button type="button" title={entry.name} onClick={() => { if (props.path) props.onOpenEntry(entry, props.path); }}>
-                  <span className="terex-project-kind" aria-hidden="true">{entry.kind === "dir" ? "DIR" : entry.kind === "symlink" ? "LINK" : "FILE"}</span>
-                  <span className="terex-project-name">{entry.name}</span>
+                  <span className="tarex-project-kind" aria-hidden="true">{entry.kind === "dir" ? "DIR" : entry.kind === "symlink" ? "LINK" : "FILE"}</span>
+                  <span className="tarex-project-name">{entry.name}</span>
                 </button>
               </li>)}</ul>
-              {!files.length && <p className="terex-project-message" role="status">{pending ? "Reading folder…" : term ? "No matching files" : "No files in this folder"}</p>}
-              {files.length > ROW_LIMIT && <p className="terex-project-message">{ROW_LIMIT} of {files.length} entries. Filter or open Files for the full list.</p>}
+              {!files.length && <p className="tarex-project-message" role="status">{pending ? "Reading folder…" : term ? "No matching files" : "No files in this folder"}</p>}
+              {files.length > ROW_LIMIT && <p className="tarex-project-message">{ROW_LIMIT} of {files.length} entries. Filter or open Files for the full list.</p>}
             </>
           )
-        ) : props.git.localError ? <p className="terex-project-message" role="alert">{props.git.localError}</p> : !matchesRepo ? (
-          <div className="terex-project-message"><p>No Git repository selected for this folder.</p><button type="button" disabled={!props.path} onClick={() => { if (props.path) props.onGit(props.path); }}>Open source control</button></div>
+        ) : props.git.localError ? <p className="tarex-project-message" role="alert">{props.git.localError}</p> : !matchesRepo ? (
+          <div className="tarex-project-message"><p>No Git repository selected for this folder.</p><button type="button" disabled={!props.path} onClick={() => { if (props.path) props.onGit(props.path); }}>Open source control</button></div>
         ) : (
           <>
             <ul>{changes.slice(0, ROW_LIMIT).map((file) => <li key={file.path}>
               <button type="button" title={`${file.statusLabel}: ${file.path}`} onClick={() => props.onOpenDiff({ path: file.path, repoRoot: props.git.repo?.repoRoot ?? "", mode: file.unstaged ? "-" : "+", originalPath: file.originalPath })}>
-                <span className="terex-project-change" aria-hidden="true">{file.untracked ? "?" : file.unstaged ? file.worktreeStatus : file.indexStatus}</span>
-                <span className="terex-project-name">{file.path}</span>
-                {file.staged && !file.unstaged && <span className="terex-project-staged">Staged</span>}
+                <span className="tarex-project-change" aria-hidden="true">{file.untracked ? "?" : file.unstaged ? file.worktreeStatus : file.indexStatus}</span>
+                <span className="tarex-project-name">{file.path}</span>
+                {file.staged && !file.unstaged && <span className="tarex-project-staged">Staged</span>}
               </button>
             </li>)}</ul>
-            {!changes.length && <p className="terex-project-message">{props.git.isLoading ? "Reading changes…" : term ? "No matching changes" : "Working tree clean"}</p>}
-            {changes.length > ROW_LIMIT && <p className="terex-project-message">Showing {ROW_LIMIT} of {changes.length} changes.</p>}
-            {props.git.status?.truncated && <p className="terex-project-message">Git returned a partial file list.</p>}
+            {!changes.length && <p className="tarex-project-message">{props.git.isLoading ? "Reading changes…" : term ? "No matching changes" : "Working tree clean"}</p>}
+            {changes.length > ROW_LIMIT && <p className="tarex-project-message">Showing {ROW_LIMIT} of {changes.length} changes.</p>}
+            {props.git.status?.truncated && <p className="tarex-project-message">Git returned a partial file list.</p>}
           </>
         )}
       </div>
-      <footer className="terex-project-footer">
+      <footer className="tarex-project-footer">
         <span>{view === "files" ? "Click to open" : "Click to review diff"}</span>
         <button type="button" disabled={!visible || !props.path || (view === "files" ? pending : props.git.isLoading)} onClick={() => { setRevision((value) => value + 1); void props.git.refresh({ remote: "never" }); }}>Refresh</button>
       </footer>

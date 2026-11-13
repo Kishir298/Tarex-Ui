@@ -819,7 +819,7 @@ const StreamHandler = struct {
                     },
                     .end_prompt_start_input, .end_prompt_start_input_terminate_eol => {
                         var payload: [5]u8 = undefined;
-                        payload[0] = @intFromBool(!std.mem.eql(u8, value.options_unvalidated, "terax_blocks=0"));
+                        payload[0] = @intFromBool(!std.mem.eql(u8, value.options_unvalidated, "tarex_blocks=0"));
                         std.mem.writeInt(u32, payload[1..5], try self.semantic_markers.capture(self.alloc, self.term), .little);
                         try self.emitEvent(.prompt_end, &.{&payload});
                     },

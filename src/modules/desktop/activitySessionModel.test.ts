@@ -89,10 +89,10 @@ describe("activity sessions", () => {
   it("places local approval above a working terminal and removes the local row when idle", () => {
     const rows = sessions({
       tabs: [terminal(1)], phases: { 1101: "working" },
-      localAgent: { agent: "Terex UI", status: "waiting" },
+      localAgent: { agent: "Tarex UI", status: "waiting" },
     });
     expect(rows[0]).toMatchObject({ kind: "local", phase: "attention", stateLabel: "Approval" });
-    expect(sessionMatches(rows[0], "Terex", "attention")).toBe(true);
+    expect(sessionMatches(rows[0], "Tarex", "attention")).toBe(true);
     expect(sessions()).toEqual([]);
   });
 });

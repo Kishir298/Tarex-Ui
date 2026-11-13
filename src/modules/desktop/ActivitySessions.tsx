@@ -73,8 +73,8 @@ export function ActivitySessions({ tabs, activeTabId, activeLeafId, onActivate, 
   };
 
   return (
-    <section className="terex-activity-sessions" aria-label="Sessions across all spaces">
-      <div className="terex-session-search">
+    <section className="tarex-activity-sessions" aria-label="Sessions across all spaces">
+      <div className="tarex-session-search">
         <input
           ref={searchRef}
           type="search"
@@ -95,7 +95,7 @@ export function ActivitySessions({ tabs, activeTabId, activeLeafId, onActivate, 
         />
         {query && <button type="button" onClick={clearSearch} aria-label="Clear session search">Clear</button>}
       </div>
-      <div className="terex-session-controls">
+      <div className="tarex-session-controls">
         <span role="status">{visibleRows.length}/{rows.length} sessions</span>
         <select
           aria-label="Filter session state"
@@ -109,7 +109,7 @@ export function ActivitySessions({ tabs, activeTabId, activeLeafId, onActivate, 
           <option value="idle">Idle / saved</option>
         </select>
       </div>
-      <div className="terex-session-scroll">
+      <div className="tarex-session-scroll">
         <ul ref={listRef} aria-label="Session activity">
           {rows.map((row) => row.kind === "terminal" ? (
             <TerminalSessionItem
@@ -133,7 +133,7 @@ export function ActivitySessions({ tabs, activeTabId, activeLeafId, onActivate, 
           ))}
         </ul>
         {visibleRows.length === 0 && (
-          <div className="terex-session-empty">
+          <div className="tarex-session-empty">
             <strong>{rows.length === 0 ? "No sessions yet" : "No matching sessions"}</strong>
             <p>{rows.length === 0
               ? "Open a terminal to see its activity here."
@@ -146,7 +146,7 @@ export function ActivitySessions({ tabs, activeTabId, activeLeafId, onActivate, 
           </div>
         )}
       </div>
-      <p className="terex-session-footnote">All spaces · Attention first</p>
+      <p className="tarex-session-footnote">All spaces · Attention first</p>
     </section>
   );
 }
@@ -181,21 +181,21 @@ function SessionItem({ row, hidden, selected, onActivate, onKeyDown }: ItemProps
     <li hidden={hidden}>
       <button
         type="button"
-        className="terex-session-row"
+        className="tarex-session-row"
         data-phase={row.phase}
         aria-current={selected ? "true" : undefined}
         onClick={onActivate}
         onKeyDown={onKeyDown}
         title={[row.title, row.stateLabel, context, description].filter(Boolean).join("\n")}
       >
-        <span className="terex-session-titleline">
-          <span className="terex-session-indicator" aria-hidden="true" />
+        <span className="tarex-session-titleline">
+          <span className="tarex-session-indicator" aria-hidden="true" />
           <strong>{row.title}</strong>
-          <span className="terex-session-state">{row.stateLabel}</span>
+          <span className="tarex-session-state">{row.stateLabel}</span>
         </span>
-        {context && <span className="terex-session-context">{context}</span>}
-        <span className="terex-session-description">{description}</span>
-        {selected && <span className="terex-session-current">Current pane</span>}
+        {context && <span className="tarex-session-context">{context}</span>}
+        <span className="tarex-session-description">{description}</span>
+        {selected && <span className="tarex-session-current">Current pane</span>}
       </button>
     </li>
   );

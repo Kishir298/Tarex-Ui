@@ -29,7 +29,7 @@ import { appDataFile } from "@/lib/appData";
 
 export type ThemePref = "system" | "light" | "dark";
 
-export const DEFAULT_THEME_ID = "terax-default";
+export const DEFAULT_THEME_ID = "tarex-default";
 
 export type BackgroundKind = "none" | "image";
 
@@ -218,7 +218,7 @@ export type LspCustomServer = {
   rootMarkers: string[];
 };
 
-const STORE_PATH = "terax-settings.json";
+const STORE_PATH = "tarex-settings.json";
 const KEY_THEME = "theme";
 const KEY_THEME_ID = "themeId";
 const KEY_BG_KIND = "backgroundKind";
@@ -395,7 +395,7 @@ const store = new LazyStore(appDataFile(STORE_PATH), {
 // page lives in a separate webview, so writes there never reach the main
 // window's subscribers. Mirror every setter through a Tauri event so any
 // window can listen.
-const PREFS_CHANGED_EVENT = "terax://prefs-changed";
+const PREFS_CHANGED_EVENT = "tarex://prefs-changed";
 
 async function writePref<T>(key: string, value: T): Promise<void> {
   await store.set(key, value);
@@ -1080,7 +1080,7 @@ export async function onPreferencesChange(
 
 // API key changes are stored in OS keychain (not the prefs store),
 // so we broadcast via a Tauri event for cross-window listeners.
-const KEYS_CHANGED_EVENT = "terax://ai-keys-changed";
+const KEYS_CHANGED_EVENT = "tarex://ai-keys-changed";
 
 export async function emitKeysChanged(): Promise<void> {
   await emit(KEYS_CHANGED_EVENT);

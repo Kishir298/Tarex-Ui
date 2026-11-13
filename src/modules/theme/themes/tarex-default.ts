@@ -6,10 +6,10 @@ import type { Theme } from "../types";
  * anything declared in `variants` would be dead and would drift. Empty
  * variants also let the settings swatch fall back to the live CSS vars.
  */
-export const teraxDefault: Theme = {
-  id: "terax-default",
-  name: "Terex UI Amethyst",
-  description: "Purple console with lime accents on a dark surface.",
+export const tarexDefault: Theme = {
+  id: "tarex-default",
+  name: "Tarex Signal",
+  description: "Deep signal-green console with warm amber accents.",
   editorTheme: { dark: "github-dark", light: "github-light" },
   variants: {
     light: {},

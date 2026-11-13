@@ -27,7 +27,7 @@ describe("saved terminal agent setup", () => {
     await first.setAgentLaunchDefaults({ agent: "opencode", instances: 3 });
     await first.setAgentLaunchCommands({ ...first.DEFAULT_PREFERENCES.agentLaunchCommands, opencode: "opencode --continue" });
     expect(changed).toHaveBeenCalledWith("agentLaunchDefaults", { agent: "opencode", instances: 3 });
-    expect(fixture.emit).toHaveBeenCalledWith("terax://prefs-changed", { key: "agentLaunchDefaults", value: { agent: "opencode", instances: 3 } });
+    expect(fixture.emit).toHaveBeenCalledWith("tarex://prefs-changed", { key: "agentLaunchDefaults", value: { agent: "opencode", instances: 3 } });
     stop();
     vi.resetModules();
     const second = await import("@/modules/settings/store");

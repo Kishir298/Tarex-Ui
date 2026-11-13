@@ -24,8 +24,8 @@ export function ActivityPanel(props: ActivityPanelProps) {
 
   return (
     <section
-      id="terex-activity-panel"
-      className="terex-activity-panel"
+      id="tarex-activity-panel"
+      className="tarex-activity-panel"
       aria-label="Activity panel"
       onKeyDown={(event) => {
         if (event.key === "Escape" && !event.defaultPrevented) {
@@ -35,7 +35,7 @@ export function ActivityPanel(props: ActivityPanelProps) {
         }
       }}
     >
-      <header className="terex-activity-header">
+      <header className="tarex-activity-header">
         <div>
           <h2>ACTIVITY</h2>
           <p>Your sessions and background work</p>
@@ -44,23 +44,23 @@ export function ActivityPanel(props: ActivityPanelProps) {
           <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8" /></svg>
         </button>
       </header>
-      <Tabs value={view} onValueChange={setView} className="terex-activity-tabs">
-        <TabsList aria-label="Activity views" className="terex-activity-tablist">
+      <Tabs value={view} onValueChange={setView} className="tarex-activity-tabs">
+        <TabsList aria-label="Activity views" className="tarex-activity-tablist">
           <TabsTrigger value="sessions">Sessions</TabsTrigger>
           <TabsTrigger value="jobs">Jobs</TabsTrigger>
         </TabsList>
-        <TabsContent value="sessions" className="terex-activity-body">
-          <Suspense fallback={<p className="terex-activity-loading" role="status">Loading sessions…</p>}>
+        <TabsContent value="sessions" className="tarex-activity-body">
+          <Suspense fallback={<p className="tarex-activity-loading" role="status">Loading sessions…</p>}>
             <ActivitySessions tabs={props.tabs} activeTabId={props.activeTabId} activeLeafId={props.activeLeafId} onActivate={props.onActivate} onOpenAi={props.onOpenAi} />
           </Suspense>
         </TabsContent>
-        <TabsContent value="jobs" className="terex-activity-body">
-          <Suspense fallback={<p className="terex-activity-loading" role="status">Loading background jobs…</p>}>
+        <TabsContent value="jobs" className="tarex-activity-body">
+          <Suspense fallback={<p className="tarex-activity-loading" role="status">Loading background jobs…</p>}>
             <ActivityJobs />
           </Suspense>
         </TabsContent>
       </Tabs>
-      <footer className="terex-activity-tools">
+      <footer className="tarex-activity-tools">
         <span>WORKSPACE TOOLS</span>
         <nav aria-label="Activity workspace tools">
           <button type="button" disabled={!props.onGit} onClick={() => props.onGit?.()}>Git changes</button>

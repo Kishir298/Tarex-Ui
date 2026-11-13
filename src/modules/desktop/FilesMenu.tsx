@@ -55,7 +55,7 @@ export function FilesMenu({ files, actions, children }: { files: DesktopFiles; a
   };
   return <>
     <ContextMenu><ContextMenuTrigger asChild className="select-auto">
-      <div className="terex-files-content" onKeyDownCapture={e => {
+      <div className="tarex-files-content" onKeyDownCapture={e => {
         if ((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="l") {e.preventDefault();e.currentTarget.querySelector<HTMLInputElement>('input[aria-label="Directory path"]')?.focus();}
         const row=(e.target as HTMLElement).closest<HTMLElement>('[data-file-path]');
         if (!row) return;

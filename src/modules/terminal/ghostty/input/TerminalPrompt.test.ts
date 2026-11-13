@@ -1,15 +1,15 @@
 import { readFile } from "node:fs/promises";
-import { TeraxGhostty } from "@terax/ghostty-core/adapted";
+import { TarexGhostty } from "@tarex/ghostty-core/adapted";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { AdaptedGhosttyTerminalModel } from "@/modules/terminal/ghostty/AdaptedGhosttyTerminalModel";
 import { TerminalPrompt, insertPromptDraft } from "@/modules/terminal/ghostty/input/TerminalPrompt";
 import { encodeTerminalPaste } from "@/modules/terminal/ghostty/input/terminalInputEncoding";
 
 describe.each(["ghostty-vt", "ghostty-vt-scalar"])("raw shell prompt (%s)", (artifact) => {
-  let core: TeraxGhostty;
+  let core: TarexGhostty;
   beforeAll(async () => {
     const bytes = await readFile(new URL(`../../../../../packages/ghostty-core/adapted/${artifact}.wasm`, import.meta.url));
-    core = await TeraxGhostty.loadBytes(Uint8Array.from(bytes).buffer);
+    core = await TarexGhostty.loadBytes(Uint8Array.from(bytes).buffer);
   });
   function create() {
     const prompt = new TerminalPrompt();

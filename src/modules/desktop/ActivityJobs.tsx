@@ -200,11 +200,11 @@ export function ActivityJobs() {
   const runningCount = jobs.filter((job) => !job.exited).length;
 
   return (
-    <section className="terex-activity-jobs" aria-label="Agent background jobs">
-      <p className="terex-jobs-scope">
+    <section className="tarex-activity-jobs" aria-label="Agent background jobs">
+      <p className="tarex-jobs-scope">
         Background jobs started by the AI agent
       </p>
-      <div className="terex-jobs-toolbar">
+      <div className="tarex-jobs-toolbar">
         <span role="status">
           {!presented
             ? "Updates paused"
@@ -224,12 +224,12 @@ export function ActivityJobs() {
         </button>
       </div>
       {error && (
-        <p className="terex-jobs-error" role="alert">
+        <p className="tarex-jobs-error" role="alert">
           Could not refresh jobs. {error}
         </p>
       )}
       {loaded && jobs.length === 0 && (
-        <div className="terex-jobs-empty">
+        <div className="tarex-jobs-empty">
           <strong>No background jobs</strong>
           <p>
             When the AI agent starts a background command, its status and output
@@ -238,20 +238,20 @@ export function ActivityJobs() {
         </div>
       )}
       {jobs.length > 0 && (
-        <ul className="terex-jobs-list" aria-label="Background commands">
+        <ul className="tarex-jobs-list" aria-label="Background commands">
           {jobs.map((job) => (
             <li key={job.handle}>
               <button
                 type="button"
-                className="terex-job-row"
+                className="tarex-job-row"
                 aria-pressed={job.handle === selectedHandle}
                 aria-controls={outputId}
                 onClick={() => select(job.handle)}
               >
-                <span className="terex-job-identity">
+                <span className="tarex-job-identity">
                   <span>JOB {String(job.handle).padStart(2, "0")}</span>
                   <span
-                    className="terex-job-status"
+                    className="tarex-job-status"
                     data-state={jobStatus(job)}
                   >
                     {jobStatus(job)}
@@ -261,7 +261,7 @@ export function ActivityJobs() {
                   </span>
                 </span>
                 <strong title={job.command}>{job.command}</strong>
-                <span className="terex-job-path" title={job.cwd ?? undefined}>
+                <span className="tarex-job-path" title={job.cwd ?? undefined}>
                   {job.cwd ?? "Inherited working directory"}
                 </span>
               </button>
@@ -272,17 +272,17 @@ export function ActivityJobs() {
       {selected && (
         <section
           id={outputId}
-          className="terex-job-detail"
+          className="tarex-job-detail"
           aria-label={`Output for job ${selected.handle}`}
         >
-          <div className="terex-job-detail-header">
+          <div className="tarex-job-detail-header">
             <h3>
               Output <span>/ {String(selected.handle).padStart(2, "0")}</span>
             </h3>
             {!selected.exited && (
               <button
                 type="button"
-                className="terex-job-stop"
+                className="tarex-job-stop"
                 onClick={() => void stop()}
                 disabled={stopping !== null || !presented}
                 aria-label={`Stop background job ${selected.handle}`}
@@ -291,25 +291,25 @@ export function ActivityJobs() {
               </button>
             )}
           </div>
-          <p className="terex-job-started">
+          <p className="tarex-job-started">
             Started {new Date(selected.started_at_ms).toLocaleString()}
           </p>
-          <p className="terex-job-command">{selected.command}</p>
-          <p className="terex-job-directory">
+          <p className="tarex-job-command">{selected.command}</p>
+          <p className="tarex-job-directory">
             {selected.cwd ?? "Inherited working directory"}
           </p>
           {stopError?.handle === selected.handle && (
-            <p className="terex-jobs-error" role="alert">
+            <p className="tarex-jobs-error" role="alert">
               Could not stop job. {stopError.message}
             </p>
           )}
           {currentOutput?.error && (
-            <p className="terex-jobs-error" role="alert">
+            <p className="tarex-jobs-error" role="alert">
               Could not read output. {currentOutput.error} Use Refresh to retry.
             </p>
           )}
           <section
-            className="terex-job-output"
+            className="tarex-job-output"
             ref={scroll}
             // biome-ignore lint/a11y/noNoninteractiveTabindex: The log region needs keyboard scrolling.
             tabIndex={0}
@@ -329,7 +329,7 @@ export function ActivityJobs() {
             {currentOutput?.text ? (
               <pre>{currentOutput.text}</pre>
             ) : (
-              <p className="terex-job-output-empty">
+              <p className="tarex-job-output-empty">
                 {currentOutput?.error
                   ? "Output unavailable."
                   : !currentOutput?.loaded
@@ -340,7 +340,7 @@ export function ActivityJobs() {
               </p>
             )}
           </section>
-          <div className="terex-job-output-footer">
+          <div className="tarex-job-output-footer">
             <span>
               {currentOutput?.truncated
                 ? "Earlier output omitted"

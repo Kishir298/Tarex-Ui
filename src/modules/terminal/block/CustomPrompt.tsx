@@ -22,20 +22,20 @@ export function CustomPrompt({
   const knownOs = os === "macOS" || os === "Windows" || os === "Linux";
   return (
     <span
-      className="terex-shell-prompt"
+      className="tarex-shell-prompt"
       role="img"
       aria-label={`${os ?? "System"} terminal prompt, ${path}`}
       data-os={os ?? "unknown"}
       title={cwd ?? "Waiting for shell directory"}
     >
-      <span className="terex-prompt-os" aria-hidden="true">
+      <span className="tarex-prompt-os" aria-hidden="true">
         {knownOs ? (
           <OsIcon os={os} />
         ) : (
           <HugeiconsIcon icon={TerminalIcon} size={14} />
         )}
       </span>
-      <span className="terex-prompt-path" aria-hidden="true">
+      <span className="tarex-prompt-path" aria-hidden="true">
         <HugeiconsIcon icon={inHome ? Home01Icon : Folder01Icon} size={14} />
         <span>{path}</span>
       </span>

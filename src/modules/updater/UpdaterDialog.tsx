@@ -51,7 +51,7 @@ export function UpdaterDialog({
         <DialogHeader>
           <DialogTitle>
             {status.kind === "ready"
-              ? `Terex UI ${status.version} is ready`
+              ? `Tarex UI ${status.version} is ready`
               : downloading
                 ? "Downloading update"
                 : status.kind === "checking"
@@ -62,7 +62,7 @@ export function UpdaterDialog({
                       ? "Update could not finish"
                       : status.kind === "manual"
                         ? "Package update"
-                        : "Terex UI is up to date"}
+                        : "Tarex UI is up to date"}
           </DialogTitle>
           <DialogDescription>
             {status.kind === "ready"
@@ -74,7 +74,7 @@ export function UpdaterDialog({
                   : downloading
                     ? `${(status.downloaded / 1048576).toFixed(1)} MB downloaded${percent !== null ? ` (${percent.toFixed(0)}%)` : ""}`
                     : locked
-                      ? "Terex UI will restart when installation finishes."
+                      ? "Tarex UI will restart when installation finishes."
                       : status.kind === "checking"
                         ? "Checking the signed release channel."
                         : "No newer release is available."}
@@ -101,7 +101,7 @@ export function UpdaterDialog({
             <Button
               onClick={() =>
                 void openUrl(
-                  "https://github.com/3xecutablefile/terex-ui/releases/latest",
+                  "https://github.com/Kishir298/Tarex-Ui/releases/latest",
                 )
               }
             >

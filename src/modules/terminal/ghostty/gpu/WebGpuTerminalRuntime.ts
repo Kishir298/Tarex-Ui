@@ -426,7 +426,7 @@ export class WebGpuTerminalRuntime {
         }
         try {
           encoder ??= resources.device.createCommandEncoder({
-            label: "Terax terminal window frame",
+            label: "Tarex terminal window frame",
           });
           if (surface.renderFrame(encoder, resources)) {
             this.pacer.presented(surface, frameAt);
@@ -506,7 +506,7 @@ export class WebGpuTerminalRuntime {
     this.assertLive();
     if (!adapter) throw new Error("No compatible WebGPU adapter was found");
     const device = await adapter.requestDevice({
-      label: "Terax shared terminal renderer",
+      label: "Tarex shared terminal renderer",
     });
     if (this.disposed || this.fatalError) {
       device.destroy();
@@ -553,7 +553,7 @@ export class WebGpuTerminalRuntime {
     format: GPUTextureFormat,
   ): Promise<void> {
     this.colorBindGroupLayout = device.createBindGroupLayout({
-      label: "Terax terminal color bindings",
+      label: "Tarex terminal color bindings",
       entries: [
         {
           binding: 0,
@@ -563,7 +563,7 @@ export class WebGpuTerminalRuntime {
       ],
     });
     this.glyphBindGroupLayout = device.createBindGroupLayout({
-      label: "Terax terminal glyph bindings",
+      label: "Tarex terminal glyph bindings",
       entries: [
         {
           binding: 0,
@@ -589,15 +589,15 @@ export class WebGpuTerminalRuntime {
     });
 
     const colorModule = device.createShaderModule({
-      label: "Terax terminal color shader",
+      label: "Tarex terminal color shader",
       code: COLOR_SHADER,
     });
     const glyphModule = device.createShaderModule({
-      label: "Terax terminal glyph shader",
+      label: "Tarex terminal glyph shader",
       code: GLYPH_SHADER,
     });
     const colorPipelineDescriptor: GPURenderPipelineDescriptor = {
-      label: "Terax terminal color pipeline",
+      label: "Tarex terminal color pipeline",
       layout: device.createPipelineLayout({
         bindGroupLayouts: [this.colorBindGroupLayout],
       }),
@@ -614,7 +614,7 @@ export class WebGpuTerminalRuntime {
       primitive: { topology: "triangle-list" },
     };
     const glyphPipelineDescriptor: GPURenderPipelineDescriptor = {
-      label: "Terax terminal glyph pipeline",
+      label: "Tarex terminal glyph pipeline",
       layout: device.createPipelineLayout({
         bindGroupLayouts: [this.glyphBindGroupLayout],
       }),
@@ -653,7 +653,7 @@ export class WebGpuTerminalRuntime {
     this.colorPipeline = colorPipeline;
     this.glyphPipeline = glyphPipeline;
     this.glyphSampler = device.createSampler({
-      label: "Terax terminal glyph sampler",
+      label: "Tarex terminal glyph sampler",
       minFilter: "linear",
       magFilter: "linear",
     });

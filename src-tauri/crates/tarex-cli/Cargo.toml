@@ -1,18 +1,18 @@
 [package]
-name = "terax-cli"
+name = "tarex-cli"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 publish = false
 
 [[bin]]
-name = "terax-cli"
+name = "tarex-cli"
 path = "src/main.rs"
 
 [dependencies]
 dirs = "7"
 serde_json = "1"
-terax-control-protocol = { path = "../terax-control-protocol" }
+tarex-control-protocol = { path = "../tarex-control-protocol" }
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"

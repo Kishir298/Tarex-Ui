@@ -6,8 +6,8 @@ import { sharedConfigDirectory } from "@/lib/appData";
 import type { Theme } from "./types";
 import { validateTheme, type ValidationResult } from "./validateTheme";
 
-const THEME_FILE_EXT = ".terax-theme";
-const THEME_EDIT_EVENT = "terax://theme-edit";
+const THEME_FILE_EXT = ".tarex-theme";
+const THEME_EDIT_EVENT = "tarex://theme-edit";
 
 export type ThemeEditRequest =
   | { action: "create" }

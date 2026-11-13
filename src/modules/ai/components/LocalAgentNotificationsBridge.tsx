@@ -5,7 +5,7 @@ import type { AgentStatus } from "@/modules/agents/lib/types";
 import { useEffect, useRef } from "react";
 import { useChatStore } from "../store/chatStore";
 
-const AGENT = "Terex UI";
+const AGENT = "Tarex UI";
 
 type RunStatus =
   | "idle"
@@ -63,11 +63,11 @@ export function LocalAgentNotificationsBridge() {
       });
 
     if (status === "awaiting-approval") {
-      fire("attention", "Terex UI needs your approval", "Approve a tool to continue");
+      fire("attention", "Tarex UI needs your approval", "Approve a tool to continue");
     } else if (status === "error") {
-      fire("error", "Terex UI run failed", error ?? undefined);
+      fire("error", "Tarex UI run failed", error ?? undefined);
     } else if (status === "idle" && isBusy(was)) {
-      fire("finished", "Terex UI finished", "Your task is ready");
+      fire("finished", "Tarex UI finished", "Your task is ready");
     }
   }, [status, error]);
 

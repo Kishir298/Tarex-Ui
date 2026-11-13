@@ -59,7 +59,7 @@ export function WorkspaceInputBar({
     <section
       data-ai-input-bar
       data-state={open ? "open" : "closed"}
-      className="terax-reveal"
+      className="tarex-reveal"
       aria-label="AI agent composer"
       aria-hidden={!open}
       inert={!open}

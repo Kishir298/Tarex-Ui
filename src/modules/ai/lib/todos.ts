@@ -10,7 +10,7 @@ export type Todo = {
   status: TodoStatus;
 };
 
-const STORE_PATH = "terax-ai-todos.json";
+const STORE_PATH = "tarex-ai-todos.json";
 const todosKey = (sessionId: string) => `todos:${sessionId}`;
 
 const store = new LazyStore(appDataFile(STORE_PATH), { defaults: {}, autoSave: 200 });

@@ -5,7 +5,7 @@ use tauri::{
     AppHandle, Manager, Runtime,
 };
 
-const GUARDED_QUIT_MENU_ID: &str = "terax.quit";
+const GUARDED_QUIT_MENU_ID: &str = "tarex.quit";
 const QUIT_ACCELERATOR: &str = "Command+Q";
 
 fn invalid_default_menu(message: &'static str) -> tauri::Error {

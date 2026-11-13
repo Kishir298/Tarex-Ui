@@ -15,7 +15,7 @@ pushd "$work" >/dev/null
 ./original.AppImage --appimage-extract >/dev/null
 # Use the host Wayland libraries instead of Ubuntu 22.04's older bundled copies.
 rm -f squashfs-root/usr/lib/libwayland-{client,egl,cursor,server}.so*
-test -x squashfs-root/usr/bin/terex-ui
+test -x squashfs-root/usr/bin/tarex-ui
 curl --fail --show-error --location --retry 3 \
   https://github.com/AppImage/appimagetool/releases/download/1.9.1/appimagetool-x86_64.AppImage \
   -o appimagetool.AppImage

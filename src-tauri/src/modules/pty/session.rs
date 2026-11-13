@@ -14,7 +14,7 @@ use super::output::{OutputCredit, MAX_BUFFERED_BYTES};
 use super::shell_init;
 use crate::modules::workspace::WorkspaceEnv;
 
-const AGENT_EVENT: &str = "terax:agent-signal";
+const AGENT_EVENT: &str = "tarex:agent-signal";
 
 // Sparse output keeps low interactive latency. Sustained output is aligned to
 // the display cadence so IPC cannot outpace useful terminal presentation.
@@ -361,7 +361,7 @@ pub fn spawn(
     let app_reader = app.clone();
     let first_byte_r = first_byte;
     let reader_thread = thread::Builder::new()
-        .name("terax-pty-reader".into())
+        .name("tarex-pty-reader".into())
         .spawn(move || {
             let mut buf = [0u8; READ_BUF];
             let mut filtered: Vec<u8> = Vec::with_capacity(READ_BUF);
@@ -427,7 +427,7 @@ pub fn spawn(
     #[cfg(unix)]
     let reader_control_f = reader_control.clone();
     let flusher_thread = thread::Builder::new()
-        .name("terax-pty-flusher".into())
+        .name("tarex-pty-flusher".into())
         .spawn(move || {
             let mut last_flush_at: Option<Instant> = None;
             loop {
@@ -465,7 +465,7 @@ pub fn spawn(
     #[cfg(windows)]
     let master_e = session.master.clone();
     thread::Builder::new()
-        .name("terax-pty-waiter".into())
+        .name("tarex-pty-waiter".into())
         .spawn(move || {
             let code = match child.wait() {
                 Ok(status) => status.exit_code() as i32,

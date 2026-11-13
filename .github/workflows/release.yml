@@ -1,4 +1,4 @@
-name: Release Terex UI
+name: Release Tarex UI
 
 on:
   push:
@@ -55,7 +55,7 @@ jobs:
       run:
         shell: bash
     env:
-      TERAX_CLI_TARGET: ${{ matrix.target }}
+      TAREX_CLI_TARGET: ${{ matrix.target }}
       CARGO_INCREMENTAL: "0"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -141,7 +141,7 @@ jobs:
           tag="build-$BUILD-$ATTEMPT"
           notes="$(mktemp)"
           cat > "$notes" <<EOF
-          Automatic Terex UI build from commit $COMMIT.
+          Automatic Tarex UI build from commit $COMMIT.
 
           - macOS: Apple Silicon and Intel DMG installers and app archives.
           - Linux x64: AppImage, DEB, and RPM.
@@ -156,4 +156,4 @@ jobs:
           head="$(gh api "repos/$GH_REPO/git/ref/heads/main" --jq .object.sha)"
           latest=false
           if [[ "$COMMIT" == "$head" ]]; then latest=true; fi
-          gh release create "$tag" "${assets[@]}" --target "$COMMIT" --title "Terex UI build $BUILD.$ATTEMPT" --notes-file "$notes" --latest="$latest"
+          gh release create "$tag" "${assets[@]}" --target "$COMMIT" --title "Tarex UI build $BUILD.$ATTEMPT" --notes-file "$notes" --latest="$latest"

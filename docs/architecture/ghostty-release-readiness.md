@@ -2,7 +2,7 @@
 
 Status on 2026-09-07: Ghostty-only implementation, with packaged release validation
 still open. xterm and its addons are removed. All terminals, including blocks,
-use Ghostty with WebGPU or Terax WebGL. This is a testable release candidate,
+use Ghostty with WebGPU or Tarex WebGL. This is a testable release candidate,
 not evidence of multi-platform, multi-day production certification.
 
 The [final resource audit](ghostty-final-audit-2026-09-07.md) records the latest
@@ -71,11 +71,11 @@ limits. Packaged throughput and all-day resource measurements still gate release
   timing variation, ownership tests, and measurement limits.
 
 The final macOS arm64 candidate was built separately as
-`src-tauri/target/release/bundle/macos/Terax Resource Candidate.app` to avoid
-replacing the running `Terax.app`. It occupies 9,848 KiB on disk, and its local
+`src-tauri/target/release/bundle/macos/Tarex Resource Candidate.app` to avoid
+replacing the running `Tarex.app`. It occupies 9,848 KiB on disk, and its local
 ad-hoc signature passes `codesign --verify --deep --strict`. It was not launched
 or installed. Its application identifier is unchanged, so quit the existing
-Terax before switching to the candidate for manual testing.
+Tarex before switching to the candidate for manual testing.
 
 These checks establish reproducible core/resource invariants. They do not close
 packaged throughput, real GPU fault injection, macOS desktop-switch attribution,
@@ -116,7 +116,7 @@ The rebuilt macOS arm64 application occupies 9,848 KiB (about 9.6 MiB) on disk,
 down from 10,600 KiB in the September 6 font build. Its local ad-hoc signature
 passes `codesign --verify --deep --strict`. This is an application-directory size,
 not a compressed installer size. The app was not launched or installed during
-this pass. The test candidate is at `src-tauri/target/release/bundle/macos/Terax.app`.
+this pass. The test candidate is at `src-tauri/target/release/bundle/macos/Tarex.app`.
 
 The readiness review checked transport credit/retry behavior, GPU submission and
 atlas ownership, occlusion subscriptions, dependency removal, and CI coverage.
@@ -324,13 +324,13 @@ and implementation before it can be advertised.
 
 ```sh
 pnpm tauri build --bundles app --config '{"bundle":{"createUpdaterArtifacts":false}}'
-codesign --force --sign - src-tauri/target/release/bundle/macos/Terax.app/Contents/MacOS/terax-cli
-codesign --force --sign - --entitlements src-tauri/entitlements.plist src-tauri/target/release/bundle/macos/Terax.app
-codesign --verify --deep --strict src-tauri/target/release/bundle/macos/Terax.app
+codesign --force --sign - src-tauri/target/release/bundle/macos/Tarex.app/Contents/MacOS/tarex-cli
+codesign --force --sign - --entitlements src-tauri/entitlements.plist src-tauri/target/release/bundle/macos/Tarex.app
+codesign --verify --deep --strict src-tauri/target/release/bundle/macos/Tarex.app
 ```
 
 Use the new local app bundle without replacing the installed daily-driver build:
-`src-tauri/target/release/bundle/macos/Terax.app`. The build shares the existing
+`src-tauri/target/release/bundle/macos/Tarex.app`. The build shares the existing
 application identifier and settings; it is not a separate user-data profile.
 
 1. Start Fish with Starship, run several commands, then drag split boundaries
@@ -358,10 +358,10 @@ Enable diagnostics, reload, and capture the following before and after each
 identical workload on xterm and Ghostty builds:
 
 ```js
-localStorage.setItem("terax:terminal-diagnostics", "1");
+localStorage.setItem("tarex:terminal-diagnostics", "1");
 // After reload:
-window.__teraxTerm();
-await window.__teraxTermSnapshot();
+window.__tarexTerm();
+await window.__tarexTermSnapshot();
 ```
 
 `native.hostRssBytes` covers the Rust host only. Collect WebContent and GPU
@@ -425,8 +425,8 @@ The Ghostty-only candidate passed on macOS arm64:
   and verified with `codesign --verify --deep --strict`. The arm64 `.app` uses
   about 9.6 MiB on disk; this is not a compressed installer-size measurement.
 
-The candidate is at `src-tauri/target/release/bundle/macos/Terax.app`. It was not
-launched or installed, and no measurements were taken from another running Terax.
+The candidate is at `src-tauri/target/release/bundle/macos/Tarex.app`. It was not
+launched or installed, and no measurements were taken from another running Tarex.
 This verification leaves the platform, packaged GUI, accessibility, and sustained
 resource release gates above open.
 

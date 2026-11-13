@@ -19,19 +19,19 @@ it.skipIf(process.platform === "win32")(
         "-c",
         `
 source() { :; }
-export TERAX_BLOCKS=1
+export TAREX_BLOCKS=1
 PS1='test> '
 . "$1" >/dev/null
 if (( BASH_VERSINFO[0] > 4 || BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 4 )); then
-  test "$TERAX_BLOCKS" = 1 || exit 10
+  test "$TAREX_BLOCKS" = 1 || exit 10
   case "$PS0" in *'133;C'*) ;; *) exit 11 ;; esac
 else
-  test -z "$TERAX_BLOCKS" || exit 12
-  case "$PS1" in 'test> '*'terax_blocks=0'*) ;; *) exit 13 ;; esac
+  test -z "$TAREX_BLOCKS" || exit 12
+  case "$PS1" in 'test> '*'tarex_blocks=0'*) ;; *) exit 13 ;; esac
 fi
 case "$PS1" in 'test> '*'133;B'*) ;; *) exit 14 ;; esac
 `,
-        "terax-test",
+        "tarex-test",
         script,
       ],
       {

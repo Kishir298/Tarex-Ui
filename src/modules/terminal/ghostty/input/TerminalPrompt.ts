@@ -1,4 +1,4 @@
-import type { GhosttyTerminalEvent } from "@terax/ghostty-core/protocol";
+import type { GhosttyTerminalEvent } from "@tarex/ghostty-core/protocol";
 import type { GhosttyTerminalModelApi } from "@/modules/terminal/ghostty/GhosttyTerminalModel";
 
 export type PromptLine = {

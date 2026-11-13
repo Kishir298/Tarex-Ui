@@ -92,7 +92,7 @@ export function phaseForSignal(
 // reports per-pty lifecycle: started, working, attention, finished, exited.
 export function ensureAgentActivityListener(): Promise<void> {
   if (listenerReady) return listenerReady;
-  listenerReady = listen<AgentSignal>("terax:agent-signal", (e) => {
+  listenerReady = listen<AgentSignal>("tarex:agent-signal", (e) => {
     const { id, agent } = e.payload;
     const action = phaseForSignal(e.payload.kind);
     if (action === null) return;

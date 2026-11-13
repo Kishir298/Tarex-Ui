@@ -6,15 +6,15 @@ describe("GhosttySemanticEventRouter", () => {
     const onCwd = vi.fn();
     const router = new GhosttySemanticEventRouter({ onCwd });
 
-    router.handle({ type: "pwd", uri: "file://localhost/Users/terax" });
+    router.handle({ type: "pwd", uri: "file://localhost/Users/tarex" });
     router.handle({ type: "prompt-end" });
     router.handle({ type: "pwd", uri: "file://attacker/tmp/ignored" });
     router.handle({ type: "end-of-command", exitCode: 0 });
-    router.handle({ type: "pwd", uri: "file://localhost/Users/terax/src" });
+    router.handle({ type: "pwd", uri: "file://localhost/Users/tarex/src" });
 
     expect(onCwd).toHaveBeenCalledTimes(2);
-    expect(onCwd).toHaveBeenNthCalledWith(1, "/Users/terax");
-    expect(onCwd).toHaveBeenNthCalledWith(2, "/Users/terax/src");
+    expect(onCwd).toHaveBeenNthCalledWith(1, "/Users/tarex");
+    expect(onCwd).toHaveBeenNthCalledWith(2, "/Users/tarex/src");
   });
 
   it("tracks command execution separately from prompt input", () => {

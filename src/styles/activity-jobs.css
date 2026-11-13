@@ -1,4 +1,4 @@
-.terex-activity-jobs {
+.tarex-activity-jobs {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -8,40 +8,40 @@
   min-height: 0;
   padding: 12px;
   overflow: auto;
-  color: var(--terex-bright, var(--foreground));
+  color: var(--tarex-bright, var(--foreground));
   font: 11px/1.5 "JetBrains Mono", monospace;
   scrollbar-width: thin;
-  scrollbar-color: var(--terex-line, var(--border)) transparent;
+  scrollbar-color: var(--tarex-line, var(--border)) transparent;
 }
 
-.terex-jobs-scope,
-.terex-job-started,
-.terex-job-directory {
+.tarex-jobs-scope,
+.tarex-job-started,
+.tarex-job-directory {
   margin: 0;
   color: var(--muted-foreground);
   overflow-wrap: anywhere;
 }
 
-.terex-jobs-toolbar,
-.terex-job-detail-header,
-.terex-job-output-footer,
-.terex-job-identity {
+.tarex-jobs-toolbar,
+.tarex-job-detail-header,
+.tarex-job-output-footer,
+.tarex-job-identity {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
 
-.terex-jobs-toolbar > span,
-.terex-job-output-footer > span {
+.tarex-jobs-toolbar > span,
+.tarex-job-output-footer > span {
   min-width: 0;
   color: var(--muted-foreground);
   font-size: 10px;
 }
 
-.terex-activity-jobs button {
+.tarex-activity-jobs button {
   min-height: 32px;
-  border: 1px solid var(--terex-line, var(--border));
+  border: 1px solid var(--tarex-line, var(--border));
   border-radius: 2px;
   padding: 4px 8px;
   background: transparent;
@@ -51,42 +51,42 @@
   transition: border-color 120ms, background-color 120ms, color 120ms;
 }
 
-.terex-activity-jobs button:hover:not(:disabled) {
+.tarex-activity-jobs button:hover:not(:disabled) {
   border-color: var(--ring);
   background: var(--muted);
 }
 
-.terex-activity-jobs button:active:not(:disabled) {
+.tarex-activity-jobs button:active:not(:disabled) {
   background: var(--secondary);
 }
 
-.terex-activity-jobs button:disabled {
+.tarex-activity-jobs button:disabled {
   color: var(--muted-foreground);
   cursor: default;
 }
 
-.terex-activity-jobs button:focus-visible,
-.terex-job-output:focus-visible {
+.tarex-activity-jobs button:focus-visible,
+.tarex-job-output:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: -2px;
 }
 
-.terex-jobs-empty {
+.tarex-jobs-empty {
   padding: 24px 8px;
-  border-block: 1px solid var(--terex-line, var(--border));
+  border-block: 1px solid var(--tarex-line, var(--border));
 }
 
-.terex-jobs-empty strong {
+.tarex-jobs-empty strong {
   font-size: 12px;
   font-weight: 500;
 }
 
-.terex-jobs-empty p {
+.tarex-jobs-empty p {
   margin: 8px 0 0;
   color: var(--muted-foreground);
 }
 
-.terex-jobs-error {
+.tarex-jobs-error {
   margin: 0;
   padding: 8px;
   border-left: 2px solid var(--destructive);
@@ -95,7 +95,7 @@
   overflow-wrap: anywhere;
 }
 
-.terex-jobs-list {
+.tarex-jobs-list {
   flex: 0 1 auto;
   min-height: 84px;
   max-height: min(36vh, 280px);
@@ -104,15 +104,15 @@
   overflow: auto;
   list-style: none;
   scrollbar-width: thin;
-  scrollbar-color: var(--terex-line, var(--border)) transparent;
+  scrollbar-color: var(--tarex-line, var(--border)) transparent;
   overscroll-behavior: contain;
 }
 
-.terex-jobs-list li + li {
+.tarex-jobs-list li + li {
   margin-top: 4px;
 }
 
-.terex-jobs-list .terex-job-row {
+.tarex-jobs-list .tarex-job-row {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -122,13 +122,13 @@
   text-align: left;
 }
 
-.terex-job-row[aria-pressed="true"] {
-  border-color: var(--terex-blue, var(--primary));
+.tarex-job-row[aria-pressed="true"] {
+  border-color: var(--tarex-blue, var(--primary));
   background: color-mix(in srgb, var(--primary) 10%, var(--background));
-  box-shadow: inset 2px 0 var(--terex-blue, var(--primary));
+  box-shadow: inset 2px 0 var(--tarex-blue, var(--primary));
 }
 
-.terex-job-identity {
+.tarex-job-identity {
   width: 100%;
   color: var(--muted-foreground);
   font-size: 10px;
@@ -136,20 +136,20 @@
   letter-spacing: .02em;
 }
 
-.terex-job-status {
+.tarex-job-status {
   text-transform: uppercase;
 }
 
-.terex-job-status[data-state="running"] {
+.tarex-job-status[data-state="running"] {
   color: var(--ring);
 }
 
-.terex-job-status[data-state="failed"] {
+.tarex-job-status[data-state="failed"] {
   color: var(--destructive);
 }
 
-.terex-job-row strong,
-.terex-job-path {
+.tarex-job-row strong,
+.tarex-job-path {
   display: block;
   width: 100%;
   min-width: 0;
@@ -158,27 +158,27 @@
   white-space: nowrap;
 }
 
-.terex-job-row strong {
+.tarex-job-row strong {
   font-size: 12px;
   font-weight: 500;
 }
 
-.terex-job-path {
+.tarex-job-path {
   color: var(--muted-foreground);
   font-size: 10px;
 }
 
-.terex-job-detail {
+.tarex-job-detail {
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 6px;
   min-height: 210px;
-  border-top: 1px solid var(--terex-line, var(--border));
+  border-top: 1px solid var(--tarex-line, var(--border));
   padding-top: 8px;
 }
 
-.terex-job-detail h3 {
+.tarex-job-detail h3 {
   margin: 0;
   font-size: 11px;
   font-weight: 500;
@@ -186,20 +186,20 @@
   text-transform: uppercase;
 }
 
-.terex-job-detail h3 span {
-  color: var(--terex-blue, var(--primary));
+.tarex-job-detail h3 span {
+  color: var(--tarex-blue, var(--primary));
 }
 
-.terex-job-detail .terex-job-stop {
+.tarex-job-detail .tarex-job-stop {
   color: var(--destructive);
 }
 
-.terex-job-started,
-.terex-job-directory {
+.tarex-job-started,
+.tarex-job-directory {
   font-size: 10px;
 }
 
-.terex-job-command {
+.tarex-job-command {
   max-height: 72px;
   margin: 0;
   overflow: auto;
@@ -207,22 +207,22 @@
   white-space: pre-wrap;
 }
 
-.terex-job-output {
+.tarex-job-output {
   flex: 1 1 220px;
   min-height: 100px;
-  border: 1px solid var(--terex-line, var(--border));
+  border: 1px solid var(--tarex-line, var(--border));
   padding: 8px;
   overflow: auto;
   background: var(--background);
   color: var(--foreground);
   scrollbar-width: thin;
-  scrollbar-color: var(--terex-blue, var(--primary)) transparent;
+  scrollbar-color: var(--tarex-blue, var(--primary)) transparent;
   overscroll-behavior: contain;
   overflow-anchor: none;
   user-select: text;
 }
 
-.terex-job-output pre {
+.tarex-job-output pre {
   margin: 0;
   font: inherit;
   line-height: 1.55;
@@ -230,20 +230,20 @@
   white-space: pre;
 }
 
-.terex-job-output-empty {
+.tarex-job-output-empty {
   margin: 0;
   color: var(--muted-foreground);
 }
 
-.terex-job-output-footer button {
+.tarex-job-output-footer button {
   flex-shrink: 0;
   font-size: 10px;
 }
 
 @media (pointer: coarse) {
-  .terex-activity-jobs button { min-height: 44px; }
+  .tarex-activity-jobs button { min-height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .terex-activity-jobs button { transition: none; }
+  .tarex-activity-jobs button { transition: none; }
 }

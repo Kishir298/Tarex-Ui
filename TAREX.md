@@ -1,16 +1,138 @@
-# TERAX.md
+# TAREX.md — Tarex UI Working Memory
 
-Terax loads `TERAX.md` from the workspace root as agent memory (similar to AGENTS.md / CLAUDE.md). This file is also the project's living architecture doc - read it before making changes.
+This file is the primary project memory for future agents. Read it before changing the repository.
 
-## Project
+## Product
 
-**Terax**: open-source AI-native terminal emulator. Tauri 2 + Rust (`portable-pty`) backend, React 19 + TypeScript + libghostty-vt WASM client (WebGPU, Terax WebGL fallback), BYOK AI via Vercel AI SDK v6.
+Tarex UI is an independent desktop terminal, editor, filesystem browser, and AI-agent workspace built with Tauri 2, Rust, React 19, and Vite.
 
-- Bundle id: `app.crynta.terax`
-- Package manager: **pnpm**
-- Platforms: macOS, Linux, Windows
-- Frontend checks: `pnpm lint`, `pnpm check-types`, `pnpm test`
-- Rust checks: `cd src-tauri && cargo clippy --all-targets --locked -- -D warnings`, `cd src-tauri && cargo nextest run --locked` (local fallback: `cargo test --locked`)
+- Product name: `Tarex UI`
+- Main binary: `tarex-ui`
+- Bundle identifier: `io.github.kishir298.tarex-ui`
+- CLI: `tarex`
+- Internal prefix: `tarex` / `TAREX_`
+- Repository: `https://github.com/Kishir298/Tarex-Ui`
+- License: Apache-2.0; preserve upstream Crynta/Terex and Ghostty attribution.
+
+## Non-negotiable rules
+
+- Do not silently migrate credentials. Non-secret settings import automatically; API keys require an explicit prompt.
+- Do not fabricate hardware, telemetry, battery savings, or VPN capabilities.
+- Do not weaken AI tool approval rules.
+- Do not commit secrets, signing keys, `.env` files, local app data, or build artifacts.
+- Do not use sudo.
+- Preserve Apache-2.0 and upstream attribution.
+- Keep agent/tool access constrained to the active workspace at the native layer.
+
+## Commands
+
+```sh
+pnpm install --frozen-lockfile
+pnpm check-types
+pnpm lint
+pnpm test
+pnpm build
+pnpm tauri build
+cargo test --manifest-path src-tauri/Cargo.toml --locked
+cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --locked -- -D warnings
+node --test scripts/release.check.mjs
+```
+
+Local macOS smoke build:
+
+```sh
+pnpm tauri build
+open src-tauri/target/release/bundle/macos/Tarex\ UI.app
+```
+
+## Architecture
+
+- Frontend: `src/`
+  - `src/app/` shell, tabs, desktop, activity.
+  - `src/modules/ai/` providers, chat runtime, tools, sessions, agents.
+  - `src/modules/desktop/` telemetry, processes, files, activity, project rail.
+  - `src/modules/terminal/` Ghostty-based terminal.
+  - `src/modules/editor/` CodeMirror editor and LSP integration.
+  - `src/settings/` settings window and sections.
+  - `src/styles/` Tarex UI CSS.
+- Native: `src-tauri/src/`
+  - `modules/fs/` filesystem commands and mutations.
+  - `modules/workspace.rs` workspace registry and path authorization.
+  - `modules/process_control.rs` process actions.
+  - `modules/dashboard.rs` system snapshot.
+  - `modules/secrets.rs` keychain/file secret storage.
+  - `modules/lsp/` language-server sessions.
+  - `modules/control.rs` CLI control server.
+  - `modules/agent.rs` agent notification hooks.
+  - `modules/shared_storage.rs` app storage paths and legacy import trigger.
+- Sidecar: `src-tauri/crates/tarex-cli` (built into `src-tauri/binaries/`).
+- Control protocol: `src-tauri/crates/tarex-control-protocol`.
+
+## Naming map
+
+| Terex/Terax | Tarex |
+| --- | --- |
+| `Terex UI` | `Tarex UI` |
+| `terex-ui` | `tarex-ui` |
+| `io.github.3xecutablefile.terex-ui` | `io.github.kishir298.tarex-ui` |
+| `terax` crate/lib | `tarex` / `tarex_lib` |
+| `terax-cli` | `tarex-cli` |
+| `terax-control-protocol` | `tarex-control-protocol` |
+| `TERAX_*` env | `TAREX_*` (legacy reads for compatibility) |
+| `terax-settings.json` | `tarex-settings.json` |
+| `terax-ai-*.json` | `tarex-ai-*.json` |
+| `terax-spaces.json` | `tarex-spaces.json` |
+| `terax-custom-themes.json` | `tarex-custom-themes.json` |
+| `terax-ai` keychain | `tarex-ai` |
+| `terex:`/`terax:` events | `tarex:` events |
+| `terex-*` CSS | `tarex-*` CSS |
+
+Compatibility shims are allowed only where needed for existing agent hooks or CLI invocations: read legacy `TERAX_*` env vars, recognize legacy `Terax` OSC markers, and read `TERAX.md` only as a fallback to `TAREX.md`.
+
+## Storage and import
+
+- New app data directory comes from Tauri using `io.github.kishir298.tarex-ui`.
+- `shared_storage_paths` must always return the new directories.
+- On first launch, `shared_storage_paths` runs the one-time importer before returning paths.
+- Legacy candidates: sibling `io.github.3xecutablefile.terex-ui` and `app.crynta.terax` directories in data/config/local-data roots.
+- Imported: settings, AI sessions/agents/snippets/todos, spaces, custom themes, `.terax-theme` files.
+- Never imported automatically: keychain entries, Linux `secrets.json`, `suspended-processes.json`, `.window-state.json`, logs, caches, IndexedDB background images.
+- Marker: `.tarex-import.json` in the new data directory.
+- API keys: explicit one-time prompt, then copy from `terax-ai` to `tarex-ai`.
+
+## AI behavior
+
+- The AI panel must open even when no provider key is configured.
+- Built-in providers and custom endpoints must both appear in model pickers.
+- Provider keys must be hydrated in the main window at startup and refreshed after settings changes.
+- `hasProvider` is for onboarding UI only; it must not gate shortcuts or panel opening.
+- `resolveModel` handles built-in and `compat-*` model IDs. Never cast a compat ID to `ModelId`.
+- Project memory: read `TAREX.md` first, then `TERAX.md` as a fallback.
+
+## Process and system behavior
+
+- Terminate = graceful request (`SIGTERM` / Windows close), force kill = explicit destructive action.
+- Protect PID <= 1, self, ancestors, critical system processes, and PID-reuse mismatches.
+- Resume suspended processes on app exit.
+- Efficiency Mode lowers Tarex's own priority and reduces its own background work. Do not claim system-wide throttling.
+- Hardware info is best-effort and must show “Unavailable” rather than invented values.
+
+## VPN
+
+VPN functionality is deferred. Tarex does not provide VPN controls or fake status. See `README.md` and `TAREX_PROGRESS.md`.
+
+## Release
+
+- Updater endpoint: `https://github.com/Kishir298/Tarex-Ui/releases/latest/download/latest.json`.
+- A fresh Tarex signing keypair is required. The public key lives in `tauri.conf.json`; the private key is a repository secret.
+- Release artifacts use `Tarex-UI-` names and `TAREX_*` environment variables.
+- Push to the `tarex` remote; keep `origin` as upstream.
+
+## Current status
+
+See `TAREX_PROGRESS.md`.
+
+## Architecture reference
 
 ## Quality bar
 
@@ -32,7 +154,7 @@ A change to a core subsystem (terminal/shell spawn, workspace auth, git, fs, IPC
 ## Terminal migration status
 
 libghostty-vt is the only terminal model. WebGPU is the default renderer and
-Terax WebGL is the compatibility fallback. Each leaf owns one persistent model;
+Tarex WebGL is the compatibility fallback. Each leaf owns one persistent model;
 presentation resources are shared, bounded, and released for hidden leaves.
 Native cell, grapheme and hyperlink presentation buffers allocate on first use
 and return to the WASM allocator when presentation is reclaimed. Hidden parsing
@@ -79,9 +201,9 @@ Key encoding supplies the base character required by Kitty keyboard mode; plain
 keys and key releases also use Ghostty encoding when the application requests it.
 Terminal text uses the configured font, an installed Nerd Font when detected,
 or bundled JetBrains Mono. Private-use prompt symbols require an installed font
-that supplies them; Terax does not ship a separate symbol font. Native color
+that supplies them; Tarex does not ship a separate symbol font. Native color
 emoji remain on the system fallback path. Rerun requires the complete command
-submitted through Terax; truncated shell labels are never executed.
+submitted through Tarex; truncated shell labels are never executed.
 Primary-screen full erase, scrollback erase, and terminal reset invalidate block
 pins at parse time and clear block chrome, selection, and search. Commands after
 an erase in the same output chunk retain their new pins. Alternate-screen erases
@@ -91,7 +213,7 @@ with their timers and history scans.
 Terminal autocomplete displays a single ghost suffix at the shell cursor after
 integration confirms prompt input. It does not replace shell editing with a
 separate command field. Bare shells retain direct input without inferred prompts.
-Bash before 4.4 reports `OSC 133;B;terax_blocks=0` because it lacks PS0.
+Bash before 4.4 reports `OSC 133;B;tarex_blocks=0` because it lacks PS0.
 
 Settings offer Automatic or WebGL for new terminals, plus opt-in screen reader
 output. Accessible text is limited to 256 rows / 64 KiB and refreshes at most four
@@ -119,9 +241,9 @@ delivery failure and exit status -1. The deadline is armed before ConPTY close
 and thread joins; it does not run during live-shell backpressure. Close wakes blocked
 queue workers and the Unix reader; Windows keeps draining the pipe while ConPTY closes.
 
-Enable release diagnostics with `localStorage.setItem("terax:terminal-diagnostics", "1")`
-and reload. `window.__teraxTerm()` reads frontend counters;
-`await window.__teraxTermSnapshot()` adds native queue counters and explicitly
+Enable release diagnostics with `localStorage.setItem("tarex:terminal-diagnostics", "1")`
+and reload. `window.__tarexTerm()` reads frontend counters;
+`await window.__tarexTermSnapshot()` adds native queue counters and explicitly
 labeled host RSS. Host RSS
 excludes WebContent and GPU processes and is not total application memory.
 
@@ -135,7 +257,7 @@ User wheel, drag, and keyboard interaction gives only its pane 150 ms of focused
 cadence, including in an unfocused visible window. It starts no idle timer or
 frame loop. Reclaimed WebGPU canvases shrink to 1x1 while retaining their target
 geometry for the next presentation transaction.
-`window.__teraxTermTrace()` explicitly starts a bounded ten-minute resource trace;
+`window.__tarexTermTrace()` explicitly starts a bounded ten-minute resource trace;
 it is never started automatically. `pnpm soak:ghostty` exercises real WASM models
 without launching the application. `pnpm profile:ghostty` compares allocation
 and parsing workloads in a fresh process per artifact and optional baseline.
@@ -169,7 +291,7 @@ establish production readiness, platform parity, or multi-day resource stability
 - `workspace::*`: `workspace_authorize` / `workspace_current_dir` (the spawn/git/AI cwd authorization registry) plus the WSL bridge (`wsl_list_distros`, `wsl_default_distro`, `wsl_home`).
 - `lsp::*` (`lsp_detect`, `lsp_host_pid`, `lsp_resolve_root`, `lsp_spawn`, `lsp_send`, `lsp_kill`): language server process host. Dumb JSON-RPC pipe: Content-Length framing + process lifecycle in Rust (`lsp/framing.rs`, pure + tested), protocol intelligence on the frontend. Spawn cwd gated through the workspace registry; binaries resolve via the captured login-shell env (`lsp/env.rs`, GUI apps get a bare PATH on macOS); root detection walks up to markers but never to or above `$HOME`. Servers run in their own process group on Unix and are group-killed (cargo check / proc-macro children die with the server); Windows children get a `proc::job::ProcessJob` (kill-on-close, shared with pty). All sessions killed on `RunEvent::Exit`.
 - `net::*` (`ai_http_request`, `ai_http_stream`, `lm_ping`): AI HTTP proxy with SSRF guard; keeps provider calls and local-model pings off the webview.
-- `secrets::secrets_*`: OS keychain via the `keyring` crate. Service constant `terax-ai`. Linux uses a file-based fallback gated behind `#[cfg(target_os = "linux")]`.
+- `secrets::secrets_*`: OS keychain via the `keyring` crate. Service constant `tarex-ai`. Linux uses a file-based fallback gated behind `#[cfg(target_os = "linux")]`.
 - `open_settings_window`: separate webview window for Settings (optional `tab` arg deep-links a section).
 - `vibrancy::window_*`: native window backdrop (`window_backdrop_kind`, `window_set_backdrop`). macOS gets `NSVisualEffectMaterial::UnderWindowBackground`, Windows 11 gets Mica (gated on build >= 22000 via `RtlGetVersion`, since `apply_mica` fails on Windows 10), Linux reports `none` because blur there belongs to the compositor. The `window-vibrancy` crate is a macOS/Windows-only dependency so Linux builds never pull it.
 
@@ -177,14 +299,14 @@ establish production readiness, platform parity, or multi-day resource stability
 
 PTY shells are bootstrapped via injected init scripts in `src-tauri/src/modules/pty/scripts/`:
 
-- **Unix** (`zshenv.zsh`, `zprofile.zsh`, `zlogin.zsh`, `zshrc.zsh`, `bashrc.bash`) for zsh/bash, plus `init.fish` installed to `~/.config/fish/conf.d/terax.fish` for fish. Emit OSC 7 (cwd) and OSC 133 A/B/C/D (prompt boundaries + exit code) so the host can track cwd and detect command boundaries without re-parsing the prompt. Fish 4.0+ writes its own OSC 133 prompt markers; Terax sets `fish_features=no-mark-prompt` and re-asserts its own prompt via `-C` to avoid doubling.
+- **Unix** (`zshenv.zsh`, `zprofile.zsh`, `zlogin.zsh`, `zshrc.zsh`, `bashrc.bash`) for zsh/bash, plus `init.fish` installed to `~/.config/fish/conf.d/tarex.fish` for fish. Emit OSC 7 (cwd) and OSC 133 A/B/C/D (prompt boundaries + exit code) so the host can track cwd and detect command boundaries without re-parsing the prompt. Fish 4.0+ writes its own OSC 133 prompt markers; Tarex sets `fish_features=no-mark-prompt` and re-asserts its own prompt via `-C` to avoid doubling.
 - **Windows** (`profile.ps1`) - passed via `pwsh -NoLogo -NoExit -ExecutionPolicy Bypass -File <path>`. Wraps the user's existing `prompt` function (after their `$PROFILE` runs) to emit OSC 7 + OSC 133 A/B/D. Shell priority: `pwsh.exe` (PS 7+) → `powershell.exe` (PS 5.1) → `cmd.exe` (no integration). cwd is normalized to backslashes before being passed to ConPTY (`CreateProcessW` misbehaves with forward-slash cwd).
 
 `pty/shell_init.rs` is split into `#[cfg(unix)]` / `#[cfg(windows)]` modules - keep new platform-specific code in the right cfg arm.
 
 ConPTY on Windows requires `CONPTY_LIFECYCLE_LOCK` (Mutex) around `openpty + spawn_command` in `session.rs`. Concurrent spawns leave one of the resulting PTYs with a stalled output pipe. Don't remove the lock without verifying first-tab stability under fast tab spam.
 
-Each ConPTY child is also assigned to a per-session **Job Object** with `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` (`pty/job.rs`). When the Job HANDLE drops - clean shutdown, panic, or even SIGKILL'd Terax process - the kernel kills every descendant of the shell (e.g. `npm run dev` spawned from inside pwsh). Without this Windows orphans the entire process subtree because `TerminateProcess` only kills the immediate child. macOS/Linux rely on `Drop for Session → killer.kill()`; on dev-`Ctrl-C` of `cargo run` destructors don't fire and orphans are possible there too - acceptable for now since dev only.
+Each ConPTY child is also assigned to a per-session **Job Object** with `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` (`pty/job.rs`). When the Job HANDLE drops - clean shutdown, panic, or even SIGKILL'd Tarex process - the kernel kills every descendant of the shell (e.g. `npm run dev` spawned from inside pwsh). Without this Windows orphans the entire process subtree because `TerminateProcess` only kills the immediate child. macOS/Linux rely on `Drop for Session → killer.kill()`; on dev-`Ctrl-C` of `cargo run` destructors don't fire and orphans are possible there too - acceptable for now since dev only.
 
 `AiComposerProvider` is mounted unconditionally at the App.tsx root: a conditional wrapper would change the parent element type when keys load, remounting the entire tree (and re-spawning every PTY) the moment `getAllKeys()` resolves. Production happened to dodge this because keychain reads can land in the same paint frame; dev didn't. Keep the unconditional wrap.
 
@@ -215,9 +337,9 @@ Each module is self-contained, exports a thin barrel via `index.ts`, and owns it
 - **lsp/** - opt-in language server support, zero cost until enabled (no process, no PATH check, nothing in the eager bundle beyond a 14.5 kB shell). Statusbar pill offers Enable (binary found) or Install (with copyable command) per language; activation persists as `lspActivation` in the settings store (`enabled`/`dismissed`/unset). `sessionManager.ts` keys sessions by (server, workspace root), refcounts open docs, idle-kills after 3 min, and crash-backoffs (cooldown before respawn; 3 in 5 min → give up + toast with the server's stderr tail). Resource invariants: **no root marker → no session** (a dirname fallback once spawned a server per directory and burned GBs), hard cap of 4 sessions per server, lean per-preset `initializationOptions` (rust-analyzer: `cachePriming` off + bounded `lru`; tsls: `maxTsServerMemory`). Client is `codemirror-languageserver` behind a lazy import, subclassed (`lib/client.ts`) to add didClose/didSave/shutdown, `textDocument/references` (Shift-F12; multi-result definitions and references share the `locationsPanel.ts` picker) and the publishDiagnostics capability the lib forgets (tsls sends no diagnostics without it); `lib/transport.ts` bridges to the Rust pipe and answers server-to-client requests the lib ignores. `vscode-languageserver-protocol` is aliased to a 4-enum shim in vite.config.ts (~117 kB saved). Presets: typescript, rust-analyzer, pyright, ruff, gopls and more; custom stdio servers via Settings. Several presets can claim one language (pyright and ruff both take `py`): `serverForLanguage` prefers the enabled candidate, so enabling ruff while pyright is unset or dismissed routes Python to ruff. WSL workspaces excluded for now.
 - **markdown/** - markdown preview renderer (backs the `markdown` tab kind).
 - **workspace/** - workspace environment switching (Local + WSL distros).
-- **theme/** - custom theme engine (no `next-themes`). `ThemeProvider` + `applyTheme` write CSS variables; built-in presets in `themes/` (terax-default - colours live in `globals.css` since ThemeProvider clears rather than applies for that id - xcode, claude, kanagawa, kanagawa-dragon, tokyo-night, catppuccin, rose-pine, everforest, nord, gruvbox, dracula, solarized, tide, sage, caffeine), each optionally declaring an `editorTheme` pairing consumed by `resolveEditorThemeId` (see editor/). User themes via `customThemes.ts` + `validateTheme.ts`, optional background image via `bgImageStore.ts` + `SurfaceLayer`.
+- **theme/** - custom theme engine (no `next-themes`). `ThemeProvider` + `applyTheme` write CSS variables; built-in presets in `themes/` (tarex-default - colours live in `globals.css` since ThemeProvider clears rather than applies for that id - xcode, claude, kanagawa, kanagawa-dragon, tokyo-night, catppuccin, rose-pine, everforest, nord, gruvbox, dracula, solarized, tide, sage, caffeine), each optionally declaring an `editorTheme` pairing consumed by `resolveEditorThemeId` (see editor/). User themes via `customThemes.ts` + `validateTheme.ts`, optional background image via `bgImageStore.ts` + `SurfaceLayer`.
 - **updater/** - auto-updater UI built on `tauri-plugin-updater`.
-- **agents/** - agent launching, notifications, and management for both the built-in Terax agent and terminal coding agents (Claude Code, Codex, Gemini CLI, Pi, OpenCode, Grok). The header launcher (`components/AgentLauncherPanel.tsx` + `lib/launcher.ts`) persists per-agent start commands in preferences and atomically builds balanced one-to-four-pane tabs. Shared store (`store/agentStore.ts`: terminal `sessions` + `localAgent` + `notifications`) and a shared router (`lib/route.ts`: suppress when focused-and-visible, OS-notify when unfocused, in-app Sonner toast when focused-but-hidden) feed the header `NotificationBell` (management surface, Terax agent listed first, per-agent hook enable rows). Toasts use Sonner (`components/ui/sonner.tsx`) themed via the central engine; `lib/agentIcon.tsx` renders the per-agent brand mark. Terminal detection is Rust-side (`pty/agent_detect.rs`) on the PTY reader's byte filter, armed on `OSC 133;C;<cmd>` or self-armed by the marker, emitting `terax:agent-signal` transitions (`started`/`working`/`attention`/`finished`/`exited`) driven only by OSC sequences (never raw output, so a repainting TUI never flaps) - zero cost when no agent runs. Hook-backed terminal agents converge on the same `OSC 777` marker the detector reads, installed via `agent_enable_hooks(agent)` / `agent_hooks_status(agent)` in `modules/agent.rs` (data-driven `AgentSpec` for JSON-hook agents plus a Terax-owned Pi extension; atomic writes, foreign configuration preserved, idempotent; gated on `TERAX_TERMINAL`). OpenCode and Grok use OSC 133 process-lifecycle detection but do not install attention hooks. Delivery differs because only Claude's hook protocol can return terminal bytes in the hook *response*: **Claude** (`~/.claude/settings.json`, `UserPromptSubmit`/`Notification`/`Stop`) returns the marker via the `terminalSequence` field (legacy 3-field `notify;Terax;<event>`). **Codex** (`~/.codex/hooks.json`, `UserPromptSubmit`/`PermissionRequest`/`Stop`) and **Gemini** (`~/.gemini/settings.json`, `BeforeAgent`/`Notification`/`AfterAgent`, `matcher:"*"`) can't, so the hook *command* emits the 4-field `notify;Terax;<agent>;<event>` marker itself (`printf > /dev/tty` on Unix, or `terax __terax_notify` writing to `CONOUT$` after `AttachConsole` on Windows) and prints `{}` as a JSON stdout no-op (Codex's `Stop` and Gemini both reject empty/non-JSON stdout). **Pi** (`~/.pi/agent/extensions/terax-notifications.ts`) uses `agent_start`/`agent_settled` extension events and writes its named marker directly to stdout. The agent-named marker lets a self-arm name the right agent when no preexec fired (bash/tmux/Windows). The Terax agent path is `ai/components/LocalAgentNotificationsBridge.tsx`, mapping `chatStore.agentMeta` (`awaiting-approval`→attention, busy→idle→finished, `error`) into the same router.
+- **agents/** - agent launching, notifications, and management for both the built-in Tarex agent and terminal coding agents (Claude Code, Codex, Gemini CLI, Pi, OpenCode, Grok). The header launcher (`components/AgentLauncherPanel.tsx` + `lib/launcher.ts`) persists per-agent start commands in preferences and atomically builds balanced one-to-four-pane tabs. Shared store (`store/agentStore.ts`: terminal `sessions` + `localAgent` + `notifications`) and a shared router (`lib/route.ts`: suppress when focused-and-visible, OS-notify when unfocused, in-app Sonner toast when focused-but-hidden) feed the header `NotificationBell` (management surface, Tarex agent listed first, per-agent hook enable rows). Toasts use Sonner (`components/ui/sonner.tsx`) themed via the central engine; `lib/agentIcon.tsx` renders the per-agent brand mark. Terminal detection is Rust-side (`pty/agent_detect.rs`) on the PTY reader's byte filter, armed on `OSC 133;C;<cmd>` or self-armed by the marker, emitting `tarex:agent-signal` transitions (`started`/`working`/`attention`/`finished`/`exited`) driven only by OSC sequences (never raw output, so a repainting TUI never flaps) - zero cost when no agent runs. Hook-backed terminal agents converge on the same `OSC 777` marker the detector reads, installed via `agent_enable_hooks(agent)` / `agent_hooks_status(agent)` in `modules/agent.rs` (data-driven `AgentSpec` for JSON-hook agents plus a Tarex-owned Pi extension; atomic writes, foreign configuration preserved, idempotent; gated on `TAREX_TERMINAL`). OpenCode and Grok use OSC 133 process-lifecycle detection but do not install attention hooks. Delivery differs because only Claude's hook protocol can return terminal bytes in the hook *response*: **Claude** (`~/.claude/settings.json`, `UserPromptSubmit`/`Notification`/`Stop`) returns the marker via the `terminalSequence` field (legacy 3-field `notify;Tarex;<event>`). **Codex** (`~/.codex/hooks.json`, `UserPromptSubmit`/`PermissionRequest`/`Stop`) and **Gemini** (`~/.gemini/settings.json`, `BeforeAgent`/`Notification`/`AfterAgent`, `matcher:"*"`) can't, so the hook *command* emits the 4-field `notify;Tarex;<agent>;<event>` marker itself (`printf > /dev/tty` on Unix, or `tarex __tarex_notify` writing to `CONOUT$` after `AttachConsole` on Windows) and prints `{}` as a JSON stdout no-op (Codex's `Stop` and Gemini both reject empty/non-JSON stdout). **Pi** (`~/.pi/agent/extensions/tarex-notifications.ts`) uses `agent_start`/`agent_settled` extension events and writes its named marker directly to stdout. The agent-named marker lets a self-arm name the right agent when no preexec fired (bash/tmux/Windows). The Tarex agent path is `ai/components/LocalAgentNotificationsBridge.tsx`, mapping `chatStore.agentMeta` (`awaiting-approval`→attention, busy→idle→finished, `error`) into the same router.
 - **command-palette/** - modal command palette (`CommandPalette.tsx`, `commands.ts`) for actions and navigation.
 - Terminal agent commands are edited in **Config > Agents > Terminal agents**. `agentLaunchCommands` stores commands; `agentLaunchDefaults` stores the remembered agent ID and pane count. Both hydrate through the preferences store and synchronize across main/settings windows. The launch menu reads saved commands and remembers selection changes without resetting on mount.
 - **spaces/** - workspace spaces/projects (name, root, env, color, per-space tab persistence) via `useSpaces` and `SpaceSwitcher`.
@@ -227,10 +349,10 @@ Each module is self-contained, exports a thin barrel via `index.ts`, and owns it
 
 BYOK. Cloud providers via `@ai-sdk/*`: **OpenAI, Anthropic, Google, xAI, Cerebras, Groq, DeepSeek, Mistral, OpenRouter**, plus **OpenAI-compatible** for any custom base URL. Local / offline providers (key-optional, model id supplied at runtime): **LM Studio, MLX, Ollama**. Provider list in `config.ts` (`PROVIDERS`); model registry includes `DEFAULT_MODEL_ID` + `DEFAULT_AUTOCOMPLETE_MODEL`.
 
-- **Key storage**: OS keychain via `keyring` (Rust). Frontend reads/writes through `secrets_*` commands. Service `KEYRING_SERVICE = "terax-ai"`. Never persist keys to disk, settings store, or `localStorage`.
+- **Key storage**: OS keychain via `keyring` (Rust). Frontend reads/writes through `secrets_*` commands. Service `KEYRING_SERVICE = "tarex-ai"`. Never persist keys to disk, settings store, or `localStorage`.
 - **Agent** (`lib/agent.ts`): `Experimental_Agent` with `stopWhen: stepCountIs(MAX_AGENT_STEPS)` and the system prompt from `config.ts`. Provider branching happens here - keep the `Agent` / `DirectChatTransport` shape; the rest of the system depends on AI SDK v6 chat semantics.
 - **Sub-agents** (`agents/registry.ts`, `agents/runSubagent.ts`): named sub-agents with their own system prompts and tool subsets, invoked by the main agent via `run_subagent` tool.
-- **Sessions** (`lib/sessions.ts` + `store/chatStore.ts`): conversations are organized into named sessions, persisted via `tauri-plugin-store` at `terax-ai-sessions.json` (list + `activeId` + per-session `messages:<id>` keys). `chatStore.ts` keeps a module-scoped `Map<sessionId, Chat<UIMessage>>`; `getOrCreateChat(apiKey, sessionId)` lazily constructs a `Chat`, seeded with messages from a hydration map populated by `hydrateSessions()` (called once from `App.tsx`). `AgentRunBridge` mirrors active-session messages to disk on every change and auto-derives titles from the first user message. Switching the API key wipes the chat map; sessions persist.
+- **Sessions** (`lib/sessions.ts` + `store/chatStore.ts`): conversations are organized into named sessions, persisted via `tauri-plugin-store` at `tarex-ai-sessions.json` (list + `activeId` + per-session `messages:<id>` keys). `chatStore.ts` keeps a module-scoped `Map<sessionId, Chat<UIMessage>>`; `getOrCreateChat(apiKey, sessionId)` lazily constructs a `Chat`, seeded with messages from a hydration map populated by `hydrateSessions()` (called once from `App.tsx`). `AgentRunBridge` mirrors active-session messages to disk on every change and auto-derives titles from the first user message. Switching the API key wipes the chat map; sessions persist.
 - **Composer** (`lib/composer.tsx`): React context providing shared input state (text, attachments, voice) for both the docked `AiInputBar` and any other surface. Attachments include image, text-file, and `selection` kinds - selections come from `useChatStore.attachSelection(text, source)` (drained into chips, not pasted into the textarea) and are wrapped as `<selection source="terminal|editor">…</selection>` blocks at submit. Composer derives `isBusy` from `agentMeta.status` so it can mount safely before sessions hydrate.
 - **Voice input**: streamed transcription pipeline. Toggled from the composer.
 - **Live context bridge**: `App.tsx` calls `setLive({ getCwd, getTerminalContext, … })` so tools can read the *currently active* terminal's cwd + last 300 lines of buffer. Lazy by design - don't pre-snapshot.
@@ -245,7 +367,7 @@ BYOK. Cloud providers via `@ai-sdk/*`: **OpenAI, Anthropic, Google, xAI, Cerebra
 - **Tailwind v4** - no `tailwind.config.*`, config is in `src/App.css` via `@theme`. Use `cn()` from `@/lib/utils`.
 - Animation: `motion` (Framer Motion successor). Resizable layout: `react-resizable-panels`.
 - **Window vibrancy**: the `windowVibrancy` pref drives `WindowVibrancyBridge` (main window only - `window_set_backdrop` targets its caller). `html[data-vibrancy="on"]` makes `<html>`/`<body>` transparent and redefines `--frame` with alpha, so only the chrome frosts; panes keep `--background` so terminal text stays on a solid surface and the terminal canvas still matches its container. The opaque colour the pre-paint script parks on `<html>` would cover the backdrop, so `applyVibrancy` clears it while the effect is on; there is deliberately no localStorage fast path, since pre-declaring the effect would show a see-through window on any launch where the native call has not landed yet. Repeat applications are deduped, and only Mica is rebuilt on a light/dark flip (NSVisualEffectView adapts on its own).
-- **Floating panes**: header and status bar are window chrome painted on `--frame` (derived from `--card`, so no theme declares it); the sidebar and the tab surface are `.terax-pane` cards on `--background` - same tone as the terminal canvas. Panes meet the chrome flush and are inset only horizontally, because the header centers its content and any vertical gutter would stack onto that padding and read as asymmetric. `.terax-pane` carries no drop shadow: `react-resizable-panels` clips panel content at the panel box, so a shadow would only render on the gutter sides.
+- **Floating panes**: header and status bar are window chrome painted on `--frame` (derived from `--card`, so no theme declares it); the sidebar and the tab surface are `.tarex-pane` cards on `--background` - same tone as the terminal canvas. Panes meet the chrome flush and are inset only horizontally, because the header centers its content and any vertical gutter would stack onto that padding and read as asymmetric. `.tarex-pane` carries no drop shadow: `react-resizable-panels` clips panel content at the panel box, so a shadow would only render on the gutter sides.
 - Path imports: always `@/…`, never relative across modules.
 - Cross-platform paths: anywhere a path may originate from OSC 7, the explorer, or the OS, normalize separators with `.split(/[\\/]/)` rather than `.split("/")`.
 - Canonical path form on the frontend is **forward-slash**. `homeDir()` returns backslashes on Windows; convert at the boundary (App.tsx setHome). OSC 7 already arrives as forward-slash. Equal canonical strings keep `useFileTree` from wiping its tree and flashing the explorer when `tab.cwd` first arrives.
@@ -275,18 +397,18 @@ BYOK. Cloud providers via `@ai-sdk/*`: **OpenAI, Anthropic, Google, xAI, Cerebra
   - **macOS**: `minimumSystemVersion: 13.0`.
   - **Linux**: deb depends `libwebkit2gtk-4.1-0`, `libgtk-3-0`; rpm `webkit2gtk4.1`, `gtk3`; AppImage bundles its media framework.
   - **Windows**: NSIS installer in `currentUser` mode (no admin required), WebView2 via `downloadBootstrapper`. Installing a missing WebView2 runtime requires internet access; there is no bundled offline runtime. Packaged and offline-install validation remains in the release-readiness gates.
-- Auto-updater configured with a public minisign key; release artifacts at `https://github.com/crynta/terax-ai/releases/latest/download/latest.json`.
+- Auto-updater configured with a public minisign key; release artifacts at `https://github.com/crynta/tarex-ai/releases/latest/download/latest.json`.
 - `bundle.resources` includes the upstream Ghostty, Restty, ghostty-web, and xterm.js license notices under `licenses/terminal/`. Repository documentation and test-only reference WASM cores are not packaged; the frontend includes only the adapted SIMD and scalar cores.
 
 ### Known gotchas
 
 - **React 19 strict mode** double-mounts `useEffect` in dev → terminals spawn twice on first render. The first PTY is cleaned up almost immediately. The `CONPTY_LIFECYCLE_LOCK` mutex serializes this; don't be alarmed by `pty opened id=1` followed by `pty closed id=1` in dev logs.
-- **Windows PowerShell process lifecycle**: `killer.kill()` from `portable-pty` only kills the immediate child. Descendants (e.g. `npm run dev` started inside pwsh) survive unless something else takes them down. The Job Object in `pty/job.rs` handles this for the Terax-process-death case; an explicit `pty_close` from JS also kills only the immediate child + relies on the Job to take the rest. Don't disable the Job without a replacement.
+- **Windows PowerShell process lifecycle**: `killer.kill()` from `portable-pty` only kills the immediate child. Descendants (e.g. `npm run dev` started inside pwsh) survive unless something else takes them down. The Job Object in `pty/job.rs` handles this for the Tarex-process-death case; an explicit `pty_close` from JS also kills only the immediate child + relies on the Job to take the rest. Don't disable the Job without a replacement.
 - **Tab `cwd` storage**: comes from OSC 7 with forward slashes (after `parseOsc7` strips `/C:` → `C:`). Anything that consumes `tab.cwd` and passes it to a Rust fs command on Windows must normalize separators or accept both forms - `apply_common` in `pty::shell_init` handles this for PTY spawn; other call sites must do their own.
 
 ## Further reading
 
-Long-form contributor guides live under `docs/`. These guides elaborate on `TERAX.md`; if anything conflicts, `TERAX.md` wins.
+Long-form contributor guides live under `docs/`. These guides elaborate on `TAREX.md`; if anything conflicts, `TAREX.md` wins.
 
 - `docs/README.md` - index of contributor guides
 - `docs/architecture/two-process-model.md` - IPC boundary and command reference

@@ -205,7 +205,7 @@ export class PtyOutputReceiver {
     if (this.parserTimer !== null) clearTimeout(this.parserTimer);
     this.parserTimer = null;
     this.setStatus("failed");
-    console.error("[terax] PTY output delivery paused:", error);
+    console.error("[tarex] PTY output delivery paused:", error);
   }
 
   private setStatus(status: PtyOutputStatus): void {
@@ -219,7 +219,7 @@ export class PtyOutputReceiver {
     try {
       this.onStatus(status);
     } catch (error) {
-      console.error("[terax] PTY status notification failed:", error);
+      console.error("[tarex] PTY status notification failed:", error);
     }
   }
 }

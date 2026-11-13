@@ -1,4 +1,4 @@
-.terex-activity-panel {
+.tarex-activity-panel {
   display: flex;
   flex: 0 0 310px;
   flex-direction: column;
@@ -11,24 +11,24 @@
   font-family: "JetBrains Mono", monospace;
   font-size: 12px;
 }
-.terex-activity-header { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:14px 12px 12px; flex-shrink:0; }
-.terex-activity-header h2 { margin:0; font-size:12px; font-weight:700; letter-spacing:.12em; }
-.terex-activity-header p { margin:5px 0 0; color:var(--muted-foreground); font-size:10px; }
-.terex-activity-header>button { display:grid; place-items:center; flex-shrink:0; width:34px; height:34px; border:1px solid var(--border); }
-.terex-activity-header svg { width:16px; height:16px; stroke:currentColor; stroke-width:1.5; }
-.terex-activity-panel button:focus-visible { outline:2px solid var(--ring); outline-offset:-2px; }
-.terex-activity-panel button:hover:not(:disabled) { background:var(--muted); }
-.terex-activity-tabs { display:flex; flex-direction:column; flex:1; min-height:0; gap:0; }
-.terex-activity-tablist { display:flex; flex-shrink:0; width:auto; height:36px; margin:0 12px 12px; border:1px solid var(--border); border-radius:2px; padding:2px; background:var(--muted); }
-.terex-activity-tablist>button { border-radius:1px; font-size:12px; min-height:30px; }
-.terex-activity-tablist>button[data-state=active] { background:var(--primary); color:var(--primary-foreground); }
-.terex-activity-tablist>button[data-state=active]:hover { background:var(--primary); color:var(--primary-foreground); }
-.terex-activity-body { min-height:0; overflow:hidden; display:flex; flex-direction:column; }
-.terex-activity-body[hidden] { display:none; }
-.terex-activity-loading { padding:12px; color:var(--muted-foreground); font-size:12px; }
-.terex-activity-tools { flex-shrink:0; margin-top:8px; border-top:1px solid var(--border); padding:10px 12px; }
-.terex-activity-tools>span { display:block; margin-bottom:6px; font-size:9px; letter-spacing:.1em; color:var(--muted-foreground); }
-.terex-activity-tools nav { display:flex; gap:4px; flex-wrap:wrap; }
-.terex-activity-tools button { min-height:34px; padding:0 7px; color:var(--primary); border:1px solid var(--border); font-size:10px; }
-.terex-workspace[data-activity-exclusive=true]>.terex-activity-panel { flex:1; border-left:0; }
-@media(pointer:coarse) { .terex-activity-panel button { min-height:44px; } }
+.tarex-activity-header { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:14px 12px 12px; flex-shrink:0; }
+.tarex-activity-header h2 { margin:0; font-size:12px; font-weight:700; letter-spacing:.12em; }
+.tarex-activity-header p { margin:5px 0 0; color:var(--muted-foreground); font-size:10px; }
+.tarex-activity-header>button { display:grid; place-items:center; flex-shrink:0; width:34px; height:34px; border:1px solid var(--border); }
+.tarex-activity-header svg { width:16px; height:16px; stroke:currentColor; stroke-width:1.5; }
+.tarex-activity-panel button:focus-visible { outline:2px solid var(--ring); outline-offset:-2px; }
+.tarex-activity-panel button:hover:not(:disabled) { background:var(--muted); }
+.tarex-activity-tabs { display:flex; flex-direction:column; flex:1; min-height:0; gap:0; }
+.tarex-activity-tablist { display:flex; flex-shrink:0; width:auto; height:36px; margin:0 12px 12px; border:1px solid var(--border); border-radius:2px; padding:2px; background:var(--muted); }
+.tarex-activity-tablist>button { border-radius:1px; font-size:12px; min-height:30px; }
+.tarex-activity-tablist>button[data-state=active] { background:var(--primary); color:var(--primary-foreground); }
+.tarex-activity-tablist>button[data-state=active]:hover { background:var(--primary); color:var(--primary-foreground); }
+.tarex-activity-body { min-height:0; overflow:hidden; display:flex; flex-direction:column; }
+.tarex-activity-body[hidden] { display:none; }
+.tarex-activity-loading { padding:12px; color:var(--muted-foreground); font-size:12px; }
+.tarex-activity-tools { flex-shrink:0; margin-top:8px; border-top:1px solid var(--border); padding:10px 12px; }
+.tarex-activity-tools>span { display:block; margin-bottom:6px; font-size:9px; letter-spacing:.1em; color:var(--muted-foreground); }
+.tarex-activity-tools nav { display:flex; gap:4px; flex-wrap:wrap; }
+.tarex-activity-tools button { min-height:34px; padding:0 7px; color:var(--primary); border:1px solid var(--border); font-size:10px; }
+.tarex-workspace[data-activity-exclusive=true]>.tarex-activity-panel { flex:1; border-left:0; }
+@media(pointer:coarse) { .tarex-activity-panel button { min-height:44px; } }

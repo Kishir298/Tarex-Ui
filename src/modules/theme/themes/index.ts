@@ -11,14 +11,14 @@ import { nord } from "./nord";
 import { rosePine } from "./rose-pine";
 import { sage } from "./sage";
 import { solarized } from "./solarized";
-import { teraxDefault } from "./terax-default";
+import { tarexDefault } from "./tarex-default";
 import { tide } from "./tide";
 import { tokyoNight } from "./tokyo-night";
 import { xcode } from "./xcode";
 import { voidFrost } from "@/modules/theme/themes/void-frost";
 
 const BUILTIN: Theme[] = [
-  teraxDefault,
+  tarexDefault,
   xcode,
   claude,
   kanagawa,

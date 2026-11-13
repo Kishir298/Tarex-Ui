@@ -1,9 +1,9 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Terex UI",
-  "mainBinaryName": "terex-ui",
-  "version": "0.10.0",
-  "identifier": "io.github.3xecutablefile.terex-ui",
+  "productName": "Tarex UI",
+  "mainBinaryName": "tarex-ui",
+  "version": "0.1.0",
+  "identifier": "io.github.kishir298.tarex-ui",
   "build": {
     "beforeDevCommand": "pnpm build:cli:dev && pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -15,7 +15,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "Terex UI",
+        "title": "Tarex UI",
         "width": 1440,
         "height": 860,
         "minWidth": 420,
@@ -31,14 +31,16 @@
       "csp": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: asset: https://asset.localhost blob:; media-src 'self' asset: https://asset.localhost blob:; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost https: http://localhost:* http://127.0.0.1:*; frame-src 'self' http: https: asset: https://asset.localhost; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'",
       "assetProtocol": {
         "enable": true,
-        "scope": ["**"]
+        "scope": [
+          "**"
+        ]
       }
     }
   },
   "bundle": {
     "active": true,
     "externalBin": [
-      "binaries/terax-cli"
+      "binaries/tarex-cli"
     ],
     "resources": {
       "../packages/ghostty-core/LICENSE": "licenses/terminal/ghostty-web.txt",
@@ -48,9 +50,9 @@
     },
     "targets": "all",
     "createUpdaterArtifacts": false,
-    "copyright": "Copyright 2026 Crynta",
+    "copyright": "Copyright 2026 Crynta and Tarex UI contributors",
     "license": "Apache-2.0",
-    "publisher": "Terex UI",
+    "publisher": "Tarex UI",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -97,32 +99,81 @@
     },
     "category": "DeveloperTool",
     "shortDescription": "Native AI terminal and system console",
-    "longDescription": "Terex UI: a native purple-and-lime system console with terminals, file browsing, code editing, and AI agents.",
+    "longDescription": "Tarex UI: a native developer console with terminals, file browsing, code editing, and AI agents.",
     "fileAssociations": [
       {
-        "name": "Terex UI Document",
+        "name": "Tarex UI Document",
         "role": "Editor",
         "mimeType": "text/plain",
         "ext": [
-          "json", "jsonc", "txt", "log", "csv", "tsv",
-          "md", "markdown", "mdx",
-          "js", "mjs", "cjs", "jsx", "ts", "tsx", "mts", "cts",
-          "java", "kt", "kts", "gradle",
-          "py", "rb", "php", "go", "rs", "swift", "dart", "lua",
-          "c", "h", "cpp", "cc", "hpp", "hh", "cs",
-          "html", "htm", "css", "scss", "sass", "less", "vue", "svelte",
-          "xml", "yaml", "yml", "toml", "ini", "cfg", "conf", "properties",
-          "sh", "bash", "zsh", "sql", "graphql", "proto"
+          "json",
+          "jsonc",
+          "txt",
+          "log",
+          "csv",
+          "tsv",
+          "md",
+          "markdown",
+          "mdx",
+          "js",
+          "mjs",
+          "cjs",
+          "jsx",
+          "ts",
+          "tsx",
+          "mts",
+          "cts",
+          "java",
+          "kt",
+          "kts",
+          "gradle",
+          "py",
+          "rb",
+          "php",
+          "go",
+          "rs",
+          "swift",
+          "dart",
+          "lua",
+          "c",
+          "h",
+          "cpp",
+          "cc",
+          "hpp",
+          "hh",
+          "cs",
+          "html",
+          "htm",
+          "css",
+          "scss",
+          "sass",
+          "less",
+          "vue",
+          "svelte",
+          "xml",
+          "yaml",
+          "yml",
+          "toml",
+          "ini",
+          "cfg",
+          "conf",
+          "properties",
+          "sh",
+          "bash",
+          "zsh",
+          "sql",
+          "graphql",
+          "proto"
         ]
       }
     ]
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEUyMzQzQTAzODY1M0MxMTEKUldRUndWT0dBem8wNGlCMU90WkdCYm8rS1N4dlp2WVQ5VmVwY0R3WjVUcWE3ZGIwbmluZjh5SDIK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM4NEJFRDQ2ODU0OUVFMUMKUldRYzdrbUZSdTFMT0NURzR2UHpBSU9mdmxuR1BUdGZ1cUlWYU1hbUdKamlwTWQza0g2S09Xd0QK",
       "requireSignedVersion": true,
       "endpoints": [
-        "https://github.com/3xecutablefile/terex-ui/releases/latest/download/latest.json"
+        "https://github.com/Kishir298/Tarex-Ui/releases/latest/download/latest.json"
       ]
     }
   }

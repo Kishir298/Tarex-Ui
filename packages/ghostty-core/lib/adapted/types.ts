@@ -1,4 +1,4 @@
-export type TeraxGhosttyCursor = {
+export type TarexGhosttyCursor = {
   readonly row: number;
   readonly column: number;
   readonly visible: boolean;
@@ -8,7 +8,7 @@ export type TeraxGhosttyCursor = {
   readonly colorRgba: number;
 };
 
-export type TeraxGhosttyRenderState = {
+export type TarexGhosttyRenderState = {
   readonly rows: number;
   readonly cols: number;
   readonly cellCount: number;
@@ -33,10 +33,10 @@ export type TeraxGhosttyRenderState = {
   readonly linkOffsets: Uint32Array;
   readonly linkLengths: Uint32Array;
   readonly linkBytes: Uint8Array;
-  readonly cursor: TeraxGhosttyCursor;
+  readonly cursor: TarexGhosttyCursor;
 };
 
-export type TeraxGhosttyKeyEvent = {
+export type TarexGhosttyKeyEvent = {
   readonly action: number;
   readonly key: number;
   readonly mods: number;
@@ -46,18 +46,18 @@ export type TeraxGhosttyKeyEvent = {
   readonly unshiftedCodepoint?: number;
 };
 
-export type TeraxGhosttyTerminalOptions = {
+export type TarexGhosttyTerminalOptions = {
   readonly maxScrollbackBytes?: number;
   readonly maxScrollbackLines?: number;
 };
 
-export type TeraxGhosttyTerminalResourceStats = {
+export type TarexGhosttyTerminalResourceStats = {
   readonly cellCapacity: number;
   readonly rowCapacity: number;
   readonly renderStateResets: number;
 };
 
-export type TeraxGhosttySearchStatus = {
+export type TarexGhosttySearchStatus = {
   readonly active: boolean;
   readonly pending: boolean;
   readonly complete: boolean;
@@ -66,24 +66,24 @@ export type TeraxGhosttySearchStatus = {
   readonly selectedIndex: number;
 };
 
-export type TeraxGhosttySearchViewportSpan = {
+export type TarexGhosttySearchViewportSpan = {
   readonly row: number;
   readonly startColumn: number;
   readonly endColumn: number;
   readonly selected: boolean;
 };
 
-export type TeraxGhosttySelection = {
+export type TarexGhosttySelection = {
   readonly anchor: { readonly line: number; readonly column: number };
   readonly focus: { readonly line: number; readonly column: number };
   readonly rectangular: boolean;
 };
 
-export type TeraxGhosttyLoadOptions = {
+export type TarexGhosttyLoadOptions = {
   readonly log?: (message: string) => void;
 };
 
-export type TeraxGhosttyWasmExports = WebAssembly.Exports & {
+export type TarexGhosttyWasmExports = WebAssembly.Exports & {
   readonly memory: WebAssembly.Memory;
   readonly restty_create_with_limits: (
     cols: number,

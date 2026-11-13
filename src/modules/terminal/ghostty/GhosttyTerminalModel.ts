@@ -6,7 +6,7 @@ import type {
   GhosttyTerminalConfig,
   GhosttyTerminalEvent,
   KeyEvent,
-} from "@terax/ghostty-core/protocol";
+} from "@tarex/ghostty-core/protocol";
 import type { TerminalCellReader } from "@/modules/terminal/ghostty/core/packedCells";
 
 export type GhosttyTerminalModelOptions = {

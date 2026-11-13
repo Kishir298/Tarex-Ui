@@ -1,6 +1,6 @@
-# Terax Ghostty WASM adaptation
+# Tarex Ghostty WASM adaptation
 
-This is the production-candidate terminal core for the pooled Terax renderer
+This is the production-candidate terminal core for the pooled Tarex renderer
 architecture. It adapts the mature bulk render-state bridge from Restty
 without importing Restty's application runtime, PTY transport, perpetual
 per-terminal frame loop, or per-pane GPU lifecycle.
@@ -16,7 +16,7 @@ per-terminal frame loop, or per-pane GPU lifecycle.
 - SIMD SHA-256: `af4e24cf43a84355a25dcea7da084642a5fe0882093a386d383ed34f13056e04`
 - Scalar SHA-256: `3fe304ccd86044e1a114c90c2c4d30bc1db698804aa40911d4262fc59f161731`
 
-Terax-specific changes include:
+Tarex-specific changes include:
 
 - rebasing the bridge onto the pinned current Ghostty API;
 - Ghostty `TinyIo`, avoiding the binary and runtime overhead of threaded I/O;
@@ -39,7 +39,7 @@ Terax-specific changes include:
 - native mode, size, color, visibility, and version query replies;
 - generated upstream Ghostty XTGETTCAP responses and native DECRQSS replies;
 - synchronized-output state for damage suppression with bounded recovery;
-- one shared WASM instance with one terminal handle per Terax model;
+- one shared WASM instance with one terminal handle per Tarex model;
 - Ghostty's module-global exact-page WASM pool, avoiding per-terminal geometric
   page-pool growth while reusing released pages across tabs;
 - upstream OSC SIMD scanning plus row-recycling, cursor, hyperlink, C0/C1,
@@ -71,7 +71,7 @@ Terax-specific changes include:
   colors, text blink, graphemes, and wide-cell state;
 - a raw `.wasm` asset instead of a multi-megabyte JavaScript string literal.
 
-The bridge deliberately stays below Terax's model/surface boundary. Terax
+The bridge deliberately stays below Tarex's model/surface boundary. Tarex
 retains renderer pooling, hidden-tab renderer release, damage-driven frame
 scheduling, shell integration, semantic routing, and fallback selection.
 
@@ -79,12 +79,12 @@ scheduling, shell integration, semantic routing, and fallback selection.
 
 The September 7 pin includes upstream page allocation, default-palette sharing
 and fixed terminal allocation reductions. There is no tagged stable standalone
-libghostty WASM release in the inspected release list; Terax still builds its
+libghostty WASM release in the inspected release list; Tarex still builds its
 adapted bridge from an exact source revision, rather than consuming the nightly
 artifact or treating Ghostty's application version as a stable library ABI.
 
 The update alone saved only one 64 KiB WASM page across 20 blank 120x40 models.
-With Terax's lazy presentation arrays, the identical workload uses 10,878,976
+With Tarex's lazy presentation arrays, the identical workload uses 10,878,976
 bytes instead of 16,187,392 bytes at `0e3fae9`, a 5,308,416-byte reduction.
 Isolated per-artifact row-edit, scrolling and OSC microbenchmarks were within
 roughly 2% of baseline; this is not evidence of an application CPU speedup.
@@ -104,9 +104,9 @@ From `packages/ghostty-core/adapted/wasm`:
 
 ```sh
 zig build -Dtarget=wasm32-freestanding -Doptimize=ReleaseFast
-cp zig-out/bin/terax-ghostty-vt.wasm ../ghostty-vt.wasm
+cp zig-out/bin/tarex-ghostty-vt.wasm ../ghostty-vt.wasm
 zig build -Dtarget=wasm32-freestanding -Doptimize=ReleaseFast -Dwasm-simd=false
-cp zig-out/bin/terax-ghostty-vt.wasm ../ghostty-vt-scalar.wasm
+cp zig-out/bin/tarex-ghostty-vt.wasm ../ghostty-vt-scalar.wasm
 shasum -a 256 ../ghostty-vt.wasm ../ghostty-vt-scalar.wasm
 ```
 

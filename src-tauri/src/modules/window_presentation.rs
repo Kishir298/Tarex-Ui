@@ -87,7 +87,7 @@ pub mod macos {
             .unwrap_or_else(|error| error.into_inner())
             .update(occluded, sleeping);
         if let (Some(next), Some(window)) = (next, app.get_webview_window("main")) {
-            let _ = window.emit("terax:window-presentation", next);
+            let _ = window.emit("tarex:window-presentation", next);
         }
     }
 

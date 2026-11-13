@@ -293,7 +293,7 @@ export function NotificationBell({ onActivate, onActivateLocal }: Props) {
           <div className="border-t border-border/60 px-3 py-5 text-center text-xs leading-relaxed text-muted-foreground">
             No agent activity yet.
             <br />
-            Run the Terex UI agent or a coding agent to track it here.
+            Run the Tarex UI agent or a coding agent to track it here.
           </div>
         ) : (
           <div className="max-h-80 overflow-y-auto border-t border-border/60 p-1">

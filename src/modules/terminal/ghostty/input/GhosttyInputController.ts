@@ -7,7 +7,7 @@ import {
   KeyAction,
   Mods,
   type KeyEvent,
-} from "@terax/ghostty-core/protocol";
+} from "@tarex/ghostty-core/protocol";
 import type { GhosttyTerminalModelApi } from "../GhosttyTerminalModel";
 import { encodeTerminalPaste } from "./terminalInputEncoding";
 

@@ -26,19 +26,19 @@ test('publication requires all platforms with version-bound signature metadata a
 });
 
 test('stamping keeps app, Cargo workspace, lockfile and CI versions identical',()=>{
-  const directory=mkdtempSync(join(tmpdir(),'terex-release-'));
+  const directory=mkdtempSync(join(tmpdir(),'tarex-release-'));
   try {
     mkdirSync(join(directory,'src-tauri'));
     writeFileSync(join(directory,'package.json'),JSON.stringify({version:'0.10.0'}));
     writeFileSync(join(directory,'src-tauri/tauri.conf.json'),JSON.stringify({version:'0.10.0'}));
-    writeFileSync(join(directory,'src-tauri/Cargo.toml'),'[package]\r\nname = "terax"\r\nversion = "0.10.0"\r\n[workspace.package]\r\nversion = "0.10.0"\r\n');
-    writeFileSync(join(directory,'src-tauri/Cargo.lock'),['terax','terax-cli','terax-control-protocol'].map(name=>`[[package]]\r\nname = "${name}"\r\nversion = "0.10.0"\r\n`).join('\r\n'));
+    writeFileSync(join(directory,'src-tauri/Cargo.toml'),'[package]\r\nname = "tarex"\r\nversion = "0.10.0"\r\n[workspace.package]\r\nversion = "0.10.0"\r\n');
+    writeFileSync(join(directory,'src-tauri/Cargo.lock'),['tarex','tarex-cli','tarex-control-protocol'].map(name=>`[[package]]\r\nname = "${name}"\r\nversion = "0.10.0"\r\n`).join('\r\n'));
     const environment=join(directory,'environment');
     execFileSync(process.execPath,[fileURLToPath(new URL('./release.mjs',import.meta.url)),'stamp'],{cwd:directory,env:{...process.env,GITHUB_RUN_NUMBER:'6',GITHUB_ENV:environment}});
     assert.equal(JSON.parse(readFileSync(join(directory,'package.json'))).version,'0.10.6');
     assert.equal(JSON.parse(readFileSync(join(directory,'src-tauri/tauri.conf.json'))).version,'0.10.6');
     assert.equal((readFileSync(join(directory,'src-tauri/Cargo.lock'),'utf8').match(/version = "0.10.6"/g)||[]).length,3);
     assert.equal((readFileSync(join(directory,'src-tauri/Cargo.toml'),'utf8').match(/version = "0.10.6"/g)||[]).length,2);
-    assert.equal(readFileSync(environment,'utf8'),'TEREX_RELEASE_VERSION=0.10.6\n');
+    assert.equal(readFileSync(environment,'utf8'),'TAREX_RELEASE_VERSION=0.10.6\n');
   } finally {rmSync(directory,{recursive:true,force:true});}
 });

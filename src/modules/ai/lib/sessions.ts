@@ -9,7 +9,7 @@ export type SessionMeta = {
   updatedAt: number;
 };
 
-const STORE_PATH = "terax-ai-sessions.json";
+const STORE_PATH = "tarex-ai-sessions.json";
 const KEY_SESSIONS = "sessions";
 const KEY_ACTIVE = "activeId";
 const messagesKey = (id: string) => `messages:${id}`;

@@ -1,13 +1,13 @@
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { TeraxGhostty } from "@terax/ghostty-core/adapted";
+import { TarexGhostty } from "@tarex/ghostty-core/adapted";
 import { it } from "vitest";
 
 it("profiles identical isolated core workloads against optional baseline artifacts", async () => {
   const directories = [
     resolve(
-      process.env.TERAX_PROFILE_CORE_DIR ?? "packages/ghostty-core/adapted",
+      process.env.TAREX_PROFILE_CORE_DIR ?? "packages/ghostty-core/adapted",
     ),
   ];
   const results = [];
@@ -19,10 +19,10 @@ it("profiles identical isolated core workloads against optional baseline artifac
   };
   for (const directory of directories) {
     for (const artifact of [
-      process.env.TERAX_PROFILE_ARTIFACT ?? "ghostty-vt.wasm",
+      process.env.TAREX_PROFILE_ARTIFACT ?? "ghostty-vt.wasm",
     ]) {
       const bytes = await readFile(resolve(directory, artifact));
-      const core = await TeraxGhostty.loadBytes(Uint8Array.from(bytes).buffer);
+      const core = await TarexGhostty.loadBytes(Uint8Array.from(bytes).buffer);
       const models = [];
       const allocations = [{ models: 0, wasmBytes: core.getMemoryBytes() }];
       for (let count = 1; count <= 20; count++) {
@@ -80,7 +80,7 @@ it("profiles identical isolated core workloads against optional baseline artifac
     warmupSamples: 1,
     results,
   };
-  const output = process.env.TERAX_PROFILE_REPORT;
+  const output = process.env.TAREX_PROFILE_REPORT;
   if (output) await writeFile(output, `${JSON.stringify(report, null, 2)}\n`);
   else console.info(JSON.stringify(report));
 });

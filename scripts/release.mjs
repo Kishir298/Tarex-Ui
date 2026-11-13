@@ -32,7 +32,7 @@ export function mergeManifests(fragments, version, repo, tag) {
     }
   }
   if (required.some(target => !platforms[target])) throw new Error('Release is missing an updater platform');
-  return {version, notes: `Terex UI ${version}. Updates are cryptographically signed.`, pub_date: new Date().toISOString(), platforms};
+  return {version, notes: `Tarex UI ${version}. Updates are cryptographically signed.`, pub_date: new Date().toISOString(), platforms};
 }
 
 function files(directory) {
@@ -56,17 +56,17 @@ function main(mode) {
     if ((cargo.match(/^version = "[^"]+"$/gm)||[]).length !== 2) throw new Error('Unexpected Cargo version fields');
     const manifest = cargo.replace(/^version = "[^"]+"$/gm, `version = "${version}"`);
     writeFileSync('src-tauri/Cargo.toml', manifest);
-    const lock = readFileSync('src-tauri/Cargo.lock', 'utf8').replaceAll('\r\n','\n').replace(/(\[\[package\]\]\nname = "(?:terax|terax-cli|terax-control-protocol)"\nversion = ")[^"]+("\n)/g, (_match, start, end) => `${start}${version}${end}`);
+    const lock = readFileSync('src-tauri/Cargo.lock', 'utf8').replaceAll('\r\n','\n').replace(/(\[\[package\]\]\nname = "(?:tarex|tarex-cli|tarex-control-protocol)"\nversion = ")[^"]+("\n)/g, (_match, start, end) => `${start}${version}${end}`);
     writeFileSync('src-tauri/Cargo.lock', lock);
-    if (process.env.GITHUB_ENV) appendFileSync(process.env.GITHUB_ENV, `TEREX_RELEASE_VERSION=${version}\n`);
+    if (process.env.GITHUB_ENV) appendFileSync(process.env.GITHUB_ENV, `TAREX_RELEASE_VERSION=${version}\n`);
     console.log(version);
     return;
   }
-  const version = process.env.TEREX_RELEASE_VERSION || releaseVersion(JSON.parse(readFileSync('package.json', 'utf8')).version, build);
+  const version = process.env.TAREX_RELEASE_VERSION || releaseVersion(JSON.parse(readFileSync('package.json', 'utf8')).version, build);
   if (!repo || !/^\d+$/.test(build) || !/^\d+$/.test(attempt)) throw new Error('Missing GitHub release context');
   const output = 'release-assets';
   if (mode === 'collect') {
-    const target = process.env.TERAX_CLI_TARGET;
+    const target = process.env.TAREX_CLI_TARGET;
     const choices = {
       'aarch64-apple-darwin': [['dmg','.dmg'],['macos','.app.tar.gz','darwin-aarch64']],
       'x86_64-apple-darwin': [['dmg','.dmg'],['macos','.app.tar.gz','darwin-x86_64']],
@@ -79,7 +79,7 @@ function main(mode) {
     for (const [directory, extension, platform] of choices) {
       const matches = files(join('src-tauri/target', target, 'release/bundle', directory)).filter(path => path.endsWith(extension));
       if (matches.length !== 1) throw new Error(`Expected one ${extension}, found ${matches.length}`);
-      const name = `Terex-UI-${target}${extension}`;
+      const name = `Tarex-UI-${target}${extension}`;
       const destination = join(output, name);
       copyFileSync(matches[0], destination);
       if (!platform) continue;

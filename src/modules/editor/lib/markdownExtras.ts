@@ -22,7 +22,7 @@ let mdCodeLanguages: LanguageDescription[] | null = null;
 export function markdownCodeLanguages(): LanguageDescription[] {
   if (mdCodeLanguages) return mdCodeLanguages;
   mdCodeLanguages = LANGUAGES.filter(
-    (l) => l.name !== "Markdown" && l.name !== "Terex UI Theme",
+    (l) => l.name !== "Markdown" && l.name !== "Tarex UI Theme",
   ).map((l) =>
     LanguageDescription.of({
       name: l.name,

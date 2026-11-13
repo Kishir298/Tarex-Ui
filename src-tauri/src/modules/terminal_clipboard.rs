@@ -35,7 +35,7 @@ fn save_image(
     }
     if directory.is_none() {
         let dir = tempfile::Builder::new()
-            .prefix("terex-clipboard-")
+            .prefix("tarex-clipboard-")
             .tempdir()
             .map_err(|e| e.to_string())?;
         #[cfg(unix)]

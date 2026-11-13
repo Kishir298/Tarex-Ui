@@ -17,9 +17,24 @@
 //! All commands take `&AppHandle` so we can resolve the data directory
 //! once via Tauri's path API.
 
+use std::path::PathBuf;
 use std::sync::Mutex;
 
 use tauri::AppHandle;
+
+const LEGACY_KEYRING_SERVICE: &str = "terax-ai";
+const KEYRING_ACCOUNTS: &[&str] = &[
+    "openai-api-key",
+    "anthropic-api-key",
+    "google-api-key",
+    "xai-api-key",
+    "cerebras-api-key",
+    "groq-api-key",
+    "deepseek-api-key",
+    "mistral-api-key",
+    "openrouter-api-key",
+    "openai-compatible-api-key",
+];
 
 #[cfg(target_os = "linux")]
 use std::collections::HashMap;
@@ -108,6 +123,140 @@ where
 #[cfg(not(target_os = "linux"))]
 fn entry(service: &str, account: &str) -> Result<keyring::Entry, String> {
     keyring::Entry::new(service, account).map_err(|e| e.to_string())
+}
+
+
+pub fn legacy_credentials_available(legacy_local_dirs: &[PathBuf]) -> bool {
+    #[cfg(target_os = "linux")]
+    {
+        legacy_local_dirs.iter().any(|dir| {
+            read_store_at(&dir.join("secrets.json"))
+                .map(|map| {
+                    map.keys()
+                        .any(|key| key.starts_with(&format!("{LEGACY_KEYRING_SERVICE}::")))
+                })
+                .unwrap_or(false)
+        })
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        let _ = legacy_local_dirs;
+        KEYRING_ACCOUNTS.iter().any(|account| {
+            keyring::Entry::new(LEGACY_KEYRING_SERVICE, account)
+                .ok()
+                .and_then(|entry| entry.get_password().ok())
+                .is_some_and(|value| !value.is_empty())
+        })
+    }
+}
+
+fn custom_endpoint_accounts(data: &std::path::Path) -> Vec<String> {
+    let path = data.join("tarex-settings.json");
+    let Ok(bytes) = std::fs::read(path) else {
+        return Vec::new();
+    };
+    let Ok(value) = serde_json::from_slice::<serde_json::Value>(&bytes) else {
+        return Vec::new();
+    };
+    value
+        .get("customEndpoints")
+        .and_then(|value| value.as_array())
+        .into_iter()
+        .flatten()
+        .filter_map(|endpoint| endpoint.get("id").and_then(|value| value.as_str()))
+        .map(|id| format!("compat-{id}-api-key"))
+        .collect()
+}
+
+fn copy_legacy_credentials(
+    app: &AppHandle,
+    state: &tauri::State<'_, SecretsState>,
+    skip: bool,
+) -> Result<usize, String> {
+    if skip {
+        return Ok(0);
+    }
+    let paths = crate::modules::shared_storage::storage_paths(app)?;
+    let mut accounts = KEYRING_ACCOUNTS
+        .iter()
+        .map(|account| (*account).to_string())
+        .collect::<Vec<_>>();
+    accounts.extend(custom_endpoint_accounts(&paths.data));
+
+    #[cfg(target_os = "linux")]
+    {
+        let mut legacy = HashMap::new();
+        for dir in crate::modules::shared_storage::legacy_local_data_dirs(app)? {
+            if let Ok(map) = read_store_at(&dir.join("secrets.json")) {
+                for (key, value) in map {
+                    if let Some(account) = key.strip_prefix(&format!("{LEGACY_KEYRING_SERVICE}::"))
+                    {
+                        legacy.insert(account.to_string(), value);
+                    }
+                }
+            }
+        }
+        if legacy.is_empty() {
+            return Ok(0);
+        }
+        let mut imported = 0;
+        with_store(app, state, |map| {
+            for (account, value) in legacy {
+                let destination = key("tarex-ai", &account);
+                if !map.contains_key(&destination) && !value.is_empty() {
+                    map.insert(destination, value);
+                    imported += 1;
+                }
+            }
+        })?;
+        if imported > 0 {
+            let snapshot = {
+                let guard = state.cache.lock().map_err(|e| e.to_string())?;
+                guard.as_ref().cloned().unwrap_or_default()
+            };
+            write_store(app, &snapshot)?;
+        }
+        Ok(imported)
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        let _ = state;
+        let mut imported = 0;
+        for account in accounts {
+            let Ok(old) = keyring::Entry::new(LEGACY_KEYRING_SERVICE, &account) else {
+                continue;
+            };
+            let Ok(value) = old.get_password() else {
+                continue;
+            };
+            if value.is_empty() {
+                continue;
+            }
+            let Ok(destination) = keyring::Entry::new("tarex-ai", &account) else {
+                continue;
+            };
+            if destination.get_password().is_ok() {
+                continue;
+            }
+            if destination.set_password(&value).is_ok() {
+                imported += 1;
+            }
+        }
+        Ok(imported)
+    }
+}
+
+#[tauri::command]
+pub async fn legacy_import_credentials(
+    app: AppHandle,
+    state: tauri::State<'_, SecretsState>,
+    skip: bool,
+) -> Result<usize, String> {
+    let result = copy_legacy_credentials(&app, &state, skip);
+    if result.is_ok() {
+        crate::modules::shared_storage::mark_credentials_handled(&app)?;
+    }
+    result
 }
 
 #[tauri::command]

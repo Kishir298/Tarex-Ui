@@ -100,7 +100,7 @@ async fn open_settings_window(app: tauri::AppHandle, tab: Option<String>) -> Res
         if let Some(t) = tab.as_deref().filter(|s| !s.is_empty()) {
             // emit() serializes via JSON — no string-escape footgun, unlike
             // eval() with format!(). Frontend listens via Tauri event API.
-            let _ = window.emit("terax:settings-tab", t);
+            let _ = window.emit("tarex:settings-tab", t);
         }
         return Ok(());
     }
@@ -113,7 +113,7 @@ async fn open_settings_window(app: tauri::AppHandle, tab: Option<String>) -> Res
         .visible(false)
         .always_on_top(settings_always_on_top(cfg!(target_os = "macos")));
 
-    // A normal-level child stays above Terax but recedes with the app on macOS.
+    // A normal-level child stays above Tarex but recedes with the app on macOS.
     // Never combine the macOS parent with always_on_top; that breaks WebView
     // compositing and can hide Settings behind the main window (#33, #957).
     let builder = if let Some(main) = app.get_webview_window("main") {
@@ -175,7 +175,7 @@ mod updater_config_tests {
         assert!(updater.require_signed_version);
         assert!(!updater.pubkey.is_empty());
         assert_eq!(updater.endpoints.len(), 1);
-        assert_eq!(updater.endpoints[0].as_str(), "https://github.com/3xecutablefile/terex-ui/releases/latest/download/latest.json");
+        assert_eq!(updater.endpoints[0].as_str(), "https://github.com/Kishir298/Tarex-Ui/releases/latest/download/latest.json");
     }
 }
 
@@ -184,7 +184,7 @@ pub fn run() {
     #[cfg(windows)]
     {
         let args: Vec<String> = std::env::args().collect();
-        if args.get(1).map(String::as_str) == Some("__terax_notify") {
+        if args.get(1).map(String::as_str) == Some("__tarex_notify") {
             if let (Some(agent), Some(event)) = (args.get(2), args.get(3)) {
                 agent::emit_conout_marker(agent, event);
             }
@@ -234,7 +234,7 @@ pub fn run() {
             #[cfg(target_os = "macos")]
             modules::window_presentation::macos::install(_app.handle());
             if let Err(error) = control::start(_app.handle().clone(), control_for_setup.clone()) {
-                log::warn!("could not start Terex UI control server: {error}");
+                log::warn!("could not start Tarex UI control server: {error}");
             }
             #[cfg(target_os = "macos")]
             if let Some(main) = _app.get_webview_window("main") {
@@ -362,6 +362,7 @@ pub fn run() {
             secrets::secrets_set,
             secrets::secrets_delete,
             secrets::secrets_get_all,
+            secrets::legacy_import_credentials,
             net::lm_ping,
             net::ai_http_request,
             net::ai_http_stream,
@@ -420,7 +421,7 @@ pub fn run() {
                     if let Some(state) = app.try_state::<LaunchFiles>() {
                         *state.0.lock().expect("LaunchFiles mutex poisoned") = target.files.clone();
                     }
-                    let _ = app.emit("terax:open-file", target.files);
+                    let _ = app.emit("tarex:open-file", target.files);
                 }
                 _ => {}
             }

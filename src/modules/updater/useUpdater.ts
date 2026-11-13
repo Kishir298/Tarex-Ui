@@ -7,8 +7,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { subscribeWindowPresentation } from "@/modules/terminal/ghostty/windowPresentation";
 
-const CHECK_EVENT = "terex:updater:check";
-const LAST_CHECK = "terex:updater:last-check";
+const CHECK_EVENT = "tarex:updater:check";
+const LAST_CHECK = "tarex:updater:last-check";
 const INTERVAL = 30 * 60 * 1000;
 
 export type UpdaterStatus =
@@ -116,7 +116,7 @@ export function useUpdater() {
             body: candidate.body,
           });
           if (!manual)
-            toast.info(`Terex UI ${candidate.version} is ready`, {
+            toast.info(`Tarex UI ${candidate.version} is ready`, {
               duration: 15000,
               action: { label: "Review update", onClick: () => setOpen(true) },
             });

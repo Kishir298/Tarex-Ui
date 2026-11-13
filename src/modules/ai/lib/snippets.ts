@@ -10,7 +10,7 @@ export type Snippet = {
   content: string;
 };
 
-const STORE_PATH = "terax-ai-snippets.json";
+const STORE_PATH = "tarex-ai-snippets.json";
 const KEY_LIST = "snippets";
 
 const store = new LazyStore(appDataFile(STORE_PATH), { defaults: {}, autoSave: 200 });

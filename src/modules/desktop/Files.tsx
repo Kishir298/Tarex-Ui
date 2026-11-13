@@ -276,7 +276,7 @@ function FileColumn({
   return (
     <fieldset
       ref={scroll}
-      className={`terex-file-column terex-file-column-${side}`}
+      className={`tarex-file-column tarex-file-column-${side}`}
       aria-label={`${side} directory`}
     >
       <div
@@ -343,7 +343,7 @@ export function Commander({ files }: { files: DesktopFiles }) {
             data-file-name={entry.name}
             data-file-kind={entry.kind}
             aria-pressed={side === "current" && entry.name === selected?.name}
-            className={`terex-file-row ${(side === "current" && entry.name === selected?.name) || (highlight?.base === base && highlight?.name === entry.name) || (side === "parent" && path && joinPath(base ?? "/", entry.name) === path.replace(/\/$/, "")) ? "selected" : ""} ${entry.kind === "dir" ? "is-directory" : ""}`}
+            className={`tarex-file-row ${(side === "current" && entry.name === selected?.name) || (highlight?.base === base && highlight?.name === entry.name) || (side === "parent" && path && joinPath(base ?? "/", entry.name) === path.replace(/\/$/, "")) ? "selected" : ""} ${entry.kind === "dir" ? "is-directory" : ""}`}
             onFocus={() => {
               if (side === "current") files.select(entry.name);
             }}
@@ -375,15 +375,15 @@ export function Commander({ files }: { files: DesktopFiles }) {
               if (event.key === "PageUp") {event.preventDefault();moveFocus(index-20);}
             }}
           >
-            <span className="terex-file-mark">
+            <span className="tarex-file-mark">
               {entry.kind === "dir"
                 ? "▪"
                 : entry.kind === "symlink"
                   ? "↗"
                   : "·"}
             </span>
-            <span className="terex-file-name">{entry.name}</span>
-            <span className="terex-file-size">
+            <span className="tarex-file-name">{entry.name}</span>
+            <span className="tarex-file-size">
               {entry.kind === "dir" ? "/" : bytes(entry.size)}
             </span>
           </button>
@@ -392,9 +392,9 @@ export function Commander({ files }: { files: DesktopFiles }) {
     );
   }
   return (
-    <div className="terex-commander">
-      <div className="terex-pathline">
-        <span className="terex-path-user">LOCAL</span>
+    <div className="tarex-commander">
+      <div className="tarex-pathline">
+        <span className="tarex-path-user">LOCAL</span>
         <input aria-label="Directory path" value={address} onChange={e=>setAddress(e.target.value)} onFocus={e=>e.target.select()} onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();void openAddress();}if(e.key==="Escape")setAddress(path??"");}} />
         <button
           type="button"
@@ -405,11 +405,11 @@ export function Commander({ files }: { files: DesktopFiles }) {
         </button>
       </div>
       {files.error && (
-        <div role="alert" className="terex-error">
+        <div role="alert" className="tarex-error">
           {files.error}
         </div>
       )}
-      <div className="terex-columns">
+      <div className="tarex-columns">
         {column(parent.entries, path ? parentPath(path) : null, "parent")}
         {column(current.entries, path, "current")}
         {selected?.kind === "dir" ? (
@@ -419,7 +419,7 @@ export function Commander({ files }: { files: DesktopFiles }) {
             "preview",
           )
         ) : (
-          <div className="terex-file-detail">
+          <div className="tarex-file-detail">
             {selected ? (
               <>
                 <FileGlyph kind={selected.kind} />
@@ -440,7 +440,7 @@ export function Commander({ files }: { files: DesktopFiles }) {
           </div>
         )}
       </div>
-      <div className="terex-file-footer">
+      <div className="tarex-file-footer">
         <span>
           {selected?.kind ?? "directory"} {selected?.name ?? "/"}
         </span>
@@ -466,7 +466,7 @@ export function FileActions({
 }) {
   return (
     <div
-      className="terex-file-actions"
+      className="tarex-file-actions"
       role="toolbar"
       aria-label="File actions"
     >

@@ -1,7 +1,7 @@
 # Ghostty final resource audit, September 7
 
 This audit starts from `a96a77d0ddeba3f11f8742b3149ddad8be05dc92` on PR
-[#1223](https://github.com/crynta/terax-ai/pull/1223). It covers terminal resource
+[#1223](https://github.com/crynta/tarex-ai/pull/1223). It covers terminal resource
 ownership, startup cancellation, PTY backpressure and shutdown, presentation
 scheduling, GPU/atlas lifetime, hidden panes, blocks, accessibility, asset
 loading, upstream artifacts, and regression checks. It does not certify total
@@ -56,7 +56,7 @@ The checked-in [allocation/profile data](ghostty-final-audit-profile-2026-09-07.
 and [block-enabled stress data](ghostty-final-audit-soak-2026-09-07.json) include
 artifact checksums and raw samples. Runs used Node 26.5.0 on macOS arm64. Heavy
 audit build/test jobs did not overlap these runs, but the workstation was not
-an otherwise idle, controlled benchmark machine. The user's Terax was not
+an otherwise idle, controlled benchmark machine. The user's Tarex was not
 launched, replaced, or used as candidate measurement data.
 The profile's directory labels are repository-relative; numerical samples and
 artifact checksums are unchanged from the generated report.
@@ -97,7 +97,7 @@ These timings differ from prior runs and favor different variants for different
 workloads. They do not establish a speedup from this audit or justify changing
 artifact selection. The stress run lasts seconds, not days. Its Node RSS samples
 include the test runner and earlier sequential work, and must not be interpreted
-as packaged Terax memory or added to WASM allocation counters. IPC, React,
+as packaged Tarex memory or added to WASM allocation counters. IPC, React,
 WebKit, GPU presentation and application energy are outside both harnesses.
 
 ## Rejected PTY optimization
@@ -130,7 +130,7 @@ drain overhead remains a correctness tradeoff and a packaged throughput gate.
   1.43 MB / 1.5 MB, primary Ghostty JS 46.05 kB / 56 kB, lazy WebGL 14.08 kB /
   15 kB, both WASM variants 413.4 kB / 450 kB. No budget was raised.
 - All seven CI jobs pass on `c5ab994`, including macOS and Windows tests:
-  [exact-revision run](https://github.com/crynta/terax-ai/actions/runs/34135456841).
+  [exact-revision run](https://github.com/crynta/tarex-ai/actions/runs/34135456841).
   CodeRabbit's follow-up found only local directory labels in the new profile
   JSON; those are now repository-relative.
 - The latest CodeRabbit comment requested an explicit platform-validation row;
@@ -138,11 +138,11 @@ drain overhead remains a correctness tradeoff and a packaged throughput gate.
   handoff. The checked-in minimum remains macOS 13.
 
 A fresh macOS arm64 bundle was built from `c5ab994` as
-`src-tauri/target/release/bundle/macos/Terax Resource Candidate.app`. Its local
+`src-tauri/target/release/bundle/macos/Tarex Resource Candidate.app`. Its local
 ad-hoc signature passes `codesign --verify --deep --strict`, and it occupies
 9,880 KiB on disk. It was not launched or installed. This is an application
 directory measurement, not an installer size or a notarized release. The bundle
-retains Terax's application identifier and settings, so quit the existing Terax
+retains Tarex's application identifier and settings, so quit the existing Tarex
 before switching to it for manual testing.
 
 The identified lifecycle defects are fixed and regression-tested. This audit

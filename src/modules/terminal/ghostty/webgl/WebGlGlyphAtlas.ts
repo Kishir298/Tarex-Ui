@@ -3,7 +3,7 @@
  * Copyright (c) 2017-2019 The xterm.js authors. MIT licensed.
  */
 
-import { CellFlags } from "@terax/ghostty-core/protocol";
+import { CellFlags } from "@tarex/ghostty-core/protocol";
 import { hasIntrinsicColor } from "../gpu/glyphColor";
 import { SkylineAtlasAllocator } from "../gpu/SkylineAtlasAllocator";
 import { fontCss, type TerminalFontMetrics } from "../gpu/terminalVisuals";

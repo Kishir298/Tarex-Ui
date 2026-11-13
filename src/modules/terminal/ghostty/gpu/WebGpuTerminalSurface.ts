@@ -7,7 +7,7 @@ import {
   subscribeTerminalResizeInteraction,
   terminalResizeInteractionActive,
 } from "@/modules/terminal/lib/terminalResizeInteraction";
-import { CellFlags } from "@terax/ghostty-core/protocol";
+import { CellFlags } from "@tarex/ghostty-core/protocol";
 import type { Rgb, TerminalCellReader } from "../core/packedCells";
 import type { GhosttyTerminalModelApi } from "../GhosttyTerminalModel";
 import { GhosttySearchController } from "../search/GhosttySearchController";
@@ -188,8 +188,8 @@ export class WebGpuTerminalSurface
     this.root.className = "absolute inset-0 overflow-hidden";
     this.root.style.userSelect = "none";
     this.updateRootBackground();
-    this.root.setAttribute("data-terax-ghostty-surface", "webgpu");
-    this.root.setAttribute("data-terax-terminal-surface", "");
+    this.root.setAttribute("data-tarex-ghostty-surface", "webgpu");
+    this.root.setAttribute("data-tarex-terminal-surface", "");
     this.canvas.className = "block";
     this.canvas.setAttribute("aria-hidden", "true");
     this.input.setAttribute("aria-label", "Terminal input");
@@ -480,7 +480,7 @@ export class WebGpuTerminalSurface
 
     const target = this.context.getCurrentTexture().createView();
     const pass = encoder.beginRenderPass({
-      label: "Terax terminal surface pass",
+      label: "Tarex terminal surface pass",
       colorAttachments: [
         {
           view: target,
@@ -708,7 +708,7 @@ export class WebGpuTerminalSurface
       this.forceFullRedraw = true;
       this.uniformUploaded = false;
       this.uniformBuffer = resources.device.createBuffer({
-        label: "Terax terminal surface uniform",
+        label: "Tarex terminal surface uniform",
         size: SCREEN_UNIFORM_BYTES,
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
       });
@@ -911,7 +911,7 @@ export class WebGpuTerminalSurface
     this.instanceBuffer = createVertexBuffer(
       device,
       this.instanceData.byteLength,
-      "Terax terminal packed cell and glyph instances",
+      "Tarex terminal packed cell and glyph instances",
     );
   }
 

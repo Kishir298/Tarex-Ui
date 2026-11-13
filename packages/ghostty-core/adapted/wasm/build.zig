@@ -19,14 +19,14 @@ pub fn build(b: *std.Build) void {
     retargetMacOS27Host(b);
 
     const exe_mod = b.createModule(.{
-        .root_source_file = b.path("src/terax.zig"),
+        .root_source_file = b.path("src/tarex.zig"),
         .target = target,
         .optimize = optimize,
         .strip = optimize != .Debug,
     });
 
     const exe = b.addExecutable(.{
-        .name = "terax-ghostty-vt",
+        .name = "tarex-ghostty-vt",
         .root_module = exe_mod,
     });
 
@@ -44,7 +44,7 @@ pub fn build(b: *std.Build) void {
         .optimize = .ReleaseFast,
     });
     const terminfo_gen = b.addExecutable(.{
-        .name = "terax-ghostty-terminfo-gen",
+        .name = "tarex-ghostty-terminfo-gen",
         .root_module = b.createModule(.{
             .root_source_file = b.path("src/terminfo_gen.zig"),
             .target = b.graph.host,
@@ -57,7 +57,7 @@ pub fn build(b: *std.Build) void {
     const generated_files = b.addWriteFiles();
     const terminfo_output = generated_files.addCopyFile(
         terminfo_run.captureStdOut(.{}),
-        "terax_ghostty_terminfo.zig",
+        "tarex_ghostty_terminfo.zig",
     );
 
     exe.root_module.addImport("ghostty-vt", ghostty_dep.module("ghostty-vt"));

@@ -11,7 +11,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Terax",
+        "title": "Tarex UI",
         "decorations": false,
         "transparent": true,
         "visible": false,

@@ -82,7 +82,7 @@ function connect(): void {
   sync();
   if (typeof window !== "undefined" && "__TAURI_INTERNALS__" in window) {
     void getCurrentWindow()
-      .listen<NativePresentation>("terax:window-presentation", ({ payload }) =>
+      .listen<NativePresentation>("tarex:window-presentation", ({ payload }) =>
         accept(payload),
       )
       .then(async (stop) => {
@@ -96,7 +96,7 @@ function connect(): void {
       .catch((error: unknown) => {
         if (!disposed)
           console.warn(
-            "[terax] Native window presentation tracking unavailable:",
+            "[tarex] Native window presentation tracking unavailable:",
             error,
           );
       });

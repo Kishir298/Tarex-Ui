@@ -1,6 +1,6 @@
 import type { GhosttyTerminalModelApi } from "@/modules/terminal/ghostty/GhosttyTerminalModel";
 import { readFile } from "node:fs/promises";
-import { TeraxGhostty } from "@terax/ghostty-core/adapted";
+import { TarexGhostty } from "@tarex/ghostty-core/adapted";
 import { describe, expect, it, vi } from "vitest";
 import {
   GhosttyInputController,
@@ -124,7 +124,7 @@ describe("GhosttyInputController", () => {
           import.meta.url,
         ),
       );
-      const core = await TeraxGhostty.loadBytes(Uint8Array.from(bytes).buffer);
+      const core = await TarexGhostty.loadBytes(Uint8Array.from(bytes).buffer);
       const terminal = core.createTerminal(80, 24);
       const input = new FakeTextArea();
       const onData = vi.fn();
@@ -229,7 +229,7 @@ describe("GhosttyInputController", () => {
           import.meta.url,
         ),
       );
-      const core = await TeraxGhostty.loadBytes(Uint8Array.from(bytes).buffer);
+      const core = await TarexGhostty.loadBytes(Uint8Array.from(bytes).buffer);
       const terminal = core.createTerminal(80, 24);
       const input = new FakeTextArea();
       const onData = vi.fn();

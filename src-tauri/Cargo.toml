@@ -1,19 +1,19 @@
 [package]
-name = "terax"
-version = "0.10.0"
-description = "Terex UI: native AI terminal and system console"
-authors = ["crynta"]
+name = "tarex"
+version = "0.1.0"
+description = "Tarex UI: native AI terminal and system console"
+authors = ["Tarex UI contributors"]
 license = "Apache-2.0"
 edition = "2021"
-default-run = "terax"
+default-run = "tarex"
 
 [workspace]
-members = ["crates/terax-cli", "crates/terax-control-protocol"]
-default-members = [".", "crates/terax-cli", "crates/terax-control-protocol"]
+members = ["crates/tarex-cli", "crates/tarex-control-protocol"]
+default-members = [".", "crates/tarex-cli", "crates/tarex-control-protocol"]
 resolver = "2"
 
 [workspace.package]
-version = "0.10.0"
+version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
 
@@ -23,7 +23,7 @@ license = "Apache-2.0"
 # The `_lib` suffix may seem redundant but it is necessary
 # to make the lib name unique and wouldn't conflict with the bin name.
 # This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
-name = "terax_lib"
+name = "tarex_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
@@ -40,7 +40,7 @@ image = { version = "0.25", default-features = false, features = ["png"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 getrandom = "0.4"
-terax-control-protocol = { path = "crates/terax-control-protocol" }
+tarex-control-protocol = { path = "crates/tarex-control-protocol" }
 portable-pty = "0.9"
 dirs = "7"
 log = "0.4"

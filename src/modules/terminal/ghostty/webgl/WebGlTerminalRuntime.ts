@@ -63,7 +63,7 @@ export type WebGlRuntimeStats = {
 /**
  * Window-scoped WebGL renderer pool. Ghostty models are never pooled here.
  * Hidden tabs release their GPU slot while their WASM terminal state remains
- * alive, matching Terax's existing xterm renderer-pool ownership model.
+ * alive, matching Tarex's existing xterm renderer-pool ownership model.
  */
 export class WebGlTerminalRuntime {
   private readonly slots: RendererSlot[] = [];

@@ -1,4 +1,4 @@
-import { CellFlags } from "@terax/ghostty-core/protocol";
+import { CellFlags } from "@tarex/ghostty-core/protocol";
 import type { TerminalDamage } from "@/modules/terminal/backend/contracts";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { GhosttyTerminalModelApi } from "@/modules/terminal/ghostty/GhosttyTerminalModel";

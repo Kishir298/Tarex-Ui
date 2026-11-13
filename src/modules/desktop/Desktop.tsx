@@ -110,7 +110,7 @@ export function Desktop(props: Props) {
         disabled={nativeEditMenu}
       >
         <div
-          className={`terex-desktop ${props.zen ? "is-zen" : ""}`}
+          className={`tarex-desktop ${props.zen ? "is-zen" : ""}`}
           onPointerDownCapture={(event) =>
             setNativeEditMenu(
               !!(event.target as HTMLElement).closest(
@@ -130,10 +130,10 @@ export function Desktop(props: Props) {
           onContextMenuCapture={() => setSelection(props.getSelection())}
         >
           <div
-            className={`terex-topline ${IS_MAC ? "has-native-controls" : ""} ${USE_CUSTOM_WINDOW_CONTROLS ? "has-custom-controls" : ""}`}
+            className={`tarex-topline ${IS_MAC ? "has-native-controls" : ""} ${USE_CUSTOM_WINDOW_CONTROLS ? "has-custom-controls" : ""}`}
             data-tauri-drag-region
           >
-            <strong>TEREX UI</strong>
+            <strong>TAREX UI</strong>
             <nav aria-label="Workspace views">
               <button
                 type="button"
@@ -149,7 +149,7 @@ export function Desktop(props: Props) {
               >
                 WORKSPACE
               </button>
-              <button ref={activityButton} type="button" aria-expanded={activityOpen} aria-controls="terex-activity-panel" onClick={() => props.onActivityChange(!activityOpen)}>
+              <button ref={activityButton} type="button" aria-expanded={activityOpen} aria-controls="tarex-activity-panel" onClick={() => props.onActivityChange(!activityOpen)}>
                 ACTIVITY
               </button>
               <button type="button" onClick={props.onCommands}>
@@ -161,16 +161,16 @@ export function Desktop(props: Props) {
             </nav>
             <WindowControls />
           </div>
-          <div className="terex-top-deck">
+          <div className="tarex-top-deck">
             {!props.zen && <SystemRail {...telemetry} />}
             <div
-              className="terex-workspace"
+              className="tarex-workspace"
               data-file-mode={fileMode && !props.zen}
               data-activity-exclusive={activityExclusive}
             >
-              <div className="terex-workspace-main" inert={activityExclusive} aria-hidden={activityExclusive}>
+              <div className="tarex-workspace-main" inert={activityExclusive} aria-hidden={activityExclusive}>
               <div
-                className="terex-workspace-content"
+                className="tarex-workspace-content"
                 inert={fileMode && !props.zen}
               >
                 <WorkspaceVisibility.Provider value={(!fileMode || props.zen) && !activityExclusive}>
@@ -180,8 +180,8 @@ export function Desktop(props: Props) {
                 </WorkspaceVisibility.Provider>
               </div>
               {fileMode && !props.zen && (
-                <div className="terex-browser-surface">
-                  <div className="terex-browser-tabs">
+                <div className="tarex-browser-surface">
+                  <div className="tarex-browser-tabs">
                     <button
                       type="button"
                       className="selected"
@@ -233,7 +233,7 @@ export function Desktop(props: Props) {
               )}
               </div>
               {activityOpen && (
-                <Suspense fallback={<div className="terex-activity-loading-panel" role="status">Loading Activity…</div>}>
+                <Suspense fallback={<div className="tarex-activity-loading-panel" role="status">Loading Activity…</div>}>
                   <ActivityPanel
                     tabs={props.tabs}
                     activeTabId={props.activeId}
@@ -274,7 +274,7 @@ export function Desktop(props: Props) {
             />}
           </div>
           {!props.zen && (
-            <footer className="terex-footer">
+            <footer className="tarex-footer">
               <span>
                 MOUNT {disk?.mount ?? "/"} /{" "}
                 {disk
@@ -286,7 +286,7 @@ export function Desktop(props: Props) {
                   ? `${bytes(disk.available)} AVAILABLE`
                   : "NATIVE FILESYSTEM"}
               </span>
-              <span>TEREX UI</span>
+              <span>TAREX UI</span>
             </footer>
           )}
         </div>

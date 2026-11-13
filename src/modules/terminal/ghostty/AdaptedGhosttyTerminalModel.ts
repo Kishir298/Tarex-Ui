@@ -11,16 +11,16 @@ import type {
   TerminalRowRange,
 } from "@/modules/terminal/backend/contracts";
 import type {
-  TeraxGhostty,
-  TeraxGhosttyRenderState,
-  TeraxGhosttyTerminal,
-} from "@terax/ghostty-core/adapted";
+  TarexGhostty,
+  TarexGhosttyRenderState,
+  TarexGhosttyTerminal,
+} from "@tarex/ghostty-core/adapted";
 import type {
   GhosttyTerminalConfig,
   GhosttyTerminalEvent,
   KeyEvent,
-} from "@terax/ghostty-core/protocol";
-import { CellFlags } from "@terax/ghostty-core/protocol";
+} from "@tarex/ghostty-core/protocol";
+import { CellFlags } from "@tarex/ghostty-core/protocol";
 import { PromptPresentationGate } from "./core/PromptPresentationGate";
 import {
   CELL_STRIDE,
@@ -65,14 +65,14 @@ const DEFAULT_MODES: TerminalModes = Object.freeze({
 });
 
 /**
- * Terax-owned model adapter for the current Ghostty terminal and render-state
+ * Tarex-owned model adapter for the current Ghostty terminal and render-state
  * implementation. The terminal model is independent from GPU surfaces so it
  * survives RendererPool lease release and keeps parsing hidden-tab output.
  */
 export class AdaptedGhosttyTerminalModel implements GhosttyTerminalModelApi {
   readonly backend: GhosttyTerminalModelOptions["backend"];
 
-  private readonly terminal: TeraxGhosttyTerminal;
+  private readonly terminal: TarexGhosttyTerminal;
   private plainLinks: {
     revision: number;
     origin: number;
@@ -89,7 +89,7 @@ export class AdaptedGhosttyTerminalModel implements GhosttyTerminalModelApi {
   private eventSink: ((event: GhosttyTerminalEvent) => void) | null;
   private onDispose: (() => void) | null;
   private pendingDamage: TerminalDamage = FULL_DAMAGE;
-  private renderState: TeraxGhosttyRenderState | null = null;
+  private renderState: TarexGhosttyRenderState | null = null;
   private renderStateCurrent = false;
   private packedViewport = new Uint8Array(0);
   private packedRenderVersion = -1;
@@ -110,7 +110,7 @@ export class AdaptedGhosttyTerminalModel implements GhosttyTerminalModelApi {
   private rowsValue: number;
   private disposed = false;
 
-  constructor(ghostty: TeraxGhostty, options: GhosttyTerminalModelOptions) {
+  constructor(ghostty: TarexGhostty, options: GhosttyTerminalModelOptions) {
     validateDimensions(options.cols, options.rows);
     this.backend = options.backend;
     this.colsValue = options.cols;
@@ -740,7 +740,7 @@ export class AdaptedGhosttyTerminalModel implements GhosttyTerminalModelApi {
     }
   }
 
-  private ensureRenderState(): TeraxGhosttyRenderState {
+  private ensureRenderState(): TarexGhosttyRenderState {
     const state = this.renderState;
     if (
       !this.renderStateCurrent ||
@@ -762,7 +762,7 @@ export class AdaptedGhosttyTerminalModel implements GhosttyTerminalModelApi {
     this.renderStateCurrent = false;
   }
 
-  private packRenderState(state: TeraxGhosttyRenderState): void {
+  private packRenderState(state: TarexGhosttyRenderState): void {
     const byteLength = state.cellCount * CELL_STRIDE;
     if (this.packedViewport.byteLength !== byteLength) {
       this.packedViewport = new Uint8Array(byteLength);
@@ -899,13 +899,13 @@ export class AdaptedGhosttyTerminalModel implements GhosttyTerminalModelApi {
 }
 
 class GhosttyRenderCellView implements TerminalCellReader {
-  private state: TeraxGhosttyRenderState | null = null;
+  private state: TarexGhosttyRenderState | null = null;
 
   get length(): number {
     return this.current().cellCount;
   }
 
-  update(state: TeraxGhosttyRenderState): void {
+  update(state: TarexGhosttyRenderState): void {
     this.state = state;
   }
 
@@ -970,15 +970,15 @@ class GhosttyRenderCellView implements TerminalCellReader {
     return packedRgb(this.current().backgroundRgba, index * 4);
   }
 
-  private current(): TeraxGhosttyRenderState {
+  private current(): TarexGhosttyRenderState {
     if (!this.state) throw new Error("Ghostty render cells are unavailable");
     return this.state;
   }
 }
 
 function snapshotRow(
-  terminal: TeraxGhosttyTerminal,
-  state: TeraxGhosttyRenderState,
+  terminal: TarexGhosttyTerminal,
+  state: TarexGhosttyRenderState,
   row: number,
 ): BufferLine {
   const cells = new Array<string>(state.cols);
@@ -1037,7 +1037,7 @@ function encodePalette(palette: readonly number[]): Uint8Array {
   return colors;
 }
 
-function damageFromRenderState(state: TeraxGhosttyRenderState): TerminalDamage {
+function damageFromRenderState(state: TarexGhosttyRenderState): TerminalDamage {
   if (state.fullDamage) return FULL_DAMAGE;
   const ranges: TerminalRowRange[] = [];
   let first = -1;

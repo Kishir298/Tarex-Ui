@@ -108,7 +108,7 @@ export function SettingsApp() {
       }
     };
     const unlistenPromise = getCurrentWebviewWindow().listen<string>(
-      "terax:settings-tab",
+      "tarex:settings-tab",
       (e) => apply(e.payload),
     );
     return () => {

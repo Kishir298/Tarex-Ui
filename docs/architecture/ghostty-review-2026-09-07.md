@@ -1,6 +1,6 @@
 # Ghostty PR review, September 7
 
-Review: [PR 1223](https://github.com/crynta/terax-ai/pull/1223), CodeRabbit's
+Review: [PR 1223](https://github.com/crynta/tarex-ai/pull/1223), CodeRabbit's
 September 7 review of `4834c01`. All 26 major findings and the documentation
 index comment were checked against the implementation. No PR comments were
 posted and no review threads were marked resolved automatically.
@@ -71,7 +71,7 @@ were posted or threads resolved automatically.
 | A WebGL surface retains a renderer disposed during failed acquisition | Fixed by clearing surface ownership before acquisition and before reporting exhausted recovery. Theme, font, DPR, and resume failures use the same bounded recovery path. Tests cover successful replacement with selection preserved and failure of both the original configuration and recovery. Subsequent resize work cannot reach the retired renderer. |
 | Block cwd fails home abbreviation with Windows separators | Fixed with a shared normalized home-path formatter for block headers and the workspace input bar. Tests cover both separators, exact home paths, outside paths, and near-prefix directory names. |
 | Deferred atlas cleanup requires another call on GPU completion | No runtime change. `GlyphAtlas.completeSubmission()` synchronously moves encoded uploads into submitted ownership. The end of that same `flushFrame()` then rearms deferred cleanup, before the completion callback, even with no dirty surfaces. A regression test exercises actual atlas encoding, lease release, submission, completion, and timed destruction without scheduling another frame. Reaping on every GPU completion would add unnecessary work. |
-| Preserve raw ESC by splitting bracketed paste frames | Rejected. Terminal paste framing has no portable literal-ESC quoting contract across receiving applications; inserting raw ESC outside a frame can expose it to command/key interpretation. The pinned upstream Ghostty encoder also sanitizes ESC, including in bracketed paste. Terax retains its visible U+241B substitution and the existing tests for embedded closing delimiters and single-line submissions. |
+| Preserve raw ESC by splitting bracketed paste frames | Rejected. Terminal paste framing has no portable literal-ESC quoting contract across receiving applications; inserting raw ESC outside a frame can expose it to command/key interpretation. The pinned upstream Ghostty encoder also sanitizes ESC, including in bracketed paste. Tarex retains its visible U+241B substitution and the existing tests for embedded closing delimiters and single-line submissions. |
 
 The paste disposition was checked against the pinned
 [Ghostty paste encoder](https://github.com/ghostty-org/ghostty/blob/f426f6f181ba95f45d33f683fb754b6359d9e04f/src/input/paste.zig).
@@ -121,7 +121,7 @@ diff comment and platform-validation nitpick.
 
 The reviewed head passed all test/build/coverage CI jobs, including Rust on
 Linux, macOS, and Windows and terminal tests on macOS and Windows:
-[CI run 34116210880](https://github.com/crynta/terax-ai/actions/runs/34116210880).
+[CI run 34116210880](https://github.com/crynta/tarex-ai/actions/runs/34116210880).
 No PR replies were posted or review threads resolved automatically.
 
 Validation of this follow-up: 165 frontend files / 1,148 tests, TypeScript via

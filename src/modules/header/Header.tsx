@@ -118,7 +118,7 @@ export function Header({
     <div
       ref={rootRef}
       data-tauri-drag-region
-      className={`terex-native-header flex h-10 shrink-0 items-center gap-2 select-none ${
+      className={`tarex-native-header flex h-10 shrink-0 items-center gap-2 select-none ${
         IS_MAC ? "pr-2 pl-20" : "pr-0 pl-2"
       }`}
     >

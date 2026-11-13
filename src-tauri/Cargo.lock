@@ -4511,6 +4511,79 @@ dependencies = [
 ]
 
 [[package]]
+name = "tarex"
+version = "0.1.0"
+dependencies = [
+ "block2",
+ "bytes",
+ "dirs 7.0.0",
+ "futures-util",
+ "getrandom 0.4.3",
+ "globset",
+ "grep-matcher",
+ "grep-regex",
+ "grep-searcher",
+ "gtk",
+ "ignore",
+ "image",
+ "keyring",
+ "libc",
+ "log",
+ "notify",
+ "nucleo-matcher",
+ "objc2",
+ "objc2-app-kit",
+ "objc2-foundation",
+ "portable-pty",
+ "proptest",
+ "reqwest 0.12.28",
+ "serde",
+ "serde_json",
+ "shared_child",
+ "sysinfo",
+ "tarex-control-protocol",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-autostart",
+ "tauri-plugin-clipboard-manager",
+ "tauri-plugin-dialog",
+ "tauri-plugin-log",
+ "tauri-plugin-notification",
+ "tauri-plugin-opener",
+ "tauri-plugin-os",
+ "tauri-plugin-process",
+ "tauri-plugin-store",
+ "tauri-plugin-updater",
+ "tauri-plugin-window-state",
+ "tempfile",
+ "tokio",
+ "wasmparser",
+ "which",
+ "window-vibrancy",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "tarex-cli"
+version = "0.1.0"
+dependencies = [
+ "dirs 7.0.0",
+ "libc",
+ "serde_json",
+ "tarex-control-protocol",
+ "tempfile",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "tarex-control-protocol"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "target-lexicon"
 version = "0.12.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5005,79 +5078,6 @@ checksum = "c4790fc369d5a530f4b544b094e31388b9b3a37c0f4652ade4505945f5660d24"
 dependencies = [
  "new_debug_unreachable",
  "utf-8",
-]
-
-[[package]]
-name = "terax"
-version = "0.10.0"
-dependencies = [
- "block2",
- "bytes",
- "dirs 7.0.0",
- "futures-util",
- "getrandom 0.4.3",
- "globset",
- "grep-matcher",
- "grep-regex",
- "grep-searcher",
- "gtk",
- "ignore",
- "image",
- "keyring",
- "libc",
- "log",
- "notify",
- "nucleo-matcher",
- "objc2",
- "objc2-app-kit",
- "objc2-foundation",
- "portable-pty",
- "proptest",
- "reqwest 0.12.28",
- "serde",
- "serde_json",
- "shared_child",
- "sysinfo",
- "tauri",
- "tauri-build",
- "tauri-plugin-autostart",
- "tauri-plugin-clipboard-manager",
- "tauri-plugin-dialog",
- "tauri-plugin-log",
- "tauri-plugin-notification",
- "tauri-plugin-opener",
- "tauri-plugin-os",
- "tauri-plugin-process",
- "tauri-plugin-store",
- "tauri-plugin-updater",
- "tauri-plugin-window-state",
- "tempfile",
- "terax-control-protocol",
- "tokio",
- "wasmparser",
- "which",
- "window-vibrancy",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "terax-cli"
-version = "0.10.0"
-dependencies = [
- "dirs 7.0.0",
- "libc",
- "serde_json",
- "tempfile",
- "terax-control-protocol",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "terax-control-protocol"
-version = "0.10.0"
-dependencies = [
- "serde",
- "serde_json",
 ]
 
 [[package]]

@@ -134,8 +134,8 @@ export class WebGlTerminalSurface
     this.root.className = "absolute inset-0 overflow-hidden";
     this.root.style.userSelect = "none";
     this.updateRootBackground();
-    this.root.setAttribute("data-terax-ghostty-surface", "webgl");
-    this.root.setAttribute("data-terax-terminal-surface", "");
+    this.root.setAttribute("data-tarex-ghostty-surface", "webgl");
+    this.root.setAttribute("data-tarex-terminal-surface", "");
     this.input.setAttribute("aria-label", "Terminal input");
     this.input.setAttribute("autocapitalize", "off");
     this.input.setAttribute("autocomplete", "off");

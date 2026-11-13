@@ -1874,7 +1874,7 @@ index 0000000..d22906b
 +    const term = new(80, 24);
 +    defer free(term);
 +
-+    const input = "\x1b]2;Terax\x07\x1b]133;A\x07";
++    const input = "\x1b]2;Tarex\x07\x1b]133;A\x07";
 +    write(term, input, input.len);
 +    try std.testing.expect(hasEvents(term));
 +
@@ -1883,7 +1883,7 @@ index 0000000..d22906b
 +    try std.testing.expectEqual(@as(c_int, 15), count);
 +    try std.testing.expectEqual(@as(u8, @intFromEnum(TerminalEvent.title)), bytes[0]);
 +    try std.testing.expectEqual(@as(u32, 5), std.mem.readInt(u32, bytes[1..5], .little));
-+    try std.testing.expectEqualStrings("Terax", bytes[5..10]);
++    try std.testing.expectEqualStrings("Tarex", bytes[5..10]);
 +    try std.testing.expectEqual(@as(u8, @intFromEnum(TerminalEvent.prompt_start)), bytes[10]);
 +    try std.testing.expectEqual(@as(u32, 0), std.mem.readInt(u32, bytes[11..15], .little));
 +    try std.testing.expect(!hasEvents(term));

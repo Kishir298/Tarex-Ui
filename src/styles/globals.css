@@ -55,72 +55,72 @@
 /* Baseline tokens mirror the built-in default theme, so the first paint already
  * matches what `applyTheme` writes a frame later. */
 :root {
-    --background: #ffffff;
-    --foreground: #111111;
-    --card: #f3f3f3;
-    --card-foreground: #111111;
+    --background: #f7faf9;
+    --foreground: #142321;
+    --card: #edf4f2;
+    --card-foreground: #142321;
     --popover: #ffffff;
-    --popover-foreground: #111111;
-    --primary: #111111;
-    --primary-foreground: #ffffff;
-    --secondary: #ededed;
-    --secondary-foreground: #111111;
-    --muted: #ededed;
-    --muted-foreground: #656565;
-    --accent: #e5e5e5;
-    --accent-foreground: #111111;
+    --popover-foreground: #142321;
+    --primary: #0f766e;
+    --primary-foreground: #f2fffc;
+    --secondary: #e3eeeb;
+    --secondary-foreground: #142321;
+    --muted: #e8f0ee;
+    --muted-foreground: #5c716d;
+    --accent: #f4e6c8;
+    --accent-foreground: #2b1c04;
     --destructive: #c0392f;
-    --border: rgba(0, 0, 0, 0.09);
-    --input: rgba(0, 0, 0, 0.13);
-    --ring: #8a8a8a;
-    --chart-1: #111111;
-    --chart-2: #4a4a4a;
-    --chart-3: #656565;
-    --chart-4: #8a8a8a;
-    --chart-5: #b4b4b4;
-    --radius: 0.625rem;
-    --sidebar: #f3f3f3;
-    --sidebar-foreground: #111111;
-    --sidebar-primary: #111111;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #e5e5e5;
-    --sidebar-accent-foreground: #111111;
-    --sidebar-border: rgba(0, 0, 0, 0.09);
-    --sidebar-ring: #8a8a8a;
+    --border: rgba(20, 35, 33, 0.12);
+    --input: rgba(20, 35, 33, 0.16);
+    --ring: #0f766e;
+    --chart-1: #0f766e;
+    --chart-2: #b7791f;
+    --chart-3: #2f6bb5;
+    --chart-4: #8a4fb5;
+    --chart-5: #5c716d;
+    --radius: 0.375rem;
+    --sidebar: #edf4f2;
+    --sidebar-foreground: #142321;
+    --sidebar-primary: #0f766e;
+    --sidebar-primary-foreground: #f2fffc;
+    --sidebar-accent: #dcebe7;
+    --sidebar-accent-foreground: #142321;
+    --sidebar-border: rgba(20, 35, 33, 0.12);
+    --sidebar-ring: #0f766e;
 }
 
 .dark {
-    --background: #141414;
-    --foreground: #f7f7f7;
-    --card: #1d1d1d;
-    --card-foreground: #f7f7f7;
-    --popover: #1d1d1d;
-    --popover-foreground: #f7f7f7;
-    --primary: #f7f7f7;
-    --primary-foreground: #141414;
-    --secondary: #2a2a2a;
-    --secondary-foreground: #f7f7f7;
-    --muted: #1d1d1d;
-    --muted-foreground: #a3a3a3;
-    --accent: #2a2a2a;
-    --accent-foreground: #f7f7f7;
+    --background: #0b1114;
+    --foreground: #d7e6e3;
+    --card: #111a1f;
+    --card-foreground: #d7e6e3;
+    --popover: #0f171b;
+    --popover-foreground: #e6f2ef;
+    --primary: #5ce1c6;
+    --primary-foreground: #04110f;
+    --secondary: #16242a;
+    --secondary-foreground: #c5e8df;
+    --muted: #142026;
+    --muted-foreground: #7f9ca3;
+    --accent: #f0b35a;
+    --accent-foreground: #1b1305;
     --destructive: #e35d5d;
-    --border: rgba(255, 255, 255, 0.09);
-    --input: rgba(255, 255, 255, 0.13);
-    --ring: #8a8a8a;
-    --chart-1: #f7f7f7;
-    --chart-2: #b4b4b4;
-    --chart-3: #8a8a8a;
-    --chart-4: #656565;
-    --chart-5: #4a4a4a;
-    --sidebar: #1d1d1d;
-    --sidebar-foreground: #f7f7f7;
-    --sidebar-primary: #f7f7f7;
-    --sidebar-primary-foreground: #141414;
-    --sidebar-accent: #2a2a2a;
-    --sidebar-accent-foreground: #f7f7f7;
-    --sidebar-border: rgba(255, 255, 255, 0.09);
-    --sidebar-ring: #8a8a8a;
+    --border: #25413f;
+    --input: #2d5150;
+    --ring: #f0b35a;
+    --chart-1: #5ce1c6;
+    --chart-2: #f0b35a;
+    --chart-3: #67a9ff;
+    --chart-4: #b98ce0;
+    --chart-5: #7f9ca3;
+    --sidebar: #080d10;
+    --sidebar-foreground: #d7e6e3;
+    --sidebar-primary: #5ce1c6;
+    --sidebar-primary-foreground: #04110f;
+    --sidebar-accent: #16242a;
+    --sidebar-accent-foreground: #d7e6e3;
+    --sidebar-border: #25413f;
+    --sidebar-ring: #f0b35a;
 }
 
 @layer base {
@@ -209,7 +209,7 @@
  * gutter is horizontal and anything cast downward would be clipped anyway
  * (react-resizable-panels clips panel content at the panel box). Separation
  * comes from the border plus the frame/pane tone step. */
-.terax-pane {
+.tarex-pane {
   border-radius: var(--pane-radius);
   border: 1px solid var(--border);
   background: var(--background);
@@ -230,7 +230,7 @@ html[data-vibrancy="on"] {
   --frame: color-mix(in oklab, var(--card) 55%, transparent);
 }
 
-html[data-chrome="borderless"] .terax-bg-surface {
+html[data-chrome="borderless"] .tarex-bg-surface {
   border-radius: 12px;
 }
 .zoom-content {
@@ -351,28 +351,28 @@ html *::-webkit-scrollbar {
   display: none;
 }
 
-.terax-code-editor .cm-scroller {
+.tarex-code-editor .cm-scroller {
   margin-right: -4px;
   scrollbar-width: thin !important;
   scrollbar-color: color-mix(in srgb, var(--foreground) 18%, transparent)
     transparent !important;
 }
-.terax-code-editor .cm-scroller::-webkit-scrollbar {
+.tarex-code-editor .cm-scroller::-webkit-scrollbar {
   width: 7px !important;
   height: 7px !important;
   display: block !important;
 }
-.terax-code-editor .cm-scroller::-webkit-scrollbar-track,
-.terax-code-editor .cm-scroller::-webkit-scrollbar-corner {
+.tarex-code-editor .cm-scroller::-webkit-scrollbar-track,
+.tarex-code-editor .cm-scroller::-webkit-scrollbar-corner {
   background: transparent;
 }
-.terax-code-editor .cm-scroller::-webkit-scrollbar-thumb {
+.tarex-code-editor .cm-scroller::-webkit-scrollbar-thumb {
   border: 2px solid transparent;
   border-radius: 999px;
   background: color-mix(in srgb, var(--foreground) 18%, transparent);
   background-clip: padding-box;
 }
-.terax-code-editor .cm-scroller::-webkit-scrollbar-thumb:hover {
+.tarex-code-editor .cm-scroller::-webkit-scrollbar-thumb:hover {
   background-color: color-mix(
     in srgb,
     var(--foreground) 30%,
@@ -389,7 +389,7 @@ html *::-webkit-scrollbar {
   --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes terax-collapsible-down {
+@keyframes tarex-collapsible-down {
   from {
     height: 0;
     opacity: 0;
@@ -400,7 +400,7 @@ html *::-webkit-scrollbar {
   }
 }
 
-@keyframes terax-collapsible-up {
+@keyframes tarex-collapsible-up {
   from {
     height: var(--radix-collapsible-content-height);
     opacity: 1;
@@ -411,20 +411,20 @@ html *::-webkit-scrollbar {
   }
 }
 
-.terax-collapsible-content {
+.tarex-collapsible-content {
   overflow: hidden;
 }
-.terax-collapsible-content[data-state="open"] {
-  animation: terax-collapsible-down var(--dur-base) var(--ease-soft);
+.tarex-collapsible-content[data-state="open"] {
+  animation: tarex-collapsible-down var(--dur-base) var(--ease-soft);
 }
-.terax-collapsible-content[data-state="closed"] {
-  animation: terax-collapsible-up var(--dur-base) var(--ease-soft);
+.tarex-collapsible-content[data-state="closed"] {
+  animation: tarex-collapsible-up var(--dur-base) var(--ease-soft);
 }
 
 /* Height auto<->0 reveal without JS measuring: animate the grid track from 0fr
  * to 1fr. The inner child must be the sole grid row with min-height:0. Used by
  * the docked AI input bar and the composer voice-status row. */
-.terax-reveal {
+.tarex-reveal {
   display: grid;
   grid-template-rows: 0fr;
   transition:
@@ -432,16 +432,16 @@ html *::-webkit-scrollbar {
     opacity var(--dur-base) var(--ease-premium);
   opacity: 0;
 }
-.terax-reveal[data-state="open"] {
+.tarex-reveal[data-state="open"] {
   grid-template-rows: 1fr;
   opacity: 1;
 }
-.terax-reveal > * {
+.tarex-reveal > * {
   min-height: 0;
   overflow: hidden;
 }
 
-@keyframes terax-panel-in {
+@keyframes tarex-panel-in {
   from {
     opacity: 0;
     transform: translateX(-40px);
@@ -451,11 +451,11 @@ html *::-webkit-scrollbar {
     transform: translateX(0);
   }
 }
-.terax-panel-in {
-  animation: terax-panel-in var(--dur-slow) var(--ease-premium);
+.tarex-panel-in {
+  animation: tarex-panel-in var(--dur-slow) var(--ease-premium);
 }
 
-@keyframes terax-tab-in {
+@keyframes tarex-tab-in {
   from {
     opacity: 0;
     transform: scale(0.86);
@@ -465,11 +465,11 @@ html *::-webkit-scrollbar {
     transform: scale(1);
   }
 }
-.terax-tab-in {
-  animation: terax-tab-in var(--dur-base) var(--ease-premium);
+.tarex-tab-in {
+  animation: tarex-tab-in var(--dur-base) var(--ease-premium);
 }
 
-@keyframes terax-pill-in {
+@keyframes tarex-pill-in {
   from {
     opacity: 0;
     transform: translateY(2px) scale(0.96);
@@ -479,13 +479,13 @@ html *::-webkit-scrollbar {
     transform: translateY(0) scale(1);
   }
 }
-.terax-pill-in {
-  animation: terax-pill-in var(--dur-base) var(--ease-premium);
+.tarex-pill-in {
+  animation: tarex-pill-in var(--dur-base) var(--ease-premium);
 }
 
 /* Text shimmer loop (replaces motion background-position animation). Driven by
  * --shimmer-duration / --shimmer-spread set inline per instance. */
-@keyframes terax-shimmer {
+@keyframes tarex-shimmer {
   from {
     background-position: 100% center;
   }
@@ -493,7 +493,7 @@ html *::-webkit-scrollbar {
     background-position: 0% center;
   }
 }
-.terax-shimmer {
+.tarex-shimmer {
   background-repeat: no-repeat, padding-box;
   background-size:
     250% 100%,
@@ -509,7 +509,7 @@ html *::-webkit-scrollbar {
       var(--color-muted-foreground),
       var(--color-muted-foreground)
     );
-  animation: terax-shimmer var(--shimmer-duration, 2s) linear infinite;
+  animation: tarex-shimmer var(--shimmer-duration, 2s) linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -518,10 +518,10 @@ html *::-webkit-scrollbar {
     --dur-base: 0.01ms;
     --dur-slow: 0.01ms;
   }
-  .terax-reveal {
+  .tarex-reveal {
     transition: none;
   }
-  .terax-shimmer {
+  .tarex-shimmer {
     animation: none;
     background-position: 0% center;
   }

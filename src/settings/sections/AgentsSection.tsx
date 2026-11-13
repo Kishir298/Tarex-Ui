@@ -398,7 +398,7 @@ function AgentEditorDialog({
               onChange={(e) =>
                 setDraft({ ...draft, instructions: e.target.value })
               }
-              placeholder="Persona & rules. Appended to Terex UI's core system prompt."
+              placeholder="Persona & rules. Appended to Tarex UI's core system prompt."
               className="min-h-40 resize-y text-[12px] leading-relaxed"
             />
           </div>

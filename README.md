@@ -1,27 +1,27 @@
 <div align="center">
-  <img src="public/terex-mark.svg" width="144" height="144" alt="Terex UI" />
-  <h1>Terex UI</h1>
+  <img src="public/tarex-mark.svg" width="144" height="144" alt="Tarex UI" />
+  <h1>Tarex UI</h1>
   <p><strong>A native AI terminal and system console.</strong></p>
   <p>
-    <a href="https://github.com/3xecutablefile/terex-ui/releases/latest">Downloads</a>
-    · <a href="https://github.com/3xecutablefile/terex-ui/issues">Issues</a>
-    · <a href="https://github.com/3xecutablefile/terex-ui/actions/workflows/release.yml">Release builds</a>
+    <a href="https://github.com/Kishir298/Tarex-Ui/releases/latest">Downloads</a>
+    · <a href="https://github.com/Kishir298/Tarex-Ui/issues">Issues</a>
+    · <a href="https://github.com/Kishir298/Tarex-Ui/actions/workflows/release.yml">Release builds</a>
   </p>
   <p>
-    <img src="https://github.com/3xecutablefile/terex-ui/actions/workflows/release.yml/badge.svg?branch=main" alt="Release builds" />
+    <img src="https://github.com/Kishir298/Tarex-Ui/actions/workflows/release.yml/badge.svg?branch=main" alt="Release builds" />
     <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-9856df" alt="Supported platforms" />
-    <img src="https://img.shields.io/github/license/3xecutablefile/terex-ui" alt="License" />
+    <img src="https://img.shields.io/github/license/Kishir298/Tarex-Ui" alt="License" />
   </p>
 </div>
 
-Terex UI combines a native Tauri/Rust backend with an eDEX-style desktop layout:
+Tarex UI combines a native Tauri/Rust backend with an eDEX-style desktop layout:
 live system monitoring, a three-column file browser, terminal tabs,
 a project files/changes rail, and an on-demand Activity panel. The default palette is
-purple and lime; the dashboard and terminal follow the selected theme together.
+deep charcoal, signal teal, and warm amber; the dashboard and terminal follow the selected theme together.
 
 ## Download
 
-Installers are published to [Releases](https://github.com/3xecutablefile/terex-ui/releases)
+Installers are published to [Releases](https://github.com/Kishir298/Tarex-Ui/releases)
 after successful pushes to `main`:
 
 | Platform | Downloads |
@@ -44,8 +44,8 @@ Choose **Review update → Install & restart** when ready. Installation waits un
 edited files are saved and running terminal commands and drafts are finished.
 **CONFIG → About → Check for updates** opens the same updater manually.
 
-DEB/RPM installations use their package manager instead. Existing builds that
-predate the updater need one manual installation of version 0.10.0 or later.
+DEB/RPM installations use their package manager instead. Existing Terex builds
+need one manual installation of Tarex UI 0.1.0 or later.
 
 ## Workspace
 
@@ -111,12 +111,12 @@ Open **CONFIG → Models**, add an **OpenAI Compatible** custom endpoint, and en
 its base URL, model ID, and API key if needed. Local endpoints can be keyless.
 Existing provider keys remain available for compatible features such as voice.
 
-When an existing Terax profile is found, Terex UI uses its settings, custom
+When an existing Tarex profile is found, Tarex UI uses its settings, custom
 endpoints, chats, agents, snippets, todos, custom themes, and spaces directly.
 The existing keychain entries are reused; credentials are not copied into the
-repository. The native app identifier is `io.github.3xecutablefile.terex-ui`.
+repository. The native app identifier is `io.github.kishir298.tarex-ui`.
 
-Compatibility identifiers, including the `TERAX.md` project-memory filename,
+Compatibility identifiers, including the `TAREX.md` project-memory filename,
 remain supported so existing profiles and integrations continue to work.
 
 ## Development
@@ -140,7 +140,7 @@ pnpm tauri build
 pnpm tauri build --debug --bundles app
 ```
 
-The macOS debug bundle is `src-tauri/target/debug/bundle/macos/Terex UI.app`.
+The macOS debug bundle is `src-tauri/target/debug/bundle/macos/Tarex UI.app`.
 
 ### Checks
 
@@ -170,7 +170,7 @@ are not required for these updater signatures.
 
 ## Credits And License
 
-Terex UI is derived from [Terax](https://github.com/crynta/terax-ai) by Crynta and
+Tarex UI is derived from [Tarex](https://github.com/Kishir298/Tarex-Ui) by Crynta and
 retains its native terminal, editor, and AI foundations. Original copyright and
 third-party license notices are preserved. Licensed under [Apache-2.0](LICENSE).
 

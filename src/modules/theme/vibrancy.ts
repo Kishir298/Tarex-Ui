@@ -4,7 +4,7 @@ import { invoke } from "@tauri-apps/api/core";
 export type Backdrop = "vibrancy" | "mica" | "none";
 
 /** Must stay in sync with the pre-paint script in index.html. */
-export const PREPAINT_BG = { dark: "#24212c", light: "#24212c" } as const;
+export const PREPAINT_BG = { dark: "#0b1114", light: "#0b1114" } as const;
 
 let kindPromise: Promise<Backdrop> | null = null;
 

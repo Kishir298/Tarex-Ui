@@ -76,10 +76,10 @@ function Clock() {
   }, []);
   return (
     <>
-      <time className="terex-clock" dateTime={now.toISOString()}>
+      <time className="tarex-clock" dateTime={now.toISOString()}>
         {now.toLocaleTimeString("en-GB")}
       </time>
-      <div className="terex-date">
+      <div className="tarex-date">
         {now
           .toLocaleDateString("en-US", {
             year: "numeric",
@@ -113,7 +113,7 @@ function Chart({
       .join(" ");
   return (
     <svg
-      className="terex-chart"
+      className="tarex-chart"
       viewBox="0 0 200 60"
       preserveAspectRatio="none"
       role="img"
@@ -121,7 +121,7 @@ function Chart({
     >
       <title>{label}</title>
       <path
-        className="terex-chart-grid"
+        className="tarex-chart-grid"
         d="M0 0H200M0 15H200M0 30H200M0 45H200M0 59H200M0 0V60M40 0V60M80 0V60M120 0V60M160 0V60M200 0V60"
       />
       <polyline
@@ -135,7 +135,7 @@ function Chart({
         <polyline
           points={line(second)}
           fill="none"
-          stroke="var(--terex-bright)"
+          stroke="var(--tarex-bright)"
           strokeWidth="1"
           opacity=".7"
           vectorEffect="non-scaling-stroke"
@@ -159,13 +159,13 @@ export function SystemRail({
     ? `${Math.floor(s.uptime / 86400)}D ${String(Math.floor(s.uptime / 3600) % 24).padStart(2, "0")}:${String(Math.floor(s.uptime / 60) % 60).padStart(2, "0")}`
     : "--";
   return (
-    <aside className="terex-system-rail" aria-label="Live system monitor">
-      <div className="terex-rule">
+    <aside className="tarex-system-rail" aria-label="Live system monitor">
+      <div className="tarex-rule">
         <span>PANEL</span>
         <span>SYSTEM</span>
       </div>
       <Clock />
-      <dl className="terex-machine-summary">
+      <dl className="tarex-machine-summary">
         <div>
           <dt>UPTIME</dt>
           <dd>{uptime}</dd>
@@ -179,17 +179,17 @@ export function SystemRail({
           <dd>{s?.architecture ?? "--"}</dd>
         </div>
       </dl>
-      <div className="terex-hardware">
+      <div className="tarex-hardware">
         <span>HOST / KERNEL</span>
         <strong title={s?.hostname}>{s?.hostname ?? "CONNECTING"}</strong>
         <span>{s?.kernel ?? "NATIVE SYSTEM"}</span>
         <strong title={s?.cpuName}>{s?.cpuName ?? "--"}</strong>
       </div>
-      <div className="terex-rule">
+      <div className="tarex-rule">
         <span>CPU USAGE</span>
         <span>{s ? `${average.toFixed(1)}%` : "--"}</span>
       </div>
-      <div className="terex-graph-caption">
+      <div className="tarex-graph-caption">
         <span>AVG. {s?.cpu.length ?? "--"} THREADS</span>
         <span>100%</span>
       </div>
@@ -197,7 +197,7 @@ export function SystemRail({
         values={history.map((sample) => sample.cpu)}
         label={`CPU usage ${average.toFixed(1)} percent`}
       />
-      <div className="terex-core-bars">
+      <div className="tarex-core-bars">
         {s?.cpu.map((value, index) => (
           <div
             key={`core-${index}`}
@@ -207,7 +207,7 @@ export function SystemRail({
           </div>
         ))}
       </div>
-      <dl className="terex-machine-summary">
+      <dl className="tarex-machine-summary">
         <div>
           <dt>CPU</dt>
           <dd>{s ? `${average.toFixed(0)}%` : "--"}</dd>
@@ -221,14 +221,14 @@ export function SystemRail({
           <dd>{s ? "TOP 5" : "--"}</dd>
         </div>
       </dl>
-      <div className="terex-rule">
+      <div className="tarex-rule">
         <span>MEMORY</span>
         <span>
           {bytes(s?.memoryUsed)} / {bytes(s?.memoryTotal)}
         </span>
       </div>
       <div
-        className="terex-memory-map"
+        className="tarex-memory-map"
         role="img"
         aria-label={`Memory ${(memory * 100).toFixed(0)} percent used`}
       >
@@ -239,26 +239,26 @@ export function SystemRail({
           />
         ))}
       </div>
-      <div className="terex-rule">
+      <div className="tarex-rule">
         <span>SWAP</span>
         <span>
           {bytes(s?.swapUsed)} / {bytes(s?.swapTotal)}
         </span>
       </div>
-      <div className="terex-meter">
+      <div className="tarex-meter">
         <i
           style={{
             width: `${s?.swapTotal ? (s.swapUsed / s.swapTotal) * 100 : 0}%`,
           }}
         />
       </div>
-      <div className="terex-rule">
+      <div className="tarex-rule">
         <span>TOP PROCESSES</span>
         <span>CPU / MEM</span>
       </div>
       <Processes processes={s?.processes??[]} refresh={refresh}/>
       {error && (
-        <p role="status" className="terex-error" title={error}>
+        <p role="status" className="tarex-error" title={error}>
           SYSTEM DATA UNAVAILABLE
         </p>
       )}

@@ -1,5 +1,5 @@
-import { TeraxGhostty } from "@terax/ghostty-core/adapted";
-import type { GhosttyTerminalConfig } from "@terax/ghostty-core/protocol";
+import { TarexGhostty } from "@tarex/ghostty-core/adapted";
+import type { GhosttyTerminalConfig } from "@tarex/ghostty-core/protocol";
 import { AdaptedGhosttyTerminalModel } from "./AdaptedGhosttyTerminalModel";
 import type {
   GhosttyTerminalModelApi,
@@ -27,21 +27,21 @@ export type GhosttyRuntimeDiagnostics = {
   readonly lastError: string | null;
 };
 
-type GhosttyLoader = () => Promise<TeraxGhostty>;
+type GhosttyLoader = () => Promise<TarexGhostty>;
 
 export class GhosttyCoreRuntime {
   private readonly loader: GhosttyLoader;
   private readonly models = new Map<number, GhosttyTerminalModelApi>();
   private readonly pendingModels = new Set<number>();
-  private loadPromise: Promise<TeraxGhostty> | null = null;
-  private ghostty: TeraxGhostty | null = null;
+  private loadPromise: Promise<TarexGhostty> | null = null;
+  private ghostty: TarexGhostty | null = null;
   private status: GhosttyRuntimeDiagnostics["status"] = "cold";
   private nativeDeviceAttributes: boolean | null = null;
   private lastError: string | null = null;
   private idleReleaseTimer: ReturnType<typeof setTimeout> | null = null;
   private disposed = false;
 
-  constructor(loader: GhosttyLoader = () => TeraxGhostty.load()) {
+  constructor(loader: GhosttyLoader = () => TarexGhostty.load()) {
     this.loader = loader;
   }
 
@@ -122,7 +122,7 @@ export class GhosttyCoreRuntime {
     };
   }
 
-  private load(): Promise<TeraxGhostty> {
+  private load(): Promise<TarexGhostty> {
     if (this.disposed)
       return Promise.reject(new Error("Ghostty runtime is disposed"));
     if (this.ghostty) return Promise.resolve(this.ghostty);
@@ -187,7 +187,7 @@ export class GhosttyCoreRuntime {
   }
 }
 
-function probeNativeDeviceAttributes(ghostty: TeraxGhostty): boolean {
+function probeNativeDeviceAttributes(ghostty: TarexGhostty): boolean {
   const terminal = ghostty.createTerminal(2, 1);
   try {
     terminal.write(new TextEncoder().encode("\x1b[c\x1b[>c"));

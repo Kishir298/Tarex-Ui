@@ -1,13 +1,13 @@
 import type {
-  TeraxGhosttyLoadOptions,
-  TeraxGhosttyKeyEvent,
-  TeraxGhosttyRenderState,
-  TeraxGhosttySearchStatus,
-  TeraxGhosttySearchViewportSpan,
-  TeraxGhosttySelection,
-  TeraxGhosttyTerminalOptions,
-  TeraxGhosttyTerminalResourceStats,
-  TeraxGhosttyWasmExports,
+  TarexGhosttyLoadOptions,
+  TarexGhosttyKeyEvent,
+  TarexGhosttyRenderState,
+  TarexGhosttySearchStatus,
+  TarexGhosttySearchViewportSpan,
+  TarexGhosttySelection,
+  TarexGhosttyTerminalOptions,
+  TarexGhosttyTerminalResourceStats,
+  TarexGhosttyWasmExports,
   TypedArray,
   TypedArrayConstructor,
   ViewCacheEntry,
@@ -174,16 +174,16 @@ type RenderViewCache = {
   readonly linkBytes: ViewCacheEntry<Uint8Array>;
 };
 
-export class TeraxGhostty {
+export class TarexGhostty {
   private constructor(
-    private readonly exports: TeraxGhosttyWasmExports,
+    private readonly exports: TarexGhosttyWasmExports,
     private readonly memory: WebAssembly.Memory,
   ) {}
 
   static async load(
     wasmPath?: string,
-    options: TeraxGhosttyLoadOptions = {},
-  ): Promise<TeraxGhostty> {
+    options: TarexGhosttyLoadOptions = {},
+  ): Promise<TarexGhostty> {
     const path =
       wasmPath ?? (supportsWasmSimd()
         ? new URL("../../adapted/ghostty-vt.wasm", import.meta.url).href
@@ -205,16 +205,16 @@ export class TeraxGhostty {
         response,
         imports,
       );
-      return TeraxGhostty.fromInstance(instance, memoryRef);
+      return TarexGhostty.fromInstance(instance, memoryRef);
     } catch {
-      return TeraxGhostty.loadBytes(await fallback.arrayBuffer(), options);
+      return TarexGhostty.loadBytes(await fallback.arrayBuffer(), options);
     }
   }
 
   static async loadBytes(
     bytes: ArrayBuffer,
-    options: TeraxGhosttyLoadOptions = {},
-  ): Promise<TeraxGhostty> {
+    options: TarexGhosttyLoadOptions = {},
+  ): Promise<TarexGhostty> {
     if (bytes.byteLength === 0) {
       throw new Error("Adapted Ghostty WASM is empty");
     }
@@ -226,15 +226,15 @@ export class TeraxGhostty {
       module,
       createImports(memoryRef, options),
     );
-    return TeraxGhostty.fromInstance(instance, memoryRef);
+    return TarexGhostty.fromInstance(instance, memoryRef);
   }
 
   createTerminal(
     cols: number,
     rows: number,
-    options: TeraxGhosttyTerminalOptions = {},
-  ): TeraxGhosttyTerminal {
-    return new TeraxGhosttyTerminal(
+    options: TarexGhosttyTerminalOptions = {},
+  ): TarexGhosttyTerminal {
+    return new TarexGhosttyTerminal(
       this.exports,
       this.memory,
       cols,
@@ -250,19 +250,19 @@ export class TeraxGhostty {
   private static fromInstance(
     instance: WebAssembly.Instance,
     memoryRef: { current: WebAssembly.Memory | null },
-  ): TeraxGhostty {
-    const exports = instance.exports as TeraxGhosttyWasmExports;
+  ): TarexGhostty {
+    const exports = instance.exports as TarexGhosttyWasmExports;
     for (const name of requiredExports) {
       if (!(name in exports)) {
         throw new Error(`Missing adapted Ghostty WASM export: ${name}`);
       }
     }
     memoryRef.current = exports.memory;
-    return new TeraxGhostty(exports, exports.memory);
+    return new TarexGhostty(exports, exports.memory);
   }
 }
 
-export class TeraxGhosttyTerminal {
+export class TarexGhosttyTerminal {
   private readonly cache: RenderViewCache = createRenderViewCache();
   private readonly handle: number;
   private inputPointer = 0;
@@ -271,11 +271,11 @@ export class TeraxGhosttyTerminal {
   private disposed = false;
 
   constructor(
-    private readonly exports: TeraxGhosttyWasmExports,
+    private readonly exports: TarexGhosttyWasmExports,
     private readonly memory: WebAssembly.Memory,
     cols: number,
     rows: number,
-    options: TeraxGhosttyTerminalOptions,
+    options: TarexGhosttyTerminalOptions,
   ) {
     validateDimensions(cols, rows);
     const maxScrollbackBytes = normalizeLimit(
@@ -362,7 +362,7 @@ export class TeraxGhosttyTerminal {
     );
   }
 
-  updateRenderState(): TeraxGhosttyRenderState {
+  updateRenderState(): TarexGhosttyRenderState {
     this.assertLive();
     checkResult(
       this.exports.restty_render_update(this.handle),
@@ -384,7 +384,7 @@ export class TeraxGhosttyTerminal {
     );
   }
 
-  resourceStats(): TeraxGhosttyTerminalResourceStats {
+  resourceStats(): TarexGhosttyTerminalResourceStats {
     this.assertLive();
     return {
       cellCapacity: this.exports.restty_cell_capacity(this.handle),
@@ -561,7 +561,7 @@ export class TeraxGhosttyTerminal {
     );
   }
 
-  encodeKey(event: TeraxGhosttyKeyEvent): Uint8Array {
+  encodeKey(event: TarexGhosttyKeyEvent): Uint8Array {
     this.assertLive();
     const utf8 = event.utf8 ? this.textEncoder.encode(event.utf8) : emptyBytes;
     if (utf8.byteLength > 0) {
@@ -593,7 +593,7 @@ export class TeraxGhosttyTerminal {
     return new Uint8Array(this.memory.buffer, pointer, length).slice();
   }
 
-  setSearchQuery(query: string): TeraxGhosttySearchStatus {
+  setSearchQuery(query: string): TarexGhosttySearchStatus {
     this.assertLive();
     const bytes = this.textEncoder.encode(query);
     if (bytes.byteLength === 0) {
@@ -625,7 +625,7 @@ export class TeraxGhosttyTerminal {
     checkResult(this.exports.restty_search_clear(this.handle), "clear search");
   }
 
-  stepSearch(budget = 256): TeraxGhosttySearchStatus {
+  stepSearch(budget = 256): TarexGhosttySearchStatus {
     this.assertLive();
     checkResult(
       this.exports.restty_search_step(
@@ -637,7 +637,7 @@ export class TeraxGhosttyTerminal {
     return this.searchStatus();
   }
 
-  selectSearchMatch(direction: "next" | "previous"): TeraxGhosttySearchStatus {
+  selectSearchMatch(direction: "next" | "previous"): TarexGhosttySearchStatus {
     this.assertLive();
     const result =
       direction === "next"
@@ -647,7 +647,7 @@ export class TeraxGhosttyTerminal {
     return this.searchStatus();
   }
 
-  searchStatus(): TeraxGhosttySearchStatus {
+  searchStatus(): TarexGhosttySearchStatus {
     this.assertLive();
     const pointer = this.exports.restty_search_status_ptr(this.handle);
     validateRange(this.memory.buffer, pointer, SEARCH_STATUS_BYTES);
@@ -666,7 +666,7 @@ export class TeraxGhosttyTerminal {
     };
   }
 
-  searchViewportMatches(): TeraxGhosttySearchViewportSpan[] {
+  searchViewportMatches(): TarexGhosttySearchViewportSpan[] {
     this.assertLive();
     const count = this.exports.restty_search_viewport_match_count(this.handle);
     if (count === 0) return [];
@@ -681,7 +681,7 @@ export class TeraxGhosttyTerminal {
       pointer,
       count * SEARCH_VIEWPORT_SPAN_BYTES,
     );
-    const matches = new Array<TeraxGhosttySearchViewportSpan>(count);
+    const matches = new Array<TarexGhosttySearchViewportSpan>(count);
     for (let index = 0; index < count; index += 1) {
       const offset = index * SEARCH_VIEWPORT_SPAN_BYTES;
       matches[index] = {
@@ -707,7 +707,7 @@ export class TeraxGhosttyTerminal {
     };
   }
 
-  setSelection(selection: TeraxGhosttySelection | null): void {
+  setSelection(selection: TarexGhosttySelection | null): void {
     this.assertLive();
     if (!selection) {
       checkResult(
@@ -729,7 +729,7 @@ export class TeraxGhosttyTerminal {
     );
   }
 
-  selection(): TeraxGhosttySelection | null {
+  selection(): TarexGhosttySelection | null {
     this.assertLive();
     if (this.exports.restty_selection_active(this.handle) === 0) return null;
     return {
@@ -809,7 +809,7 @@ export class TeraxGhosttyTerminal {
   }
 
   graphemeAt(
-    state: TeraxGhosttyRenderState,
+    state: TarexGhosttyRenderState,
     cellIndex: number,
   ): string {
     const index = validateCellIndex(state, cellIndex);
@@ -829,7 +829,7 @@ export class TeraxGhosttyTerminal {
   }
 
   hyperlinkAt(
-    state: TeraxGhosttyRenderState,
+    state: TarexGhosttyRenderState,
     cellIndex: number,
   ): string | null {
     const linkId = state.linkIds[validateCellIndex(state, cellIndex)];
@@ -857,7 +857,7 @@ export class TeraxGhosttyTerminal {
     this.exports.restty_destroy(this.handle);
   }
 
-  private readRenderState(): TeraxGhosttyRenderState {
+  private readRenderState(): TarexGhosttyRenderState {
     const rows = this.exports.restty_rows(this.handle);
     const cols = this.exports.restty_cols(this.handle);
     validateDimensions(cols, rows);
@@ -1071,7 +1071,7 @@ export class TeraxGhosttyTerminal {
 
 function createImports(
   memoryRef: { current: WebAssembly.Memory | null },
-  options: TeraxGhosttyLoadOptions,
+  options: TarexGhosttyLoadOptions,
 ): WebAssembly.Imports {
   return {
     env: {
@@ -1182,7 +1182,7 @@ function decodeCursorStyle(value: number): "block" | "underline" | "bar" {
 }
 
 function validateCellIndex(
-  state: TeraxGhosttyRenderState,
+  state: TarexGhosttyRenderState,
   cellIndex: number,
 ): number {
   if (

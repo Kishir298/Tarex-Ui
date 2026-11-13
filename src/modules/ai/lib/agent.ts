@@ -155,8 +155,8 @@ export async function buildLanguageModel(
         baseURL: "https://openrouter.ai/api/v1",
         apiKey: key,
         headers: {
-          "HTTP-Referer": "https://terax.ai",
-          "X-Title": "Terex UI",
+          "HTTP-Referer": "https://tarex.ai",
+          "X-Title": "Tarex UI",
         },
       })(resolvedModelId);
       break;
@@ -319,7 +319,7 @@ function buildStableSystem(
     : "";
   const memoryBlock =
     projectMemory && projectMemory.trim().length > 0
-      ? `\n\n## PROJECT — TERAX.md\n${projectMemory.trim()}`
+      ? `\n\n## PROJECT — TAREX.md\n${projectMemory.trim()}`
       : "";
   return `${base}${memoryBlock}${personaBlock}${customBlock}`;
 }

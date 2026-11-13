@@ -288,7 +288,7 @@ export function CloseDialogs({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Quit Terex UI?</AlertDialogTitle>
+            <AlertDialogTitle>Quit Tarex UI?</AlertDialogTitle>
             <AlertDialogDescription>
               {pendingAppClose ? appCloseMessage(pendingAppClose) : ""}
             </AlertDialogDescription>

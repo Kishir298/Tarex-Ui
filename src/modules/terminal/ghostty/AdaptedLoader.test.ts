@@ -25,8 +25,8 @@ describe("Ghostty artifact selection", () => {
         }),
       );
       vi.stubGlobal("fetch", fetch);
-      const { TeraxGhostty } = await import("@terax/ghostty-core/adapted");
-      const ghostty = await TeraxGhostty.load();
+      const { TarexGhostty } = await import("@tarex/ghostty-core/adapted");
+      const ghostty = await TarexGhostty.load();
       expect(fetch).toHaveBeenCalledExactlyOnceWith(
         expect.stringContaining(filename),
       );

@@ -81,7 +81,7 @@ mod mac {
     }}
     pub struct Observer(usize);
     impl Drop for Observer{fn drop(&mut self){unsafe{let pointer=self.0 as Ref;CFNotificationCenterRemoveObserver(CFNotificationCenterGetDistributedCenter(),pointer,ptr::null(),ptr::null());drop(Box::from_raw(self.0 as *mut tauri::AppHandle));}}}
-    unsafe extern "C" fn changed(_:Ref,observer:Ref,_:Ref,_:Ref,_:Ref){if let Some(app)=unsafe{(observer as *const tauri::AppHandle).as_ref()}{let _=app.emit("terex:keyboard-layout-changed",());}}
+    unsafe extern "C" fn changed(_:Ref,observer:Ref,_:Ref,_:Ref,_:Ref){if let Some(app)=unsafe{(observer as *const tauri::AppHandle).as_ref()}{let _=app.emit("tarex:keyboard-layout-changed",());}}
     pub fn observe(app:&tauri::AppHandle)->Observer{unsafe{let pointer=Box::into_raw(Box::new(app.clone()));CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(),pointer.cast(),changed,kTISNotifySelectedKeyboardInputSourceChanged,ptr::null(),4);Observer(pointer as usize)}}
 }
 
@@ -147,8 +147,8 @@ pub fn install(app:&tauri::AppHandle){
     {use gtk::prelude::*;use tauri::Manager;
         if let Some(window)=app.get_webview_window("main") {let handle=app.clone();let _=window.with_webview(move|view|{
             let release=handle.clone();
-            view.inner().connect_key_press_event(move|_,event|{let group=event.group();if GROUP.swap(group,std::sync::atomic::Ordering::Relaxed)!=group{let _=handle.emit("terex:keyboard-layout-changed",());}gtk::glib::Propagation::Proceed});
-            view.inner().connect_key_release_event(move|_,event|{let group=event.group();if GROUP.swap(group,std::sync::atomic::Ordering::Relaxed)!=group{let _=release.emit("terex:keyboard-layout-changed",());}gtk::glib::Propagation::Proceed});
+            view.inner().connect_key_press_event(move|_,event|{let group=event.group();if GROUP.swap(group,std::sync::atomic::Ordering::Relaxed)!=group{let _=handle.emit("tarex:keyboard-layout-changed",());}gtk::glib::Propagation::Proceed});
+            view.inner().connect_key_release_event(move|_,event|{let group=event.group();if GROUP.swap(group,std::sync::atomic::Ordering::Relaxed)!=group{let _=release.emit("tarex:keyboard-layout-changed",());}gtk::glib::Propagation::Proceed});
         });}
     }
     #[cfg(windows)]
